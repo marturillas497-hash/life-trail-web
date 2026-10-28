@@ -35,3 +35,19 @@ export function useTagMap(): Map<number, Tag> | undefined {
     [tags],
   );
 }
+
+/* Every tag, archived or not, oldest first. */
+export function useAllTags() {
+  return useLiveQuery(() => db.tags.orderBy("id").toArray());
+}
+
+/* How many entries use each tag, keyed by tag id. */
+export function useTagUsage() {
+  return useLiveQuery(async () => {
+    const counts = new Map<number, number>();
+    await db.entries.each((entry) => {
+      for (const id of entry.tagIds) counts.set(id, (counts.get(id) ?? 0) + 1);
+    });
+    return counts;
+  });
+}

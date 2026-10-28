@@ -5,7 +5,10 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 /* Add an item here and it shows up in the sidebar and the phone tab bar. */
-const NAV = [{ href: "/journal", label: "Journal", icon: "📓" }];
+const NAV = [
+  { href: "/journal", label: "Journal", icon: "📓" },
+  { href: "/tags", label: "Tags", icon: "🏷️" },
+];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();

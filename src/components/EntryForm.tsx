@@ -7,6 +7,7 @@ import { createEntry, updateEntry } from "@/lib/entries";
 import { useActiveTags, useTagMap } from "@/lib/hooks";
 import type { Entry, Tag } from "@/lib/types";
 import { TagChip } from "./TagChip";
+import { TagEditorDialog } from "./TagEditorDialog";
 import { btnPrimary, inputClass } from "./ui";
 
 /*
@@ -23,6 +24,7 @@ export function EntryForm({ initial }: { initial?: Entry }) {
   const [tagIds, setTagIds] = useState<number[]>(initial?.tagIds ?? []);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [creatingTag, setCreatingTag] = useState(false);
 
   const canSave =
     !saving && tagIds.length > 0 && (title.trim() !== "" || body.trim() !== "");
@@ -112,6 +114,13 @@ export function EntryForm({ initial }: { initial?: Entry }) {
                   onToggle={() => toggleTag(tag.id)}
                 />
               ))}
+              <button
+                type="button"
+                onClick={() => setCreatingTag(true)}
+                className="inline-flex items-center rounded-full border border-dashed border-zinc-400 px-3 py-1 text-sm text-zinc-600 hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              >
+                + New tag
+              </button>
             </div>
           ) : (
             <p className="text-sm text-zinc-500">Loading tags...</p>
@@ -138,6 +147,13 @@ export function EntryForm({ initial }: { initial?: Entry }) {
 
         {error && <p className="text-sm text-red-600">{error}</p>}
       </div>
+
+      {creatingTag && (
+        <TagEditorDialog
+          onClose={() => setCreatingTag(false)}
+          onSaved={(id) => setTagIds((current) => [...current, id])}
+        />
+      )}
     </div>
   );
 }
