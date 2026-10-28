@@ -1,0 +1,18 @@
+export const DEFAULT_TAGS = [
+  { name: "Happy", emoji: "😊", color: "#FACC15" },
+  { name: "Calm", emoji: "😌", color: "#60A5FA" },
+  { name: "Grateful", emoji: "🙏", color: "#34D399" },
+  { name: "Excited", emoji: "🤩", color: "#F59E0B" },
+  { name: "Loved", emoji: "🥰", color: "#F472B6" },
+  { name: "Proud", emoji: "💪", color: "#A78BFA" },
+  { name: "Motivated", emoji: "🔥", color: "#F97316" },
+  { name: "Hopeful", emoji: "🌱", color: "#4ADE80" },
+  { name: "Tired", emoji: "😴", color: "#94A3B8" },
+  { name: "Bored", emoji: "😐", color: "#A1A1AA" },
+  { name: "Confused", emoji: "😕", color: "#C4B5FD" },
+  { name: "Anxious", emoji: "😰", color: "#38BDF8" },
+  { name: "Stressed", emoji: "😣", color: "#FB923C" },
+  { name: "Sad", emoji: "😢", color: "#3B82F6" },
+  { name: "Lonely", emoji: "🥺", color: "#6366F1" },
+  { name: "Angry", emoji: "😠", color: "#EF4444" },
+];
