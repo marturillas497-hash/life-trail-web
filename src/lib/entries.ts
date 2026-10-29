@@ -7,10 +7,14 @@ export type EntryInput = {
   tagIds: number[];
 };
 
-export async function createEntry(input: EntryInput): Promise<number> {
+/* `date` is the local day as YYYY-MM-DD. It defaults to today. */
+export async function createEntry(
+  input: EntryInput,
+  date: string = todayKey(),
+): Promise<number> {
   const now = Date.now();
   return db.entries.add({
-    date: todayKey(),
+    date,
     title: input.title,
     body: input.body,
     tagIds: input.tagIds,

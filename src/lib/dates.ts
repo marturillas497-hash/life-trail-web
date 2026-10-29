@@ -35,3 +35,14 @@ export function formatDateTime(ms: number): string {
     minute: "2-digit",
   });
 }
+
+export function makeKey(year: number, month: number, day: number): string {
+  return `${year}-${pad(month + 1)}-${pad(day)}`;
+}
+
+/* True for real calendar days only, so 2026-02-31 is rejected. */
+export function isValidKey(key: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return false;
+  const date = keyToDate(key);
+  return todayKey(date) === key;
+}

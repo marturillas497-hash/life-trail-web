@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { formatFullDate, todayKey } from "@/lib/dates";
 import { createEntry, updateEntry } from "@/lib/entries";
 import { useActiveTags, useTagMap } from "@/lib/hooks";
 import type { Entry, Tag } from "@/lib/types";
@@ -13,8 +14,9 @@ import { btnPrimary, inputClass } from "./ui";
 /*
 Used for both creating and editing.
 Pass `initial` to edit, leave it out to create a new entry.
+`date` (YYYY-MM-DD) is only used when creating, and defaults to today.
 */
-export function EntryForm({ initial }: { initial?: Entry }) {
+export function EntryForm({ initial, date }: { initial?: Entry; date?: string }) {
   const router = useRouter();
   const activeTags = useActiveTags();
   const tagMap = useTagMap();
@@ -25,6 +27,7 @@ export function EntryForm({ initial }: { initial?: Entry }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [creatingTag, setCreatingTag] = useState(false);
+  const [createDate] = useState(() => date ?? todayKey());
 
   const canSave =
     !saving && tagIds.length > 0 && (title.trim() !== "" || body.trim() !== "");
@@ -55,14 +58,14 @@ export function EntryForm({ initial }: { initial?: Entry }) {
         await updateEntry(initial.id, data);
         id = initial.id;
       } else {
-        id = await createEntry(data);
+        id = await createEntry(data, createDate);
       }
       router.replace(`/journal/${id}`);
     } catch {
       setError("Could not save. Please try again.");
       setSaving(false);
     }
-  }, [canSave, title, body, tagIds, initial, router]);
+  }, [canSave, title, body, tagIds, initial, createDate, router]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -100,6 +103,10 @@ export function EntryForm({ initial }: { initial?: Entry }) {
       </header>
 
       <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-8">
+        <p className="text-sm font-medium text-zinc-500">
+          {formatFullDate(initial?.date ?? createDate)}
+        </p>
+
         <section>
           <h2 className="mb-2 text-sm font-medium text-zinc-600 dark:text-zinc-400">
             How are you feeling?

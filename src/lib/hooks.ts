@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "./db";
 import type { Tag } from "./types";
@@ -50,4 +50,30 @@ export function useTagUsage() {
     });
     return counts;
   });
+}
+
+/* Entries whose date falls in the given month. `month` is 0 to 11. */
+export function useMonthEntries(year: number, month: number) {
+  return useLiveQuery(() => {
+    const prefix = `${year}-${String(month + 1).padStart(2, "0")}`;
+    return db.entries
+      .where("date")
+      .between(`${prefix}-01`, `${prefix}-31`, true, true)
+      .toArray();
+  }, [year, month]);
+}
+
+const subscribeNothing = () => () => {};
+
+/*
+False while the page is prerendered, true in the browser.
+Use it to hold back anything that depends on today's date or the locale,
+so the server and browser output cannot disagree.
+*/
+export function useIsClient(): boolean {
+  return useSyncExternalStore(
+    subscribeNothing,
+    () => true,
+    () => false,
+  );
 }
