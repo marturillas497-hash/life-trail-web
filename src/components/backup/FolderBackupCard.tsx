@@ -44,8 +44,9 @@ export function FolderBackupCard() {
       {state === "unsupported" ? (
         <p className="mt-1 text-sm text-zinc-500">
           This browser cannot save to a folder by itself. It works in Chrome and Edge on a
-          computer. On this device, use Download or Share above, and the reminder that appears
-          when a backup is overdue.
+          computer. In Brave it is switched off by default: open brave://flags/#file-system-access-api
+          in a new tab, set it to Enabled, then restart Brave. Otherwise, use Download or Share
+          above, and the reminder that appears when a backup is overdue.
         </p>
       ) : (
         <>

@@ -41,8 +41,9 @@ export default function HelpPage() {
               cleared.
             </li>
             <li>
-              <strong>Backup folder (Chrome or Edge on a computer).</strong> You choose a folder
-              once. Life Trail then saves a file named like{" "}
+              <strong>Backup folder (Chrome or Edge on a computer).</strong> In Brave, first turn on
+              File System Access API at brave://flags/#file-system-access-api and restart Brave. You
+              choose a folder once. Life Trail then saves a file named like{" "}
               <code>life-trail-backup-2026-10-28.json</code> there each day you use it, and keeps
               the newest 30. If that folder syncs to OneDrive or Google Drive, you also have a copy
               off the computer.
