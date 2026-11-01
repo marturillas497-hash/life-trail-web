@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   title: "Life Trail",
   description: "A private, offline-first journal.",
   applicationName: "Life Trail",
+  /* A personal app: keep it out of search engines. */
+  robots: { index: false, follow: false },
   appleWebApp: { capable: true, title: "Life Trail", statusBarStyle: "default" },
 };
 
