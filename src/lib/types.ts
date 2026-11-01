@@ -20,3 +20,31 @@ export type Entry = {
   createdAt: number;
   updatedAt: number;
 };
+
+export type Movie = {
+  id: number;
+  /* null for movies added by hand. */
+  tmdbId: number | null;
+  title: string;
+  year: number | null;
+  overview: string;
+  /* Path on TMDB's image server, kept so the poster can be shown online. */
+  posterPath: string | null;
+  /* The poster itself as a data URL, so it also shows offline and in backups. */
+  posterData: string | null;
+  createdAt: number;
+  /* When the details were last copied from TMDB, null for manual movies. */
+  fetchedAt: number | null;
+};
+
+export type MovieLog = {
+  id: number;
+  movieId: number;
+  /* Stars from 0.5 to 5 in steps of 0.5. */
+  rating: number;
+  opinion: string;
+  /* Local calendar day as YYYY-MM-DD. */
+  watchedDate: string;
+  createdAt: number;
+  updatedAt: number;
+};

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatFullDate, todayKey } from "@/lib/dates";
+import { entryPath } from "@/lib/paths";
 import { createEntry, updateEntry } from "@/lib/entries";
 import { useActiveTags, useTagMap } from "@/lib/hooks";
 import type { Entry, Tag } from "@/lib/types";
@@ -31,7 +32,7 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
 
   const canSave =
     !saving && tagIds.length > 0 && (title.trim() !== "" || body.trim() !== "");
-  const backHref = initial ? `/journal/${initial.id}` : "/journal";
+  const backHref = initial ? entryPath(initial.id) : "/journal/";
 
   /*
   While editing, keep showing tags the entry already has even if they are
@@ -60,7 +61,7 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
       } else {
         id = await createEntry(data, createDate);
       }
-      router.replace(`/journal/${id}`);
+      router.replace(entryPath(id));
     } catch {
       setError("Could not save. Please try again.");
       setSaving(false);

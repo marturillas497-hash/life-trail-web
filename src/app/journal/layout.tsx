@@ -3,13 +3,14 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { EntryList } from "@/components/EntryList";
+import { newEntryPath, normalizePath } from "@/lib/paths";
 
 /*
 Two panes on wide screens: entry list on the left, the open entry on the right.
 On phones only one pane shows at a time, the list at /journal and the entry elsewhere.
 */
 export default function JournalLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+  const pathname = normalizePath(usePathname());
   const router = useRouter();
   const isIndex = pathname === "/journal";
 
@@ -17,7 +18,7 @@ export default function JournalLayout({ children }: { children: ReactNode }) {
     const onKey = (event: KeyboardEvent) => {
       if (event.altKey && event.key.toLowerCase() === "n") {
         event.preventDefault();
-        router.push("/journal/new");
+        router.push(newEntryPath());
       }
     };
     window.addEventListener("keydown", onKey);

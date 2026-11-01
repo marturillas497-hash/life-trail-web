@@ -2,11 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
-  async redirects() {
-    return [{ source: "/", destination: "/journal", permanent: false }];
-  },
+  output: "export",
+  trailingSlash: true,
   turbopack: {
     rules: {
       "*.css": {

@@ -3,7 +3,7 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "./db";
-import type { Tag } from "./types";
+import type { Movie, MovieLog, Tag } from "./types";
 
 /* Newest first. Returns undefined while loading. */
 export function useEntries() {
@@ -76,4 +76,39 @@ export function useIsClient(): boolean {
     () => true,
     () => false,
   );
+}
+
+export type MovieLogWithMovie = { log: MovieLog; movie: Movie };
+
+/* Every logged viewing with its movie. Returns undefined while loading. */
+export function useMovieLogs() {
+  return useLiveQuery(async (): Promise<MovieLogWithMovie[]> => {
+    const [logs, movies] = await Promise.all([db.movieLogs.toArray(), db.movies.toArray()]);
+    const byId = new Map(movies.map((movie) => [movie.id, movie]));
+    return logs.flatMap((log) => {
+      const movie = byId.get(log.movieId);
+      return movie ? [{ log, movie }] : [];
+    });
+  });
+}
+
+/* One viewing, its movie and the movie's other viewings. undefined while loading, null if missing. */
+export function useMovieLog(id: number) {
+  return useLiveQuery(async () => {
+    if (!Number.isInteger(id)) return null;
+    const log = await db.movieLogs.get(id);
+    const movie = log ? await db.movies.get(log.movieId) : undefined;
+    if (!log || !movie) return null;
+    const others = (await db.movieLogs.where("movieId").equals(movie.id).toArray())
+      .filter((other) => other.id !== log.id)
+      .sort((a, b) => b.watchedDate.localeCompare(a.watchedDate));
+    return { log, movie, others };
+  }, [id]);
+}
+
+export function useMovie(id: number) {
+  return useLiveQuery(async () => {
+    if (!Number.isInteger(id)) return null;
+    return (await db.movies.get(id)) ?? null;
+  }, [id]);
 }

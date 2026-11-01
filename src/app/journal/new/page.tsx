@@ -5,7 +5,7 @@ import { EntryForm } from "@/components/EntryForm";
 import { isValidKey, todayKey } from "@/lib/dates";
 import { useIsClient } from "@/lib/hooks";
 
-/* /journal/new?date=2026-10-20 writes an entry for a past day. */
+/* /journal/new/?date=2026-10-20 writes an entry for a past day. */
 export default function NewEntryPage() {
   const searchParams = useSearchParams();
   const isClient = useIsClient();

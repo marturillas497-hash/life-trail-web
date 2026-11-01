@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { formatShortDate } from "@/lib/dates";
+import { entryPath, newEntryPath, normalizePath, parseId } from "@/lib/paths";
 import { useEntries, useTagMap } from "@/lib/hooks";
 import type { Tag } from "@/lib/types";
 import { TagChip } from "./TagChip";
@@ -11,13 +12,15 @@ import { btnPrimary } from "./ui";
 export function EntryList() {
   const entries = useEntries();
   const tagMap = useTagMap();
-  const pathname = usePathname();
+  const pathname = normalizePath(usePathname());
+  const openId = parseId(useSearchParams().get("id"));
+  const viewingEntry = pathname.startsWith("/journal/entry");
 
   return (
     <>
       <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
         <h1 className="text-xl font-semibold">Journal</h1>
-        <Link href="/journal/new" className={btnPrimary} title="New entry (Alt+N)">
+        <Link href={newEntryPath()} className={btnPrimary} title="New entry (Alt+N)">
           New entry
         </Link>
       </header>
@@ -34,8 +37,7 @@ export function EntryList() {
         ) : (
           <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
             {entries.map((entry) => {
-              const href = `/journal/${entry.id}`;
-              const selected = pathname === href || pathname.startsWith(`${href}/`);
+              const selected = viewingEntry && openId === entry.id;
               const tags = entry.tagIds
                 .map((id) => tagMap.get(id))
                 .filter((tag): tag is Tag => tag !== undefined);
@@ -43,7 +45,7 @@ export function EntryList() {
               return (
                 <li key={entry.id}>
                   <Link
-                    href={href}
+                    href={entryPath(entry.id)}
                     aria-current={selected ? "page" : undefined}
                     className={`block px-4 py-3 transition-colors ${
                       selected

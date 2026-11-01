@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense, type ReactNode } from "react";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
@@ -6,6 +6,15 @@ import { AppShell } from "@/components/AppShell";
 export const metadata: Metadata = {
   title: "Life Trail",
   description: "A private, offline-first journal.",
+  applicationName: "Life Trail",
+  appleWebApp: { capable: true, title: "Life Trail", statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#4f46e5" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+  ],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

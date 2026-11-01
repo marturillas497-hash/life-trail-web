@@ -12,6 +12,7 @@ import {
   type MonthCursor,
 } from "@/lib/calendar";
 import { formatFullDate, makeKey, todayKey } from "@/lib/dates";
+import { entryPath, newEntryPath } from "@/lib/paths";
 import { useMonthEntries, useTagMap } from "@/lib/hooks";
 import type { Entry, Tag } from "@/lib/types";
 import { TagChip } from "./TagChip";
@@ -159,7 +160,7 @@ export function CalendarView() {
           <h2 className="font-semibold">{formatFullDate(selected)}</h2>
 
           {canWrite && (
-            <Link href={`/journal/new?date=${selected}`} className={`${btnPrimary} mt-3`}>
+            <Link href={newEntryPath(selected)} className={`${btnPrimary} mt-3`}>
               {selected === today ? "Write today's entry" : "Write an entry for this day"}
             </Link>
           )}
@@ -177,7 +178,7 @@ export function CalendarView() {
                 return (
                   <li key={entry.id}>
                     <Link
-                      href={`/journal/${entry.id}`}
+                      href={entryPath(entry.id)}
                       className="block rounded-xl border border-zinc-200 p-3 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
                     >
                       {entry.title && <div className="font-medium">{entry.title}</div>}

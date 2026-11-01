@@ -2,21 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { normalizePath } from "@/lib/paths";
 import type { ReactNode } from "react";
+import { BackupBanner } from "./backup/BackupBanner";
+import { BackupRunner } from "./backup/BackupRunner";
+import { LockOverlay } from "./lock/LockOverlay";
+import { ServiceWorkerRegister } from "./pwa/ServiceWorkerRegister";
+import { LockProvider, useLock } from "@/lib/lock/context";
 
 /* Add an item here and it shows up in the sidebar and the phone tab bar. */
-const NAV = [
-  { href: "/journal", label: "Journal", icon: "📓" },
-  { href: "/calendar", label: "Calendar", icon: "🗓️" },
-  { href: "/tags", label: "Tags", icon: "🏷️" },
+const NAV: { href: string; label: string; icon: string; mobile?: boolean }[] = [
+  { href: "/journal/", label: "Journal", icon: "📓" },
+  { href: "/calendar/", label: "Calendar", icon: "🗓️" },
+  { href: "/movies/", label: "Movies", icon: "🎬" },
+  { href: "/tags/", label: "Tags", icon: "🏷️" },
+  { href: "/backup/", label: "Backup", icon: "🛡️", mobile: false },
+  { href: "/settings/", label: "Settings", icon: "⚙️" },
 ];
 
-export function AppShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+function Shell({ children }: { children: ReactNode }) {
+  const { status } = useLock();
+  const pathname = normalizePath(usePathname());
+  const isActive = (href: string) => {
+    const base = normalizePath(href);
+    return pathname === base || pathname.startsWith(`${base}/`);
+  };
 
   return (
-    <div className="flex h-dvh">
+    <div className="flex h-dvh" inert={status === "loading" || status === "locked"}>
       <aside className="hidden w-60 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50 p-4 lg:flex dark:border-zinc-800 dark:bg-zinc-900">
         <div className="px-2 py-3 text-lg font-semibold tracking-tight">Life Trail</div>
         <nav className="mt-4 flex flex-col gap-1">
@@ -39,11 +52,13 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
+        <ServiceWorkerRegister />
+        <BackupBanner />
         <main className="min-h-0 flex-1">{children}</main>
 
         {NAV.length > 1 && (
           <nav className="flex border-t border-zinc-200 bg-white lg:hidden dark:border-zinc-800 dark:bg-zinc-950">
-            {NAV.map((item) => (
+            {NAV.filter((item) => item.mobile !== false).map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -64,5 +79,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       </div>
     </div>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <LockProvider>
+      <BackupRunner />
+      <Shell>{children}</Shell>
+      <LockOverlay />
+    </LockProvider>
   );
 }

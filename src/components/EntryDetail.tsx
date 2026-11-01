@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { formatDateTime, formatFullDate } from "@/lib/dates";
 import { deleteEntry } from "@/lib/entries";
+import { editEntryPath } from "@/lib/paths";
 import { useEntry, useTagMap } from "@/lib/hooks";
 import type { Tag } from "@/lib/types";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -28,7 +29,7 @@ export function EntryDetail({ id }: { id: number }) {
     return (
       <div className="p-6 text-sm">
         <p className="text-zinc-500">This entry no longer exists.</p>
-        <Link href="/journal" className="mt-2 inline-block text-indigo-600 underline">
+        <Link href="/journal/" className="mt-2 inline-block text-indigo-600 underline">
           Back to journal
         </Link>
       </div>
@@ -44,17 +45,17 @@ export function EntryDetail({ id }: { id: number }) {
     setConfirming(false);
     setDeleting(true);
     await deleteEntry(id);
-    router.replace("/journal");
+    router.replace("/journal/");
   }
 
   return (
     <article className="mx-auto max-w-2xl p-4 lg:p-8">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <Link href="/journal" className="text-sm text-indigo-600 lg:hidden">
+        <Link href="/journal/" className="text-sm text-indigo-600 lg:hidden">
           &larr; Journal
         </Link>
         <div className="ml-auto flex gap-2">
-          <Link href={`/journal/${id}/edit`} className={btnSecondary}>
+          <Link href={editEntryPath(id)} className={btnSecondary}>
             Edit
           </Link>
           <button type="button" className={btnSecondary} onClick={() => setConfirming(true)}>
