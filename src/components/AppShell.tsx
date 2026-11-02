@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { normalizePath } from "@/lib/paths";
-import type { ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
+import { isCollapsed, setCollapsed, subscribeSidebar } from "@/lib/sidebar";
 import { BackupBanner } from "./backup/BackupBanner";
 import { BackupRunner } from "./backup/BackupRunner";
 import { LockOverlay } from "./lock/LockOverlay";
@@ -23,6 +24,7 @@ const NAV: { href: string; label: string; icon: string; mobile?: boolean }[] = [
 
 function Shell({ children }: { children: ReactNode }) {
   const { status } = useLock();
+  const collapsed = useSyncExternalStore(subscribeSidebar, isCollapsed, () => false);
   const pathname = normalizePath(usePathname());
   const isActive = (href: string) => {
     const base = normalizePath(href);
@@ -31,29 +33,50 @@ function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-dvh" inert={status === "loading" || status === "locked"}>
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50 p-4 lg:flex dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="flex items-center gap-2.5 px-2 py-3">
+      <aside className="hidden w-60 shrink-0 flex-col overflow-hidden border-r border-zinc-200 bg-zinc-50 p-3 transition-[width] duration-300 ease-in-out motion-reduce:transition-none lg:flex collapsed:w-[4.5rem] dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex items-center gap-2.5 whitespace-nowrap px-1.5 py-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-mark.png" alt="" width={36} height={36} className="h-9 w-9" />
-          <span className="text-lg font-semibold tracking-tight">Life Trail</span>
+          <img src="/logo-mark.png" alt="" width={36} height={36} className="h-9 w-9 shrink-0" />
+          <span className="text-lg font-semibold tracking-tight transition-opacity duration-200 collapsed:opacity-0">
+            Life Trail
+          </span>
         </div>
         <nav className="mt-4 flex flex-col gap-1">
           {NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
+              title={collapsed ? item.label : undefined}
               aria-current={isActive(item.href) ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              className={`flex items-center overflow-hidden whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 ${
                 isActive(item.href)
                   ? "bg-indigo-100 text-indigo-900 dark:bg-indigo-950 dark:text-indigo-200"
                   : "text-zinc-700 hover:bg-zinc-200 dark:text-zinc-300 dark:hover:bg-zinc-800"
               }`}
             >
-              <span aria-hidden="true">{item.icon}</span>
-              {item.label}
+              <span aria-hidden="true" className="w-6 shrink-0 text-center">
+                {item.icon}
+              </span>
+              <span className="ml-3 transition-opacity duration-200 collapsed:opacity-0">{item.label}</span>
             </Link>
           ))}
         </nav>
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className="mt-auto flex items-center overflow-hidden whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-200 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 dark:text-zinc-400 dark:hover:bg-zinc-800"
+        >
+          <span
+            aria-hidden="true"
+            className={`w-6 shrink-0 text-center text-base transition-transform duration-300 motion-reduce:transition-none ${collapsed ? "rotate-180" : ""}`}
+          >
+            «
+          </span>
+          <span className="ml-3 transition-opacity duration-200 collapsed:opacity-0">Collapse</span>
+        </button>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">

@@ -33,14 +33,14 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/50 p-4"
       onClick={onCancel}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-title"
-        className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:bg-zinc-900"
+        className="w-full max-w-sm animate-pop-in rounded-xl bg-white p-6 shadow-xl dark:bg-zinc-900"
         onClick={(event) => event.stopPropagation()}
       >
         <h2 id="confirm-title" className="text-lg font-semibold">

@@ -13,6 +13,7 @@ import {
   type Period,
 } from "@/lib/insights";
 import { btnSecondary, cardClass } from "./ui";
+import { Segmented } from "./Segmented";
 import { YearInPixels } from "./YearInPixels";
 
 type Kind = Period["kind"];
@@ -74,23 +75,7 @@ export function InsightsView() {
         <h1 className="text-xl font-semibold">Insights</h1>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex gap-1 rounded-lg border border-zinc-300 p-1 dark:border-zinc-700" role="group" aria-label="Period">
-            {KINDS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                aria-pressed={kind === option.value}
-                onClick={() => setKind(option.value)}
-                className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-                  kind === option.value
-                    ? "bg-indigo-600 text-white"
-                    : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <Segmented label="Period" value={kind} options={KINDS} onChange={setKind} />
           {kind !== "all" && (
             <div className="flex items-center gap-2">
               <button type="button" className={btnSecondary} onClick={() => step(-1)} aria-label="Previous">
@@ -155,7 +140,7 @@ export function InsightsView() {
                           </div>
                           <div className="mt-1 h-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800">
                             <div
-                              className="h-full rounded-full"
+                              className="h-full animate-bar-grow rounded-full"
                               style={{ width: `${(count / top.count) * 100}%`, backgroundColor: tag.color }}
                             />
                           </div>

@@ -92,7 +92,7 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
                     pixel
                       ? "border-transparent"
                       : "border-zinc-200 dark:border-zinc-800"
-                  } ${future ? "opacity-40" : ""} ${
+                  } ${future ? "opacity-40" : ""} hover:outline-2 hover:outline-offset-1 hover:outline-zinc-400 dark:hover:outline-zinc-500 ${
                     isSelected ? "outline-2 outline-offset-1 outline-indigo-600 dark:outline-indigo-400" : ""
                   }`}
                   style={pixel ? { backgroundColor: tag?.color ?? NO_TAG_COLOR } : undefined}

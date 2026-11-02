@@ -4,30 +4,57 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { MovieCard } from "@/components/movies/MovieCard";
 import { TmdbAttribution } from "@/components/movies/TmdbAttribution";
-import { btnPrimary, inputClass } from "@/components/ui";
+import { Segmented } from "@/components/Segmented";
+import { btnPrimary, btnSecondary, inputClass } from "@/components/ui";
+import { todayKey } from "@/lib/dates";
 import { useMovieLogs } from "@/lib/hooks";
 import { addMoviePath } from "@/lib/paths";
+import { inRange, rangeFor, rangeTitle, shiftAnchor, type WatchView } from "@/lib/watchPeriod";
 
 type Sort = "recent" | "rating" | "title";
+
+const VIEWS: { value: WatchView; label: string }[] = [
+  { value: "week", label: "Week" },
+  { value: "month", label: "Month" },
+  { value: "year", label: "Year" },
+  { value: "all", label: "All" },
+];
 
 export default function MoviesPage() {
   const items = useMovieLogs();
   const [sort, setSort] = useState<Sort>("recent");
   const [filter, setFilter] = useState("");
+  const [today] = useState(() => todayKey());
+  const [view, setView] = useState<WatchView>("all");
+  const [anchor, setAnchor] = useState(today);
+
+  const range = useMemo(() => rangeFor(view, anchor), [view, anchor]);
+  const title = rangeTitle(view, anchor);
+  const atLatest = range === null || range.end >= today;
+
+  /* Switching the view jumps back to the current week, month or year. */
+  function changeView(next: WatchView) {
+    setView(next);
+    setAnchor(today);
+  }
+
+  const inPeriod = useMemo(
+    () => (items ?? []).filter((item) => inRange(item.log.watchedDate, range)),
+    [items, range],
+  );
 
   const stats = useMemo(() => {
-    if (!items || items.length === 0) return null;
-    const movieCount = new Set(items.map((item) => item.movie.id)).size;
-    const average = items.reduce((sum, item) => sum + item.log.rating, 0) / items.length;
-    return { logs: items.length, movies: movieCount, average };
-  }, [items]);
+    if (inPeriod.length === 0) return null;
+    const movieCount = new Set(inPeriod.map((item) => item.movie.id)).size;
+    const average = inPeriod.reduce((sum, item) => sum + item.log.rating, 0) / inPeriod.length;
+    return { logs: inPeriod.length, movies: movieCount, average };
+  }, [inPeriod]);
 
   const shown = useMemo(() => {
-    if (!items) return [];
     const needle = filter.trim().toLowerCase();
     const list = needle
-      ? items.filter((item) => item.movie.title.toLowerCase().includes(needle))
-      : [...items];
+      ? inPeriod.filter((item) => item.movie.title.toLowerCase().includes(needle))
+      : [...inPeriod];
     list.sort((a, b) => {
       if (sort === "title") return a.movie.title.localeCompare(b.movie.title);
       if (sort === "rating") {
@@ -36,7 +63,7 @@ export default function MoviesPage() {
       return b.log.watchedDate.localeCompare(a.log.watchedDate) || b.log.createdAt - a.log.createdAt;
     });
     return list;
-  }, [items, sort, filter]);
+  }, [inPeriod, sort, filter]);
 
   return (
     <div className="h-full overflow-y-auto">
@@ -58,8 +85,34 @@ export default function MoviesPage() {
           </p>
         ) : (
           <>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <Segmented label="Watched in" value={view} options={VIEWS} onChange={changeView} />
+              {view !== "all" && (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className={btnSecondary}
+                    onClick={() => setAnchor(shiftAnchor(view, anchor, -1))}
+                    aria-label="Previous"
+                  >
+                    &larr;
+                  </button>
+                  <span className="min-w-40 text-center text-sm font-medium">{title}</span>
+                  <button
+                    type="button"
+                    className={btnSecondary}
+                    onClick={() => setAnchor(shiftAnchor(view, anchor, 1))}
+                    disabled={atLatest}
+                    aria-label="Next"
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              )}
+            </div>
+
             {stats && (
-              <p className="mt-2 text-sm text-zinc-500">
+              <p className="mt-3 text-sm text-zinc-500">
                 {stats.movies} {stats.movies === 1 ? "movie" : "movies"}
                 {stats.logs !== stats.movies && `, ${stats.logs} viewings`}, average rating{" "}
                 {stats.average.toFixed(1)} of 5
@@ -87,7 +140,11 @@ export default function MoviesPage() {
               </select>
             </div>
 
-            {shown.length === 0 ? (
+            {inPeriod.length === 0 ? (
+              <p className="mt-8 text-center text-sm text-zinc-500">
+                No movies watched {view === "all" ? "yet" : `in ${title}`}.
+              </p>
+            ) : shown.length === 0 ? (
               <p className="mt-8 text-center text-sm text-zinc-500">No movie matches that.</p>
             ) : (
               <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

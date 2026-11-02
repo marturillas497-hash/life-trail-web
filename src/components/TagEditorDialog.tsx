@@ -58,14 +58,14 @@ export function TagEditorDialog({ tag, onClose, onSaved }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/50 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex animate-fade-in items-end justify-center overflow-y-auto bg-black/50 p-0 sm:items-center sm:p-4"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="tag-dialog-title"
-        className="w-full max-w-md rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl dark:bg-zinc-900"
+        className="w-full max-w-md animate-pop-in rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl dark:bg-zinc-900"
         onClick={(event) => event.stopPropagation()}
       >
         <h2 id="tag-dialog-title" className="text-lg font-semibold">
