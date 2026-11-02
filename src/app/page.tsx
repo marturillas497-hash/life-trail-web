@@ -9,5 +9,5 @@ export default function Home() {
   useEffect(() => {
     router.replace("/journal/");
   }, [router]);
-  return <p className="p-6 text-sm text-zinc-500">Loading...</p>;
+  return <p className="p-6 text-sm text-sand-500">Loading...</p>;
 }

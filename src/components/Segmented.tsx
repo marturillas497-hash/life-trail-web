@@ -9,7 +9,7 @@ type Props<T extends string> = {
 export function Segmented<T extends string>({ value, options, onChange, label }: Props<T>) {
   return (
     <div
-      className="flex gap-1 rounded-lg border border-zinc-300 p-1 dark:border-zinc-700"
+      className="flex gap-1 rounded-lg border border-sand-300 p-1 dark:border-sand-700"
       role="group"
       aria-label={label}
     >
@@ -21,8 +21,8 @@ export function Segmented<T extends string>({ value, options, onChange, label }:
           onClick={() => onChange(option.value)}
           className={`rounded-md px-3 py-1 text-sm font-medium ${
             value === option.value
-              ? "bg-indigo-600 text-white"
-              : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              ? "bg-brand-600 text-white"
+              : "text-sand-700 hover:bg-sand-100 dark:text-sand-300 dark:hover:bg-sand-800"
           }`}
         >
           {option.label}

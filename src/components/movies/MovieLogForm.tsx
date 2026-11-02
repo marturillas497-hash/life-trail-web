@@ -47,12 +47,12 @@ export function MovieLogForm({ initial, submitLabel, blocked = false, onSubmit, 
       }}
     >
       <div>
-        <p className="mb-2 text-sm font-medium text-zinc-600 dark:text-zinc-400">Your rating</p>
+        <p className="mb-2 text-sm font-medium text-sand-600 dark:text-sand-400">Your rating</p>
         <StarInput value={rating} onChange={setRating} />
       </div>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-zinc-600 dark:text-zinc-400">Date watched</span>
+        <span className="mb-1 block font-medium text-sand-600 dark:text-sand-400">Date watched</span>
         <input
           type="date"
           value={watchedDate}
@@ -63,7 +63,7 @@ export function MovieLogForm({ initial, submitLabel, blocked = false, onSubmit, 
       </label>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-zinc-600 dark:text-zinc-400">
+        <span className="mb-1 block font-medium text-sand-600 dark:text-sand-400">
           What did you think? (optional)
         </span>
         <textarea

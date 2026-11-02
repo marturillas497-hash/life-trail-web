@@ -37,7 +37,7 @@ export function SnapshotsCard({ onRestored }: { onRestored: (message: string) =>
   return (
     <section className={cardClass}>
       <h2 className="font-semibold">Snapshots in this browser</h2>
-      <p className="mt-1 text-sm text-zinc-500">
+      <p className="mt-1 text-sm text-sand-500">
         One is saved automatically each day you use the app (the last 7 days plus the last 4
         weeks are kept). They protect you from mistakes, like deleting an entry you wanted. They do
         not protect you if the browser&apos;s data is cleared, so keep backup files too.
@@ -46,16 +46,16 @@ export function SnapshotsCard({ onRestored }: { onRestored: (message: string) =>
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
       {snapshots === undefined ? (
-        <p className="mt-4 text-sm text-zinc-500">Loading...</p>
+        <p className="mt-4 text-sm text-sand-500">Loading...</p>
       ) : snapshots.length === 0 ? (
-        <p className="mt-4 text-sm text-zinc-500">No snapshots yet.</p>
+        <p className="mt-4 text-sm text-sand-500">No snapshots yet.</p>
       ) : (
-        <ul className="mt-4 divide-y divide-zinc-200 dark:divide-zinc-800">
+        <ul className="mt-4 divide-y divide-sand-200 dark:divide-sand-800">
           {snapshots.map((snapshot) => (
             <li key={snapshot.id} className="flex items-center gap-3 py-3">
               <div className="min-w-0 flex-1">
                 <div className="text-sm font-medium">{formatDateTime(snapshot.createdAt)}</div>
-                <div className="text-xs text-zinc-500">
+                <div className="text-xs text-sand-500">
                   {KIND_LABEL[snapshot.kind]}, {snapshot.entryCount}{" "}
                   {snapshot.entryCount === 1 ? "entry" : "entries"}, {snapshot.tagCount} tags
                   {snapshot.movieLogCount ? `, ${snapshot.movieLogCount} movie ${snapshot.movieLogCount === 1 ? "log" : "logs"}` : ""}

@@ -22,14 +22,14 @@ export function EntryDetail({ id }: { id: number }) {
   if (deleting) return null;
 
   if (entry === undefined || !tagMap) {
-    return <p className="p-6 text-sm text-zinc-500">Loading...</p>;
+    return <p className="p-6 text-sm text-sand-500">Loading...</p>;
   }
 
   if (entry === null) {
     return (
       <div className="p-6 text-sm">
-        <p className="text-zinc-500">This entry no longer exists.</p>
-        <Link href="/journal/" className="mt-2 inline-block text-indigo-600 underline">
+        <p className="text-sand-500">This entry no longer exists.</p>
+        <Link href="/journal/" className="mt-2 inline-block text-brand-600 underline">
           Back to journal
         </Link>
       </div>
@@ -51,7 +51,7 @@ export function EntryDetail({ id }: { id: number }) {
   return (
     <article className="mx-auto max-w-2xl p-4 lg:p-8">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <Link href="/journal/" className="text-sm text-indigo-600 lg:hidden">
+        <Link href="/journal/" className="text-sm text-brand-600 lg:hidden">
           &larr; Journal
         </Link>
         <div className="ml-auto flex gap-2">
@@ -64,7 +64,7 @@ export function EntryDetail({ id }: { id: number }) {
         </div>
       </div>
 
-      <p className="text-sm font-medium text-zinc-500">{formatFullDate(entry.date)}</p>
+      <p className="text-sm font-medium text-sand-500">{formatFullDate(entry.date)}</p>
       {entry.title && (
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">{entry.title}</h1>
       )}
@@ -80,7 +80,7 @@ export function EntryDetail({ id }: { id: number }) {
       )}
 
       {wasEdited && (
-        <p className="mt-8 text-xs text-zinc-500">Edited {formatDateTime(entry.updatedAt)}</p>
+        <p className="mt-8 text-xs text-sand-500">Edited {formatDateTime(entry.updatedAt)}</p>
       )}
 
       <ConfirmDialog

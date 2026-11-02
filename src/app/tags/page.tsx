@@ -31,7 +31,7 @@ export default function TagsPage() {
         </span>
         <div className="min-w-0 flex-1">
           <div className="truncate font-medium">{tag.name}</div>
-          <div className="text-xs text-zinc-500">
+          <div className="text-xs text-sand-500">
             {count === 1 ? "Used in 1 entry" : `Used in ${count} entries`}
           </div>
         </div>
@@ -61,18 +61,18 @@ export default function TagsPage() {
           </button>
         </header>
 
-        <p className="mt-2 text-sm text-zinc-500">
+        <p className="mt-2 text-sm text-sand-500">
           Archiving a tag hides it when you write new entries. Old entries keep it, so your
           history and stats stay correct.
         </p>
 
         {!tags ? (
-          <p className="mt-6 text-sm text-zinc-500">Loading...</p>
+          <p className="mt-6 text-sm text-sand-500">Loading...</p>
         ) : (
           <>
-            <ul className="mt-6 divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+            <ul className="mt-6 divide-y divide-sand-200 rounded-xl border border-sand-200 dark:divide-sand-800 dark:border-sand-800">
               {active.length === 0 ? (
-                <li className="px-4 py-6 text-center text-sm text-zinc-500">
+                <li className="px-4 py-6 text-center text-sm text-sand-500">
                   No active tags. Create one to start writing.
                 </li>
               ) : (
@@ -82,10 +82,10 @@ export default function TagsPage() {
 
             {archived.length > 0 && (
               <details className="mt-8">
-                <summary className="cursor-pointer text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                <summary className="cursor-pointer text-sm font-medium text-sand-600 dark:text-sand-400">
                   Archived tags ({archived.length})
                 </summary>
-                <ul className="mt-3 divide-y divide-zinc-200 rounded-xl border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
+                <ul className="mt-3 divide-y divide-sand-200 rounded-xl border border-sand-200 dark:divide-sand-800 dark:border-sand-800">
                   {archived.map(renderRow)}
                 </ul>
               </details>

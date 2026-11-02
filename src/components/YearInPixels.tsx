@@ -52,7 +52,7 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
   return (
     <section className={cardClass}>
       <h2 className="font-semibold">Year in Pixels</h2>
-      <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
         Each day takes the color of the tag you used most that day.
       </p>
 
@@ -64,14 +64,14 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
       >
         <div />
         {months.map((m) => (
-          <div key={m.month} className="text-center text-xs text-zinc-500" title={m.full}>
+          <div key={m.month} className="text-center text-xs text-sand-500" title={m.full}>
             {m.label}
           </div>
         ))}
 
         {DAYS.map((day) => (
           <div key={day} className="contents">
-            <div className="flex items-center justify-end pr-1 text-[10px] text-zinc-500">{day}</div>
+            <div className="flex items-center justify-end pr-1 text-[10px] text-sand-500">{day}</div>
             {months.map((m) => {
               if (day > m.days) return <div key={m.month} />;
               const date = makeKey(year, m.month, day);
@@ -91,9 +91,9 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
                   className={`aspect-square w-full rounded-[3px] border ${
                     pixel
                       ? "border-transparent"
-                      : "border-zinc-200 dark:border-zinc-800"
-                  } ${future ? "opacity-40" : ""} hover:outline-2 hover:outline-offset-1 hover:outline-zinc-400 dark:hover:outline-zinc-500 ${
-                    isSelected ? "outline-2 outline-offset-1 outline-indigo-600 dark:outline-indigo-400" : ""
+                      : "border-sand-200 dark:border-sand-800"
+                  } ${future ? "opacity-40" : ""} hover:outline-2 hover:outline-offset-1 hover:outline-sand-400 dark:hover:outline-sand-500 ${
+                    isSelected ? "outline-2 outline-offset-1 outline-brand-600 dark:outline-brand-400" : ""
                   }`}
                   style={pixel ? { backgroundColor: tag?.color ?? NO_TAG_COLOR } : undefined}
                 />
@@ -104,7 +104,7 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
       </div>
 
       {legend.length > 0 && (
-        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-sand-600 dark:text-sand-400">
           {legend.map(([tagId, days]) => {
             const tag = tagMap.get(tagId);
             if (!tag) return null;
@@ -119,7 +119,7 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
       )}
 
       {selected && (
-        <div className="mt-4 rounded-lg border border-zinc-200 p-3 text-sm dark:border-zinc-800">
+        <div className="mt-4 rounded-lg border border-sand-200 p-3 text-sm dark:border-sand-800">
           <div className="font-medium">{formatFullDate(selected)}</div>
           {selectedPixel ? (
             <ul className="mt-2 space-y-1">
@@ -128,21 +128,21 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
                 .sort((a, b) => a.createdAt - b.createdAt)
                 .map((entry) => (
                   <li key={entry.id}>
-                    <Link href={entryPath(entry.id)} className="text-indigo-600 hover:underline dark:text-indigo-400">
+                    <Link href={entryPath(entry.id)} className="text-brand-600 hover:underline dark:text-brand-400">
                       {entry.title || entry.body.slice(0, 60) || "Untitled"}
                     </Link>
                   </li>
                 ))}
             </ul>
           ) : selected <= today ? (
-            <p className="mt-1 text-zinc-500">
+            <p className="mt-1 text-sand-500">
               No entry this day.{" "}
-              <Link href={newEntryPath(selected)} className="text-indigo-600 hover:underline dark:text-indigo-400">
+              <Link href={newEntryPath(selected)} className="text-brand-600 hover:underline dark:text-brand-400">
                 Write one
               </Link>
             </p>
           ) : (
-            <p className="mt-1 text-zinc-500">This day has not happened yet.</p>
+            <p className="mt-1 text-sand-500">This day has not happened yet.</p>
           )}
         </div>
       )}

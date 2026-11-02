@@ -7,7 +7,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-8">
       <h2 className="text-lg font-semibold">{title}</h2>
-      <div className="mt-2 space-y-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+      <div className="mt-2 space-y-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
         {children}
       </div>
     </section>
@@ -18,7 +18,7 @@ export default function HelpPage() {
   return (
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-2xl p-4 lg:p-8">
-        <Link href="/backup/" className="text-sm text-indigo-600 underline">
+        <Link href="/backup/" className="text-sm text-brand-600 underline">
           &larr; Backup and restore
         </Link>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight">How your backups work</h1>

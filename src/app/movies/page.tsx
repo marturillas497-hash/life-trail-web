@@ -76,10 +76,10 @@ export default function MoviesPage() {
         </header>
 
         {items === undefined ? (
-          <p className="mt-6 text-sm text-zinc-500">Loading...</p>
+          <p className="mt-6 text-sm text-sand-500">Loading...</p>
         ) : items.length === 0 ? (
-          <p className="mt-10 text-center text-sm text-zinc-500">
-            No movies yet.
+          <p className="mt-10 text-center text-sm text-sand-500">
+            Your movie shelf is empty.
             <br />
             Log the last one you watched, with your rating and what you thought.
           </p>
@@ -112,7 +112,7 @@ export default function MoviesPage() {
             </div>
 
             {stats && (
-              <p className="mt-3 text-sm text-zinc-500">
+              <p className="mt-3 text-sm text-sand-500">
                 {stats.movies} {stats.movies === 1 ? "movie" : "movies"}
                 {stats.logs !== stats.movies && `, ${stats.logs} viewings`}, average rating{" "}
                 {stats.average.toFixed(1)} of 5
@@ -141,11 +141,11 @@ export default function MoviesPage() {
             </div>
 
             {inPeriod.length === 0 ? (
-              <p className="mt-8 text-center text-sm text-zinc-500">
+              <p className="mt-8 text-center text-sm text-sand-500">
                 No movies watched {view === "all" ? "yet" : `in ${title}`}.
               </p>
             ) : shown.length === 0 ? (
-              <p className="mt-8 text-center text-sm text-zinc-500">No movie matches that.</p>
+              <p className="mt-8 text-center text-sm text-sand-500">No movie matches that.</p>
             ) : (
               <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {shown.map((item) => (

@@ -18,7 +18,7 @@ export function InstallCard() {
   return (
     <section className={cardClass}>
       <h2 className="font-semibold">Install the app</h2>
-      <p className="mt-1 text-sm text-zinc-500">
+      <p className="mt-1 text-sm text-sand-500">
         Installing gives Life Trail its own icon and window, and it opens and works with no
         internet. Your journal stays on this device either way.
       </p>
@@ -53,7 +53,7 @@ export function InstallCard() {
         </p>
       )}
 
-      {message && <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-300">{message}</p>}
+      {message && <p className="mt-3 text-sm text-sand-600 dark:text-sand-300">{message}</p>}
     </section>
   );
 }

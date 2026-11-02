@@ -74,7 +74,7 @@ export function AppLockCard() {
   return (
     <section className={cardClass}>
       <h2 className="font-semibold">App lock</h2>
-      <p className="mt-1 text-sm text-zinc-500">
+      <p className="mt-1 text-sm text-sand-500">
         Asks for a PIN when the app opens. It keeps casual snoopers out. It does not encrypt your
         data, so anyone with full access to this device&apos;s browser data could still read it.
       </p>
@@ -88,7 +88,7 @@ export function AppLockCard() {
 
       {message && <p className="mt-3 text-sm text-green-700 dark:text-green-400">{message}</p>}
 
-      {available && status === "loading" && <p className="mt-3 text-sm text-zinc-500">Loading...</p>}
+      {available && status === "loading" && <p className="mt-3 text-sm text-sand-500">Loading...</p>}
 
       {available && status === "disabled" && mode === "idle" && (
         <div className="mt-4">
@@ -147,7 +147,7 @@ export function AppLockCard() {
           <p className="text-sm font-medium text-green-700 dark:text-green-400">App lock is on.</p>
 
           <label className="block text-sm">
-            <span className="mb-1 block text-zinc-500">Lock the app</span>
+            <span className="mb-1 block text-sand-500">Lock the app</span>
             <select
               value={config?.autoLockSeconds ?? 60}
               onChange={(event) => void setAutoLockSeconds(Number(event.target.value))}
@@ -221,7 +221,7 @@ export function AppLockCard() {
             });
           }}
         >
-          <p className="text-sm text-zinc-500">Enter your PIN. The old recovery code will stop working.</p>
+          <p className="text-sm text-sand-500">Enter your PIN. The old recovery code will stop working.</p>
           <PinField value={current} onChange={setCurrent} label="Current PIN" autoFocus />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3">
@@ -261,7 +261,7 @@ export function AppLockCard() {
             });
           }}
         >
-          <p className="text-sm text-zinc-500">Enter your PIN to turn the app lock off.</p>
+          <p className="text-sm text-sand-500">Enter your PIN to turn the app lock off.</p>
           <PinField value={current} onChange={setCurrent} label="Current PIN" autoFocus />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3">

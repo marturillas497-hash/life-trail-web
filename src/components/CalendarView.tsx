@@ -89,7 +89,7 @@ export function CalendarView() {
             </button>
           </header>
 
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1 text-sm text-sand-500">
             {entries === undefined
               ? "Loading..."
               : monthCount === 1
@@ -97,7 +97,7 @@ export function CalendarView() {
                 : `${monthCount} entries this month`}
           </p>
 
-          <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-medium text-zinc-500">
+          <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-medium text-sand-500">
             {weekdays.map((label) => (
               <div key={label} className="py-1">
                 {label}
@@ -127,13 +127,13 @@ export function CalendarView() {
                   aria-label={`${formatFullDate(key)}, ${dayEntries.length} ${dayEntries.length === 1 ? "entry" : "entries"}`}
                   className={`flex min-h-16 flex-col items-center gap-1 rounded-lg border p-1 pt-1.5 text-sm transition-colors lg:min-h-24 ${
                     isSelected
-                      ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-950/40"
-                      : "border-zinc-200 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+                      ? "border-brand-600 bg-brand-50 dark:bg-brand-950/40"
+                      : "border-sand-200 hover:bg-sand-50 dark:border-sand-800 dark:hover:bg-sand-900"
                   }`}
                 >
                   <span
                     className={`flex size-6 items-center justify-center rounded-full text-xs font-medium ${
-                      isToday ? "bg-indigo-600 text-white" : ""
+                      isToday ? "bg-brand-600 text-white" : ""
                     }`}
                   >
                     {day}
@@ -144,7 +144,7 @@ export function CalendarView() {
                         <span key={index}>{emoji}</span>
                       ))}
                       {emojis.length > MAX_EMOJIS && (
-                        <span className="self-center text-[10px] text-zinc-500">
+                        <span className="self-center text-[10px] text-sand-500">
                           +{emojis.length - MAX_EMOJIS}
                         </span>
                       )}
@@ -167,9 +167,9 @@ export function CalendarView() {
 
           <ul className="mt-4 space-y-3">
             {entries === undefined || !tagMap ? (
-              <li className="text-sm text-zinc-500">Loading...</li>
+              <li className="text-sm text-sand-500">Loading...</li>
             ) : selectedEntries.length === 0 ? (
-              <li className="text-sm text-zinc-500">No entries on this day.</li>
+              <li className="text-sm text-sand-500">No entries on this day.</li>
             ) : (
               selectedEntries.map((entry) => {
                 const tags = entry.tagIds
@@ -179,11 +179,11 @@ export function CalendarView() {
                   <li key={entry.id}>
                     <Link
                       href={entryPath(entry.id)}
-                      className="block rounded-xl border border-zinc-200 p-3 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+                      className="block rounded-xl border border-sand-200 p-3 transition-colors hover:bg-sand-50 dark:border-sand-800 dark:hover:bg-sand-900"
                     >
                       {entry.title && <div className="font-medium">{entry.title}</div>}
                       {entry.body && (
-                        <p className="mt-0.5 line-clamp-3 text-sm text-zinc-600 dark:text-zinc-400">
+                        <p className="mt-0.5 line-clamp-3 text-sm text-sand-600 dark:text-sand-400">
                           {entry.body}
                         </p>
                       )}

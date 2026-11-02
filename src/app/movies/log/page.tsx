@@ -24,13 +24,13 @@ export default function MovieLogPage() {
   const [deleting, setDeleting] = useState(false);
 
   if (deleting) return null;
-  if (data === undefined) return <p className="p-6 text-sm text-zinc-500">Loading...</p>;
+  if (data === undefined) return <p className="p-6 text-sm text-sand-500">Loading...</p>;
 
   if (data === null) {
     return (
       <div className="p-6 text-sm">
-        <p className="text-zinc-500">This viewing no longer exists.</p>
-        <Link href="/movies/" className="mt-2 inline-block text-indigo-600 underline">
+        <p className="text-sand-500">This viewing no longer exists.</p>
+        <Link href="/movies/" className="mt-2 inline-block text-brand-600 underline">
           Back to movies
         </Link>
       </div>
@@ -51,7 +51,7 @@ export default function MovieLogPage() {
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-2xl p-4 lg:p-8">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <Link href="/movies/" className="text-sm text-indigo-600">
+          <Link href="/movies/" className="text-sm text-brand-600">
             &larr; Movies
           </Link>
           {!editing && (
@@ -77,10 +77,10 @@ export default function MovieLogPage() {
           <div className="min-w-0">
             <h1 className="text-2xl font-semibold tracking-tight">
               {movie.title}
-              {movie.year && <span className="font-normal text-zinc-500"> ({movie.year})</span>}
+              {movie.year && <span className="font-normal text-sand-500"> ({movie.year})</span>}
             </h1>
             {movie.overview && (
-              <p className="mt-2 line-clamp-6 text-sm text-zinc-600 dark:text-zinc-400">
+              <p className="mt-2 line-clamp-6 text-sm text-sand-600 dark:text-sand-400">
                 {movie.overview}
               </p>
             )}
@@ -102,30 +102,30 @@ export default function MovieLogPage() {
         ) : (
           <div className="mt-6 space-y-3">
             <StarDisplay value={log.rating} className="text-3xl" />
-            <p className="text-sm text-zinc-500">Watched {formatFullDate(log.watchedDate)}</p>
+            <p className="text-sm text-sand-500">Watched {formatFullDate(log.watchedDate)}</p>
             {log.opinion ? (
               <p className="whitespace-pre-wrap text-base leading-relaxed">{log.opinion}</p>
             ) : (
-              <p className="text-sm text-zinc-500">No written opinion.</p>
+              <p className="text-sm text-sand-500">No written opinion.</p>
             )}
             {wasEdited && (
-              <p className="text-xs text-zinc-500">Edited {formatDateTime(log.updatedAt)}</p>
+              <p className="text-xs text-sand-500">Edited {formatDateTime(log.updatedAt)}</p>
             )}
           </div>
         )}
 
         {!editing && (
-          <div className="mt-8 border-t border-zinc-200 pt-6 dark:border-zinc-800">
+          <div className="mt-8 border-t border-sand-200 pt-6 dark:border-sand-800">
             <h2 className="text-sm font-semibold">Other viewings of this movie</h2>
             {others.length === 0 ? (
-              <p className="mt-2 text-sm text-zinc-500">This is the only one so far.</p>
+              <p className="mt-2 text-sm text-sand-500">This is the only one so far.</p>
             ) : (
               <ul className="mt-2 space-y-1">
                 {others.map((other) => (
                   <li key={other.id}>
                     <Link href={movieLogPath(other.id)} className="flex items-center gap-3 text-sm hover:underline">
                       <StarDisplay value={other.rating} />
-                      <span className="text-zinc-500">{formatShortDate(other.watchedDate)}</span>
+                      <span className="text-sand-500">{formatShortDate(other.watchedDate)}</span>
                     </Link>
                   </li>
                 ))}

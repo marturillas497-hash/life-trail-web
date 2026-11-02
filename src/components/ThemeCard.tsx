@@ -25,7 +25,7 @@ export function ThemeCard() {
   return (
     <section className={cardClass}>
       <h2 className="font-semibold">Appearance</h2>
-      <p className="mt-1 text-sm text-zinc-500">
+      <p className="mt-1 text-sm text-sand-500">
         Saved on this device only, so it is not part of backups.
       </p>
       <div className="mt-3 flex gap-2" role="radiogroup" aria-label="Theme">
@@ -43,8 +43,8 @@ export function ThemeCard() {
               }}
               className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                 selected
-                  ? "border-indigo-600 bg-indigo-50 text-indigo-900 dark:border-indigo-400 dark:bg-indigo-950 dark:text-indigo-200"
-                  : "border-zinc-300 text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  ? "border-brand-600 bg-brand-50 text-brand-900 dark:border-brand-400 dark:bg-brand-950 dark:text-brand-200"
+                  : "border-sand-300 text-sand-700 hover:bg-sand-50 dark:border-sand-700 dark:text-sand-300 dark:hover:bg-sand-800"
               }`}
             >
               {option.label}

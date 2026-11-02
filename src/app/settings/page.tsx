@@ -11,7 +11,7 @@ import { useIsClient } from "@/lib/hooks";
 export default function SettingsPage() {
   /* Several checks here depend on the browser, so wait until it is running. */
   const isClient = useIsClient();
-  if (!isClient) return <p className="p-6 text-sm text-zinc-500">Loading...</p>;
+  if (!isClient) return <p className="p-6 text-sm text-sand-500">Loading...</p>;
 
   return (
     <div className="h-full overflow-y-auto">
@@ -23,10 +23,10 @@ export default function SettingsPage() {
         <TmdbKeyCard />
         <section className={cardClass}>
           <h2 className="font-semibold">Backups</h2>
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1 text-sm text-sand-500">
             Snapshots, backup files, the backup folder and restoring live on their own page.
           </p>
-          <Link href="/backup/" className="mt-3 inline-block text-sm text-indigo-600 underline">
+          <Link href="/backup/" className="mt-3 inline-block text-sm text-brand-600 underline">
             Open Backup and restore
           </Link>
         </section>

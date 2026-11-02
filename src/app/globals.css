@@ -7,6 +7,46 @@
 @custom-variant collapsed (html[data-sidebar="collapsed"] &);
 
 @theme {
+  /* Warm neutrals: cream in the light shades, the logo's navy in the dark ones. */
+  --color-sand-50: #fdf8ee;
+  --color-sand-100: #f7efdc;
+  --color-sand-200: #ece0c6;
+  --color-sand-300: #d9c9a8;
+  --color-sand-400: #9aa4ac;
+  --color-sand-500: #6b7782;
+  --color-sand-600: #52606b;
+  --color-sand-700: #3a4d5c;
+  --color-sand-800: #1f4260;
+  --color-sand-900: #102e46;
+  --color-sand-950: #0a1c2b;
+
+  /* Main accent, the forest green from the logo's hills. */
+  --color-brand-50: #eef6f1;
+  --color-brand-100: #d9ece1;
+  --color-brand-200: #b5d9c4;
+  --color-brand-300: #86bfa0;
+  --color-brand-400: #56a07b;
+  --color-brand-500: #3a8561;
+  --color-brand-600: #2d6a4f;
+  --color-brand-700: #25573f;
+  --color-brand-800: #1f4534;
+  --color-brand-900: #1a382b;
+  --color-brand-950: #0d2219;
+
+  /* Highlight color, the logo's sun. */
+  --color-gold-50: #fff8e6;
+  --color-gold-100: #fdecc0;
+  --color-gold-200: #f9dc8f;
+  --color-gold-300: #f3c75f;
+  --color-gold-400: #eab53f;
+  --color-gold-500: #e8a838;
+  --color-gold-600: #c98a1f;
+  --color-gold-700: #9c6a17;
+  --color-gold-800: #6e4a12;
+  --color-gold-900: #4a320d;
+
+  --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+
   --animate-page-in: page-in 240ms ease-out;
   --animate-fade-in: fade-in 160ms ease-out;
   --animate-pop-in: pop-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -77,4 +117,16 @@ html.light {
 body {
   font-family:
     system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-image: radial-gradient(60rem 28rem at 100% -8%, rgb(232 168 56 / 0.14), transparent 70%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+html.dark body {
+  background-image: radial-gradient(60rem 28rem at 100% -8%, rgb(45 106 79 / 0.28), transparent 70%);
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
 }

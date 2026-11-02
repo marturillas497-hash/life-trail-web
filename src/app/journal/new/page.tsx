@@ -9,7 +9,7 @@ import { useIsClient } from "@/lib/hooks";
 export default function NewEntryPage() {
   const searchParams = useSearchParams();
   const isClient = useIsClient();
-  if (!isClient) return <p className="p-6 text-sm text-zinc-500">Loading...</p>;
+  if (!isClient) return <p className="p-6 text-sm text-sand-500">Loading...</p>;
 
   const requested = searchParams.get("date");
   const date =

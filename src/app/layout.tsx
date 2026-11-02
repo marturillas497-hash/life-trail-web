@@ -27,9 +27,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT + SIDEBAR_INIT_SCRIPT }} />
       </head>
-      <body className="h-full bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+      <body className="h-full bg-sand-50 text-sand-900 dark:bg-sand-950 dark:text-sand-100">
         {/* Required by Next.js 16 because the shell reads the current URL. */}
-        <Suspense fallback={<p className="p-6 text-sm text-zinc-500">Loading...</p>}>
+        <Suspense fallback={<p className="p-6 text-sm text-sand-500">Loading...</p>}>
           <AppShell>{children}</AppShell>
         </Suspense>
       </body>

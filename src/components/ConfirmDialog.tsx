@@ -40,13 +40,13 @@ export function ConfirmDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-title"
-        className="w-full max-w-sm animate-pop-in rounded-xl bg-white p-6 shadow-xl dark:bg-zinc-900"
+        className="w-full max-w-sm animate-pop-in rounded-xl bg-white p-6 shadow-xl dark:bg-sand-900"
         onClick={(event) => event.stopPropagation()}
       >
         <h2 id="confirm-title" className="text-lg font-semibold">
           {title}
         </h2>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{message}</p>
+        <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">{message}</p>
         <div className="mt-6 flex justify-end gap-3">
           <button type="button" className={btnSecondary} onClick={onCancel}>
             Cancel

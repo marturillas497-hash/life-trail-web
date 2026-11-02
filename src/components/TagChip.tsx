@@ -16,7 +16,7 @@ export function TagChip({ tag, selected = false, onToggle, size = "md" }: Props)
   if (!onToggle) {
     return (
       <span
-        className={`${base} border-zinc-200 bg-zinc-100 text-zinc-800 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100`}
+        className={`${base} border-sand-200 bg-sand-100 text-sand-800 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100`}
       >
         {label}
       </span>
@@ -24,8 +24,8 @@ export function TagChip({ tag, selected = false, onToggle, size = "md" }: Props)
   }
 
   const state = selected
-    ? "border-indigo-600 bg-indigo-600 text-white"
-    : "border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800";
+    ? "border-brand-600 bg-brand-600 text-white"
+    : "border-sand-300 bg-white text-sand-800 hover:bg-sand-50 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-100 dark:hover:bg-sand-800";
 
   return (
     <button

@@ -14,7 +14,7 @@ export function TmdbAttribution({ className = "" }: { className?: string }) {
   const isClient = useIsClient();
 
   return (
-    <div className={`flex items-center gap-3 text-xs text-zinc-500 ${className}`}>
+    <div className={`flex items-center gap-3 text-xs text-sand-500 ${className}`}>
       {isClient && !logoMissing && (
         // eslint-disable-next-line @next/next/no-img-element
         <img

@@ -63,7 +63,7 @@ export function ServiceWorkerRegister() {
   return (
     <div
       role="status"
-      className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-indigo-300 bg-indigo-50 px-4 py-2 text-sm text-indigo-900 dark:border-indigo-800 dark:bg-indigo-950 dark:text-indigo-100"
+      className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-brand-300 bg-brand-50 px-4 py-2 text-sm text-brand-900 dark:border-brand-800 dark:bg-brand-950 dark:text-brand-100"
     >
       <span className="mr-auto">A new version of Life Trail is ready.</span>
       <button

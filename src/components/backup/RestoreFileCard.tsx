@@ -61,7 +61,7 @@ export function RestoreFileCard({ onRestored }: { onRestored: (message: string) 
   return (
     <section className={cardClass}>
       <h2 className="font-semibold">Restore from a backup file</h2>
-      <p className="mt-1 text-sm text-zinc-500">
+      <p className="mt-1 text-sm text-sand-500">
         Choose a backup file you downloaded, or one from your backup folder. You will see what is
         inside before anything changes.
       </p>
@@ -71,15 +71,15 @@ export function RestoreFileCard({ onRestored }: { onRestored: (message: string) 
         type="file"
         accept=".json,application/json"
         onChange={(event) => void onPick(event)}
-        className="mt-4 block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-4 file:py-2 file:text-sm file:font-medium hover:file:bg-zinc-200 dark:file:bg-zinc-800 dark:hover:file:bg-zinc-700"
+        className="mt-4 block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-sand-100 file:px-4 file:py-2 file:text-sm file:font-medium hover:file:bg-sand-200 dark:file:bg-sand-800 dark:hover:file:bg-sand-700"
       />
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
       {loaded && summary && (
-        <div className="mt-4 rounded-lg bg-zinc-50 p-4 text-sm dark:bg-zinc-900">
+        <div className="mt-4 rounded-lg bg-sand-50 p-4 text-sm dark:bg-sand-900">
           <p className="font-medium">{loaded.name}</p>
-          <ul className="mt-2 space-y-1 text-zinc-600 dark:text-zinc-300">
+          <ul className="mt-2 space-y-1 text-sand-600 dark:text-sand-300">
             <li>Saved on {formatDateTime(loaded.backup.exportedAt)}</li>
             <li>
               {summary.entryCount} {summary.entryCount === 1 ? "entry" : "entries"},{" "}

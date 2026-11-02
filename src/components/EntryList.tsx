@@ -33,7 +33,7 @@ export function EntryList() {
 
   return (
     <>
-      <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
+      <header className="flex items-center justify-between border-b border-sand-200 px-4 py-3 dark:border-sand-800">
         <h1 className="text-xl font-semibold">Journal</h1>
         <Link href={newEntryPath()} className={btnPrimary} title="New entry (Alt+N)">
           New entry
@@ -41,7 +41,7 @@ export function EntryList() {
       </header>
 
       {entries && entries.length > 0 && (
-        <div className="border-b border-zinc-200 px-4 py-2 dark:border-zinc-800">
+        <div className="border-b border-sand-200 px-4 py-2 dark:border-sand-800">
           <input
             type="search"
             value={query}
@@ -51,7 +51,7 @@ export function EntryList() {
             className={inputClass}
           />
           {searching && visible && (
-            <p className="mt-1 text-xs text-zinc-500" aria-live="polite">
+            <p className="mt-1 text-xs text-sand-500" aria-live="polite">
               {visible.length} {visible.length === 1 ? "match" : "matches"}
             </p>
           )}
@@ -60,17 +60,17 @@ export function EntryList() {
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         {!visible || !entries || !tagMap ? (
-          <p className="p-6 text-sm text-zinc-500">Loading...</p>
+          <p className="p-6 text-sm text-sand-500">Loading...</p>
         ) : entries.length === 0 ? (
-          <p className="p-6 text-center text-sm text-zinc-500">
-            No entries yet.
+          <p className="p-6 text-center text-sm text-sand-500">
+            Your trail starts here.
             <br />
-            Tap New entry to write your first one.
+            Tap New entry to write your first page.
           </p>
         ) : visible.length === 0 ? (
-          <p className="p-6 text-center text-sm text-zinc-500">No entries match your search.</p>
+          <p className="p-6 text-center text-sm text-sand-500">No entries match your search.</p>
         ) : (
-          <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <ul className="divide-y divide-sand-200 dark:divide-sand-800">
             {visible.map((entry) => {
               const selected = viewingEntry && openId === entry.id;
               const tags = entry.tagIds
@@ -84,18 +84,18 @@ export function EntryList() {
                     aria-current={selected ? "page" : undefined}
                     className={`block px-4 py-3 transition-colors ${
                       selected
-                        ? "bg-indigo-50 dark:bg-indigo-950/40"
-                        : "hover:bg-zinc-50 dark:hover:bg-zinc-900"
+                        ? "bg-brand-50 dark:bg-brand-950/40"
+                        : "hover:bg-sand-50 dark:hover:bg-sand-900"
                     }`}
                   >
-                    <div className="text-xs font-medium text-zinc-500">
+                    <div className="text-xs font-medium text-sand-500">
                       {formatShortDate(entry.date)}
                     </div>
                     {entry.title && (
                       <div className="mt-0.5 font-medium">{entry.title}</div>
                     )}
                     {entry.body && (
-                      <p className="mt-0.5 line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">
+                      <p className="mt-0.5 line-clamp-2 text-sm text-sand-600 dark:text-sand-400">
                         {entry.body}
                       </p>
                     )}

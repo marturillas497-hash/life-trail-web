@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   chooseBackupFolder,
   forgetBackupFolder,
@@ -10,7 +10,27 @@ import {
 import { useFolderState, useSetting } from "@/lib/backup/hooks";
 import { btnPrimary, btnSecondary, cardClass } from "../ui";
 
+const BRAVE_FLAG = "brave://flags/#file-system-access-api";
+
+type BraveNavigator = Navigator & { brave?: { isBrave?: () => Promise<boolean> } };
+
 export function FolderBackupCard() {
+  const [isBrave, setIsBrave] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    void (navigator as BraveNavigator).brave?.isBrave?.().then(setIsBrave);
+  }, []);
+
+  async function copyFlag() {
+    try {
+      await navigator.clipboard.writeText(BRAVE_FLAG);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   const { state, refresh } = useFolderState();
   const folder = useSetting<FileSystemDirectoryHandle>("folderHandle");
   const [message, setMessage] = useState<string | null>(null);
@@ -39,25 +59,45 @@ export function FolderBackupCard() {
 
   return (
     <section className={cardClass}>
-      <h2 className="font-semibold">Automatic backup to a folder</h2>
+      <h2 id="folder-backup" className="font-semibold">Backup folder</h2>
 
       {state === "unsupported" ? (
-        <p className="mt-1 text-sm text-zinc-500">
-          This browser cannot save to a folder by itself. It works in Chrome and Edge on a
-          computer. In Brave it is switched off by default: open brave://flags/#file-system-access-api
-          in a new tab, set it to Enabled, then restart Brave. Otherwise, use Download or Share
-          above, and the reminder that appears when a backup is overdue.
-        </p>
+        isBrave ? (
+          <div className="mt-1 space-y-3 text-sm text-sand-600 dark:text-sand-400">
+            <p>
+              Brave switches folder saving off by default. Turn it on once and the one press backup
+              will save straight into a folder:
+            </p>
+            <ol className="list-decimal space-y-1 pl-5">
+              <li>Copy the address below and paste it into a new tab.</li>
+              <li>Set the highlighted option to Enabled.</li>
+              <li>Click Relaunch at the bottom of that page.</li>
+            </ol>
+            <div className="flex flex-wrap items-center gap-3">
+              <code className="rounded bg-sand-100 px-2 py-1 text-xs dark:bg-sand-800">{BRAVE_FLAG}</code>
+              <button type="button" className={btnSecondary} onClick={copyFlag}>
+                {copied ? "Copied" : "Copy address"}
+              </button>
+            </div>
+            <p>Until then, the Back up now button downloads the file to your Downloads folder.</p>
+          </div>
+        ) : (
+          <p className="mt-1 text-sm text-sand-500">
+            This browser cannot save to a folder by itself. It works in Chrome and Edge on a
+            computer, and in Brave once you switch it on. Until then, the Back up now button
+            downloads the file to your Downloads folder.
+          </p>
+        )
       ) : (
         <>
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1 text-sm text-sand-500">
             Pick a folder once. Life Trail then saves a dated backup file there every day you use
             it, and keeps the newest 30. Choosing a folder that syncs to OneDrive or Google Drive
             gives you a copy off this computer as well. Create a new folder for it, for example
             &quot;Life Trail Backups&quot;, because browsers refuse folders like Downloads itself.
           </p>
 
-          {state === "checking" && <p className="mt-3 text-sm text-zinc-500">Checking...</p>}
+          {state === "checking" && <p className="mt-3 text-sm text-sand-500">Checking...</p>}
 
           {state === "none" && (
             <div className="mt-4">
@@ -126,7 +166,7 @@ export function FolderBackupCard() {
                 </button>
               </div>
               {state === "needs-permission" && (
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-sand-500">
                   Browsers sometimes ask again when you come back to the app. This is normal, and
                   one click on Allow is enough.
                 </p>
@@ -136,7 +176,7 @@ export function FolderBackupCard() {
         </>
       )}
 
-      {message && <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-300">{message}</p>}
+      {message && <p className="mt-3 text-sm text-sand-600 dark:text-sand-300">{message}</p>}
     </section>
   );
 }

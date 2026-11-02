@@ -50,7 +50,7 @@ export function TmdbKeyCard() {
   return (
     <section className={cardClass}>
       <h2 className="font-semibold">Movie search (TMDB)</h2>
-      <p className="mt-1 text-sm text-zinc-500">
+      <p className="mt-1 text-sm text-sand-500">
         Searching for movies uses TMDB&apos;s free database. You need your own free key. It stays on
         this device only and is not included in backup files. Without a key you can still log
         movies by typing their title.
@@ -114,10 +114,10 @@ export function TmdbKeyCard() {
       )}
 
       <details className="mt-4 text-sm">
-        <summary className="cursor-pointer font-medium text-zinc-600 dark:text-zinc-400">
+        <summary className="cursor-pointer font-medium text-sand-600 dark:text-sand-400">
           How do I get a key?
         </summary>
-        <ol className="mt-2 list-decimal space-y-1 pl-5 text-zinc-600 dark:text-zinc-300">
+        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sand-600 dark:text-sand-300">
           <li>Make a free account at themoviedb.org and confirm your email.</li>
           <li>
             Open your account settings and find the API section. Request a key for personal,
@@ -128,12 +128,12 @@ export function TmdbKeyCard() {
             <strong>API Key</strong> (32 letters and numbers) and paste it above.
           </li>
         </ol>
-        <p className="mt-2 text-zinc-500">
+        <p className="mt-2 text-sand-500">
           TMDB&apos;s free API is for personal, non-commercial use only.
         </p>
       </details>
 
-      <TmdbAttribution className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800" />
+      <TmdbAttribution className="mt-4 border-t border-sand-200 pt-4 dark:border-sand-800" />
     </section>
   );
 }

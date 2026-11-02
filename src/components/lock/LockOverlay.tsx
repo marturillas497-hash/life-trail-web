@@ -27,7 +27,7 @@ export function LockOverlay() {
 
   if (status !== "loading" && status !== "locked") return null;
 
-  const shell = "fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-white p-6 dark:bg-zinc-950";
+  const shell = "fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-sand-50 p-6 dark:bg-sand-950";
   if (status === "loading") return <div className={shell} aria-hidden="true" />;
 
   function goTo(next: View) {
@@ -87,7 +87,7 @@ export function LockOverlay() {
             </button>
             <button
               type="button"
-              className="block w-full text-center text-sm text-zinc-500 underline"
+              className="block w-full text-center text-sm text-sand-500 underline"
               onClick={() => goTo("forgot")}
             >
               Forgot your PIN?
@@ -103,7 +103,7 @@ export function LockOverlay() {
               void submitRecovery();
             }}
           >
-            <p className="text-sm text-zinc-600 dark:text-zinc-300">
+            <p className="text-sm text-sand-600 dark:text-sand-300">
               Enter your recovery code and choose a new PIN.
             </p>
             <input
@@ -127,7 +127,7 @@ export function LockOverlay() {
             </button>
             <button
               type="button"
-              className="block w-full text-center text-sm text-zinc-500 underline"
+              className="block w-full text-center text-sm text-sand-500 underline"
               onClick={() => goTo("erase")}
             >
               I do not have my recovery code
@@ -148,7 +148,7 @@ export function LockOverlay() {
 
         {view === "erase" && (
           <div className="space-y-4">
-            <p className="text-sm text-zinc-600 dark:text-zinc-300">
+            <p className="text-sm text-sand-600 dark:text-sand-300">
               Without the PIN or the recovery code, the only way back in is to erase everything in
               this browser: your entries, tags, snapshots and settings. Backup files you saved
               outside the browser are not touched, and you can restore from them afterwards.

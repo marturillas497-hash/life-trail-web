@@ -33,7 +33,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div className={cardClass}>
       <div className="text-2xl font-semibold">{value}</div>
-      <div className="mt-0.5 text-xs text-zinc-500">{label}</div>
+      <div className="mt-0.5 text-xs text-sand-500">{label}</div>
     </div>
   );
 }
@@ -90,7 +90,7 @@ export function InsightsView() {
         </div>
 
         {!entries || !tagMap ? (
-          <p className="text-sm text-zinc-500">Loading...</p>
+          <p className="text-sm text-sand-500">Loading...</p>
         ) : (
           <>
             <section aria-label="Streaks" className="grid grid-cols-2 gap-3">
@@ -112,7 +112,7 @@ export function InsightsView() {
             <section className={cardClass}>
               <h2 className="font-semibold">Emotions</h2>
               {emotions.length === 0 ? (
-                <p className="mt-2 text-sm text-zinc-500">
+                <p className="mt-2 text-sm text-sand-500">
                   {inPeriod.length === 0
                     ? `No entries in ${title}.`
                     : "None of these entries have a tag yet."}
@@ -120,7 +120,7 @@ export function InsightsView() {
               ) : (
                 <>
                   {topTag && (
-                    <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                    <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
                       Your most common feeling is {topTag.emoji} {topTag.name}.
                     </p>
                   )}
@@ -134,11 +134,11 @@ export function InsightsView() {
                             <span>
                               {tag.emoji} {tag.name}
                             </span>
-                            <span className="text-zinc-500">
+                            <span className="text-sand-500">
                               {count} {count === 1 ? "entry" : "entries"} ({Math.round((count / tagged) * 100)}%)
                             </span>
                           </div>
-                          <div className="mt-1 h-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800">
+                          <div className="mt-1 h-2.5 rounded-full bg-sand-100 dark:bg-sand-800">
                             <div
                               className="h-full animate-bar-grow rounded-full"
                               style={{ width: `${(count / top.count) * 100}%`, backgroundColor: tag.color }}
@@ -148,7 +148,7 @@ export function InsightsView() {
                       );
                     })}
                   </ul>
-                  <p className="mt-4 text-xs text-zinc-500">
+                  <p className="mt-4 text-xs text-sand-500">
                     Percentages are out of the {tagged} {tagged === 1 ? "entry" : "entries"} with a tag, and an entry with several tags counts for each.
                   </p>
                 </>

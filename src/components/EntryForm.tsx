@@ -87,8 +87,8 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
 
   return (
     <div>
-      <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-zinc-200 bg-white/90 px-4 py-3 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/90">
-        <Link href={backHref} className="text-sm text-zinc-600 hover:underline dark:text-zinc-400">
+      <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-sand-200 bg-sand-50/90 px-4 py-3 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
+        <Link href={backHref} className="text-sm text-sand-600 hover:underline dark:text-sand-400">
           Cancel
         </Link>
         <h1 className="font-semibold">{initial ? "Edit entry" : "New entry"}</h1>
@@ -104,12 +104,12 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
       </header>
 
       <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-8">
-        <p className="text-sm font-medium text-zinc-500">
+        <p className="text-sm font-medium text-sand-500">
           {formatFullDate(initial?.date ?? createDate)}
         </p>
 
         <section>
-          <h2 className="mb-2 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <h2 className="mb-2 text-sm font-medium text-sand-600 dark:text-sand-400">
             How are you feeling?
           </h2>
           {visibleTags ? (
@@ -125,13 +125,13 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
               <button
                 type="button"
                 onClick={() => setCreatingTag(true)}
-                className="inline-flex items-center rounded-full border border-dashed border-zinc-400 px-3 py-1 text-sm text-zinc-600 hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                className="inline-flex items-center rounded-full border border-dashed border-sand-400 px-3 py-1 text-sm text-sand-600 hover:bg-sand-50 dark:border-sand-600 dark:text-sand-400 dark:hover:bg-sand-800"
               >
                 + New tag
               </button>
             </div>
           ) : (
-            <p className="text-sm text-zinc-500">Loading tags...</p>
+            <p className="text-sm text-sand-500">Loading tags...</p>
           )}
         </section>
 

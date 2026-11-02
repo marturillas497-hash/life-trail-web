@@ -18,7 +18,7 @@ falls back to TMDB's server, and without that to a plain placeholder.
 export function Poster({ title, posterData, posterPath, size = "w185", className = "" }: Props) {
   const [failed, setFailed] = useState(false);
   const src = failed ? null : (posterData ?? (posterPath ? posterUrl(posterPath, size) : null));
-  const frame = `aspect-[2/3] shrink-0 overflow-hidden rounded-md bg-zinc-200 dark:bg-zinc-800 ${className}`;
+  const frame = `aspect-[2/3] shrink-0 overflow-hidden rounded-md bg-sand-200 dark:bg-sand-800 ${className}`;
 
   if (!src) {
     return (

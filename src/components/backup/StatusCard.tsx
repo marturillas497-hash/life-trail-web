@@ -21,7 +21,7 @@ export function StatusCard() {
     <section className={cardClass}>
       <h2 className="font-semibold">Status</h2>
       <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-        <dt className="text-zinc-500">Journal</dt>
+        <dt className="text-sand-500">Journal</dt>
         <dd>
           {info === undefined
             ? "Loading..."
@@ -32,7 +32,7 @@ export function StatusCard() {
               }`}
         </dd>
 
-        <dt className="text-zinc-500">Last snapshot</dt>
+        <dt className="text-sand-500">Last snapshot</dt>
         <dd>
           {snapshots === undefined
             ? "Loading..."
@@ -41,7 +41,7 @@ export function StatusCard() {
               : "None yet (the first one is saved once you have an entry or a movie)"}
         </dd>
 
-        <dt className="text-zinc-500">Last file backup</dt>
+        <dt className="text-sand-500">Last file backup</dt>
         <dd>
           {lastFile === undefined
             ? "Loading..."
@@ -50,7 +50,7 @@ export function StatusCard() {
               : `${describeAge(lastFileAt, now)} (${formatDateTime(lastFileAt)})`}
         </dd>
 
-        <dt className="text-zinc-500">Browser storage</dt>
+        <dt className="text-sand-500">Browser storage</dt>
         <dd>
           {persisted === undefined || persisted.value === undefined
             ? "Not checked yet"

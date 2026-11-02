@@ -5,7 +5,7 @@ const STARS = [1, 2, 3, 4, 5];
 function Star({ fill, className = "" }: { fill: number; className?: string }) {
   return (
     <span
-      className={`relative inline-block leading-none text-zinc-300 dark:text-zinc-700 ${className}`}
+      className={`relative inline-block leading-none text-sand-300 dark:text-sand-700 ${className}`}
       aria-hidden="true"
     >
       ★
@@ -35,7 +35,7 @@ export function StarDisplay({ value, className = "" }: { value: number; classNam
 /* Click the left half of a star for a half star, the right half for a whole one. */
 export function StarInput({ value, onChange }: { value: number; onChange: (value: number) => void }) {
   const focus =
-    "absolute inset-y-0 w-1/2 focus-visible:outline-2 focus-visible:outline-indigo-600";
+    "absolute inset-y-0 w-1/2 focus-visible:outline-2 focus-visible:outline-brand-600";
 
   return (
     <div className="inline-flex items-center gap-3">
@@ -60,7 +60,7 @@ export function StarInput({ value, onChange }: { value: number; onChange: (value
           </span>
         ))}
       </div>
-      <span className="text-sm text-zinc-500">{value > 0 ? `${value} / 5` : "Tap a star"}</span>
+      <span className="text-sm text-sand-500">{value > 0 ? `${value} / 5` : "Tap a star"}</span>
     </div>
   );
 }

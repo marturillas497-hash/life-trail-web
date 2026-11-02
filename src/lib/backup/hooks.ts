@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db";
-import { getFolderState, type FolderState } from "./files";
+import { getFolderState, onFolderChange, type FolderState } from "./files";
 import { backupDb, type Snapshot } from "./store";
 
 export type SnapshotSummary = Omit<Snapshot, "data">;
@@ -49,6 +49,9 @@ export function useFolderState() {
 
   /* Call after something may have changed the folder permission. */
   const refresh = useCallback(() => setChecks((count) => count + 1), []);
+
+  /* A backup started from the sidebar button also changes the permission state. */
+  useEffect(() => onFolderChange(refresh), [refresh]);
 
   return { state, refresh };
 }

@@ -9,7 +9,7 @@ import { btnPrimary, btnSecondary, inputClass } from "./ui";
 
 const EmojiPickerPanel = dynamic(() => import("./EmojiPickerPanel"), {
   ssr: false,
-  loading: () => <p className="p-4 text-sm text-zinc-500">Loading emojis...</p>,
+  loading: () => <p className="p-4 text-sm text-sand-500">Loading emojis...</p>,
 });
 
 type Props = {
@@ -65,7 +65,7 @@ export function TagEditorDialog({ tag, onClose, onSaved }: Props) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="tag-dialog-title"
-        className="w-full max-w-md animate-pop-in rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl dark:bg-zinc-900"
+        className="w-full max-w-md animate-pop-in rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl dark:bg-sand-900"
         onClick={(event) => event.stopPropagation()}
       >
         <h2 id="tag-dialog-title" className="text-lg font-semibold">
@@ -78,7 +78,7 @@ export function TagEditorDialog({ tag, onClose, onSaved }: Props) {
             onClick={() => setPickerOpen((open) => !open)}
             aria-label="Choose emoji"
             aria-expanded={pickerOpen}
-            className="flex size-12 shrink-0 items-center justify-center rounded-lg border border-zinc-300 bg-white text-2xl hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+            className="flex size-12 shrink-0 items-center justify-center rounded-lg border border-sand-300 bg-white text-2xl hover:bg-sand-50 dark:border-sand-700 dark:bg-sand-900 dark:hover:bg-sand-800"
           >
             {emoji || "🙂"}
           </button>
@@ -95,7 +95,7 @@ export function TagEditorDialog({ tag, onClose, onSaved }: Props) {
         </div>
 
         {pickerOpen && (
-          <div className="mt-3 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
+          <div className="mt-3 overflow-hidden rounded-lg border border-sand-200 dark:border-sand-700">
             <EmojiPickerPanel
               onPick={(picked) => {
                 setEmoji(picked);
@@ -106,7 +106,7 @@ export function TagEditorDialog({ tag, onClose, onSaved }: Props) {
         )}
 
         <div className="mt-5">
-          <p className="mb-2 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <p className="mb-2 text-sm font-medium text-sand-600 dark:text-sand-400">
             Color (used later for Year in Pixels)
           </p>
           <div className="flex flex-wrap gap-2">
@@ -120,7 +120,7 @@ export function TagEditorDialog({ tag, onClose, onSaved }: Props) {
                 style={{ backgroundColor: swatch }}
                 className={`size-8 rounded-full ${
                   color === swatch
-                    ? "ring-2 ring-indigo-600 ring-offset-2 dark:ring-offset-zinc-900"
+                    ? "ring-2 ring-brand-600 ring-offset-2 dark:ring-offset-sand-900"
                     : ""
                 }`}
               />

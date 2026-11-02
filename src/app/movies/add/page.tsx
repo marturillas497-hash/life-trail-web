@@ -83,12 +83,12 @@ export default function AddMoviePage() {
 
   /* ---- Logging another viewing of a movie you already have ---- */
   if (Number.isInteger(existingId)) {
-    if (existing === undefined) return <p className="p-6 text-sm text-zinc-500">Loading...</p>;
+    if (existing === undefined) return <p className="p-6 text-sm text-sand-500">Loading...</p>;
     if (existing === null) {
       return (
         <div className="p-6 text-sm">
-          <p className="text-zinc-500">That movie no longer exists.</p>
-          <Link href="/movies/" className="mt-2 inline-block text-indigo-600 underline">
+          <p className="text-sand-500">That movie no longer exists.</p>
+          <Link href="/movies/" className="mt-2 inline-block text-brand-600 underline">
             Back to movies
           </Link>
         </div>
@@ -182,10 +182,10 @@ export default function AddMoviePage() {
       />
 
       <div className="mt-4" aria-live="polite">
-        {loading && <p className="text-sm text-zinc-500">Searching...</p>}
+        {loading && <p className="text-sm text-sand-500">Searching...</p>}
         {searching && settled && search.error && <p className="text-sm text-red-600">{search.error}</p>}
         {searching && settled && search.results && search.results.length === 0 && (
-          <p className="text-sm text-zinc-500">No movies found. Try fewer words.</p>
+          <p className="text-sm text-sand-500">No movies found. Try fewer words.</p>
         )}
         {searching && settled && search.results && search.results.length > 0 && (
           <ul className="space-y-2">
@@ -194,7 +194,7 @@ export default function AddMoviePage() {
                 <button
                   type="button"
                   onClick={() => setPicked({ kind: "tmdb", movie })}
-                  className="flex w-full gap-3 rounded-xl border border-zinc-200 p-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
+                  className="flex w-full gap-3 rounded-xl border border-sand-200 p-3 text-left transition-colors hover:bg-sand-50 dark:border-sand-800 dark:hover:bg-sand-900"
                 >
                   <Poster
                     title={movie.title}
@@ -206,10 +206,10 @@ export default function AddMoviePage() {
                   <span className="min-w-0 flex-1">
                     <span className="block font-medium">
                       {movie.title}
-                      {movie.year && <span className="font-normal text-zinc-500"> ({movie.year})</span>}
+                      {movie.year && <span className="font-normal text-sand-500"> ({movie.year})</span>}
                     </span>
                     {movie.overview && (
-                      <span className="mt-0.5 line-clamp-2 block text-sm text-zinc-600 dark:text-zinc-400">
+                      <span className="mt-0.5 line-clamp-2 block text-sm text-sand-600 dark:text-sand-400">
                         {movie.overview}
                       </span>
                     )}
@@ -221,8 +221,8 @@ export default function AddMoviePage() {
         )}
       </div>
 
-      <div className="mt-6 border-t border-zinc-200 pt-4 dark:border-zinc-800">
-        <p className="mb-2 text-sm text-zinc-500">Cannot find it, or offline?</p>
+      <div className="mt-6 border-t border-sand-200 pt-4 dark:border-sand-800">
+        <p className="mb-2 text-sm text-sand-500">Cannot find it, or offline?</p>
         <button type="button" className={btnSecondary} onClick={() => setPicked({ kind: "manual" })}>
           Type the title myself
         </button>
@@ -237,7 +237,7 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl p-4 lg:p-8">
-        <Link href="/movies/" className="text-sm text-indigo-600">
+        <Link href="/movies/" className="text-sm text-brand-600">
           &larr; Movies
         </Link>
         <h1 className="mt-2 text-xl font-semibold">{title}</h1>
@@ -266,10 +266,10 @@ function MovieHeader(props: {
       <div className="min-w-0">
         <div className="text-lg font-semibold">
           {props.title}
-          {props.year && <span className="font-normal text-zinc-500"> ({props.year})</span>}
+          {props.year && <span className="font-normal text-sand-500"> ({props.year})</span>}
         </div>
         {props.overview && (
-          <p className="mt-1 line-clamp-4 text-sm text-zinc-600 dark:text-zinc-400">{props.overview}</p>
+          <p className="mt-1 line-clamp-4 text-sm text-sand-600 dark:text-sand-400">{props.overview}</p>
         )}
       </div>
     </div>

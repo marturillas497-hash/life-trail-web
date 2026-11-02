@@ -171,3 +171,57 @@ export async function runFolderBackup(force = false): Promise<void> {
     throw error;
   }
 }
+
+/* ---------- One press backup ---------- */
+
+const FOLDER_CHANGE_EVENT = "life-trail-folder-change";
+
+/* Lets the folder card on the Backup page refresh after a backup made elsewhere. */
+export function onFolderChange(callback: () => void): () => void {
+  window.addEventListener(FOLDER_CHANGE_EVENT, callback);
+  return () => window.removeEventListener(FOLDER_CHANGE_EVENT, callback);
+}
+
+export type QuickBackupResult =
+  | { kind: "folder"; folderName: string }
+  | { kind: "download" }
+  | { kind: "empty" }
+  | { kind: "cancelled" };
+
+/*
+One button for every case. With a saved folder it writes straight into it, asking the
+browser for permission first if needed. With no folder yet it opens the folder picker once.
+Browsers that cannot save to a folder get a normal file download instead.
+Call it directly from a click, because the picker and the permission prompt require one.
+*/
+export async function quickBackup(): Promise<QuickBackupResult> {
+  if (!isFolderBackupSupported()) {
+    if (!hasContent(await readCurrentData())) return { kind: "empty" };
+    await downloadBackup();
+    return { kind: "download" };
+  }
+
+  let handle = await getHandle();
+  if (!handle) {
+    if (!(await chooseBackupFolder())) return { kind: "cancelled" };
+    handle = await getHandle();
+    if (!handle) return { kind: "cancelled" };
+    window.dispatchEvent(new Event(FOLDER_CHANGE_EVENT));
+  }
+
+  if ((await handle.queryPermission({ mode: "readwrite" })) !== "granted") {
+    if ((await handle.requestPermission({ mode: "readwrite" })) !== "granted") {
+      window.dispatchEvent(new Event(FOLDER_CHANGE_EVENT));
+      return { kind: "cancelled" };
+    }
+    await deleteSetting("folderError");
+  }
+
+  if (!hasContent(await readCurrentData())) return { kind: "empty" };
+  try {
+    await runFolderBackup(true);
+  } finally {
+    window.dispatchEvent(new Event(FOLDER_CHANGE_EVENT));
+  }
+  return { kind: "folder", folderName: handle.name };
+}

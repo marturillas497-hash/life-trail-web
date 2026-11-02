@@ -26,12 +26,12 @@ export function RecoveryCodeBox({ code, confirmLabel, onConfirm, onCancel }: Pro
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-zinc-600 dark:text-zinc-300">
+      <p className="text-sm text-sand-600 dark:text-sand-300">
         This is your recovery code. If you forget your PIN, it is the only way back in without
         erasing the journal. It is shown once, so write it down or save it in a password manager.
       </p>
       <p
-        className="rounded-lg bg-zinc-100 p-4 text-center font-mono text-xl tracking-wider dark:bg-zinc-800"
+        className="rounded-lg bg-sand-100 p-4 text-center font-mono text-xl tracking-wider dark:bg-sand-800"
         data-testid="recovery-code"
       >
         {code}

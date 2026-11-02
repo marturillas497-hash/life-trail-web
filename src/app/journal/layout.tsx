@@ -28,7 +28,7 @@ export default function JournalLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-full">
       <section
-        className={`${isIndex ? "flex" : "hidden"} w-full flex-col border-r border-zinc-200 lg:flex lg:w-96 lg:shrink-0 dark:border-zinc-800`}
+        className={`${isIndex ? "flex" : "hidden"} w-full flex-col border-r border-sand-200 lg:flex lg:w-96 lg:shrink-0 dark:border-sand-800`}
       >
         <EntryList />
       </section>
