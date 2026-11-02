@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FolderBackupCard } from "@/components/backup/FolderBackupCard";
+import { ImagesCard } from "@/components/backup/ImagesCard";
 import { QuickBackupCard } from "@/components/backup/QuickBackupCard";
 import { ManualBackupCard } from "@/components/backup/ManualBackupCard";
 import { RestoreFileCard } from "@/components/backup/RestoreFileCard";
@@ -39,6 +40,7 @@ export default function BackupPage() {
         <QuickBackupCard />
         <StatusCard />
         <ManualBackupCard />
+        <ImagesCard />
         <FolderBackupCard />
         <SnapshotsCard onRestored={setNotice} />
         <RestoreFileCard onRestored={setNotice} />

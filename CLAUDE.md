@@ -170,6 +170,19 @@ The `start` script (`next start`) does not work with a static export and can be 
 - **Cruft in the zip.** The uploaded zip contains `out/` (build output, ignore it) and default `README.md`. The unused starter SVGs are in `public/`.
 - **Untested by Claude** (could not run in the sandbox): real TMDB responses and the real key flow, the Vercel build and its routing (the person's build log showed install and build working, and they reported the deployment working after the output directory fix), the real folder picker, real devices, Brave itself.
 
+## Added since the plan above (Nov 2026)
+
+Done and tested in a real browser: theme toggle (class based dark mode, `html.dark`/`html.light`, stored in localStorage `life-trail-theme`), collapsible desktop sidebar (`html[data-sidebar=collapsed]`, localStorage `life-trail-sidebar`), warm palette (`sand`, `brand` green, `gold`; renamed from zinc and indigo), insights and entry search, Year in Pixels (most used tag of the day, ties go to the tag selected first), movies filtered by watched week, month, year, one press backup (sidebar button and Backup page card, falls back to a download when the browser has no folder access, Brave needs its flag turned on), app name stays Life Trail with the brand kit logos.
+
+**Markdown and pictures.**
+- Entry text is Markdown, edited and shown with CodeMirror 6 (`src/components/markdown/`). `livePreview.ts` hides the markers except on the line or element the cursor touches, like Obsidian's live preview. `MarkdownEditor` has the toolbar, paste and drop of pictures, Ctrl+B, Ctrl+I, Ctrl+K. `MarkdownView` is the read only twin used on the entry page. Ctrl+Enter (or Cmd+Enter) opens the link under the cursor, Ctrl+Click too, a plain click in the reader. Only http, https, mailto and bare domains open (`safeUrl`).
+- The parser must be `markdown({ base: markdownLanguage })`. The default base is plain CommonMark and has no tasks, strikethrough or bare links.
+- Dependencies added by the person with `pnpm add`: @codemirror/state, view, commands, language, lang-markdown. Vercel installs with `--frozen-lockfile`, so `pnpm-lock.yaml` must be committed with them. Do not import `@lezer/common` directly, pnpm does not expose it.
+- Pictures live in the Dexie table `images` (database version 3) as `ArrayBuffer`, shrunk to 1600 px and stored as WebP (GIFs untouched, max 4 MB). Entry text refers to them as `![name](image:ID)`. Nothing deletes a picture automatically. The Backup page has a Pictures card with Remove unused.
+- Backup file version 3 adds `images` with base64 data. `BackupData.images` is optional: missing means "leave the pictures alone" on restore, present means replace. Daily and manual snapshots leave pictures out to stay small. The "before a restore" snapshot includes them so a restore can be undone completely. The hash only covers pictures when there are some. Erase clears them.
+- Journal list, calendar and Year in Pixels previews and word counts use `plainText()` from `src/lib/markdown.ts`.
+- The head script that sets the theme and sidebar is two IIFEs joined with `;`. Without the `;` the second one never ran (found by the browser test).
+
 ## Testing (how Claude verified things)
 
 The sandbox resets between chats, so recreate what is needed. An optional `life-trail-tests.zip` holds the scripts below.
@@ -195,5 +208,4 @@ The sandbox resets between chats, so recreate what is needed. An optional `life-
 ## Open questions
 
 - Final app name (candidates: Mosaic, Hue, Feelog, Tidal, Dayfold, Kept, Inkling). `life-trail` is the current name. Changing the web address later moves the data to an empty journal, so decide before relying on the production address, or plan a backup and restore.
-- Year in Pixels color rule. Each tag has a `color`. The daily pixel could use the first selected tag or the most used tag of that day.
 - What to do about the paused Flutter repo (keep as is, archive).

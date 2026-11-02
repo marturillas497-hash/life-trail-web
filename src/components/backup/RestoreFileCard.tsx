@@ -43,9 +43,9 @@ export function RestoreFileCard({ onRestored }: { onRestored: (message: string) 
     setBusy(true);
     try {
       await replaceJournal(loaded.backup);
-      const { entryCount, tagCount } = summarize(loaded.backup);
+      const { entryCount, tagCount, imageCount } = summarize(loaded.backup);
       onRestored(
-        `Restored ${entryCount} ${entryCount === 1 ? "entry" : "entries"} and ${tagCount} tags from ${loaded.name}. Your journal before the restore was saved as a snapshot, so you can undo this.`,
+        `Restored ${entryCount} ${entryCount === 1 ? "entry" : "entries"}, ${tagCount} tags${imageCount > 0 ? ` and ${imageCount} ${imageCount === 1 ? "picture" : "pictures"}` : ""} from ${loaded.name}. Your journal before the restore was saved as a snapshot, so you can undo this.`,
       );
       reset();
     } catch (err) {

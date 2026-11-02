@@ -2,14 +2,30 @@ import { isValidKey } from "../dates";
 import type { Entry, Movie, MovieLog, Tag } from "../types";
 
 export const BACKUP_APP = "life-trail";
-/* Version 2 added movies. Version 1 files are still accepted. */
-export const BACKUP_VERSION = 2;
+/* Version 2 added movies and version 3 added pictures. Older files are still accepted. */
+export const BACKUP_VERSION = 3;
+
+/* A picture inside a backup file. The bytes are stored as base64 text. */
+export type BackupImage = {
+  id: number;
+  name: string;
+  type: string;
+  width: number;
+  height: number;
+  createdAt: number;
+  data: string;
+};
 
 export type BackupData = {
   tags: Tag[];
   entries: Entry[];
   movies: Movie[];
   movieLogs: MovieLog[];
+  /*
+  Left out of snapshots to keep them small. When missing, a restore keeps the pictures
+  that are already in the browser. When present, a restore replaces them.
+  */
+  images?: BackupImage[];
 };
 
 /* A journal counts as empty only when it has no entries and no movie logs. */
@@ -23,7 +39,25 @@ export function normalizeData(data: Partial<BackupData>): BackupData {
     entries: data.entries ?? [],
     movies: data.movies ?? [],
     movieLogs: data.movieLogs ?? [],
+    ...(data.images ? { images: data.images } : {}),
   };
+}
+
+/* Base64 helpers that work in the browser and in Node. */
+export function bytesToBase64(bytes: ArrayBuffer): string {
+  const view = new Uint8Array(bytes);
+  let text = "";
+  for (let i = 0; i < view.length; i += 0x8000) {
+    text += String.fromCharCode(...view.subarray(i, i + 0x8000));
+  }
+  return btoa(text);
+}
+
+export function base64ToBytes(base64: string): ArrayBuffer {
+  const text = atob(base64);
+  const bytes = new Uint8Array(text.length);
+  for (let i = 0; i < text.length; i++) bytes[i] = text.charCodeAt(i);
+  return bytes.buffer;
 }
 
 export type BackupFile = BackupData & {
@@ -47,12 +81,17 @@ nothing changed. Not a security feature.
 */
 export function hashData(data: BackupData): string {
   /* Fixed field order, so the same journal always gives the same fingerprint. */
-  const text = JSON.stringify([
+  const hashed: unknown[] = [
     data.tags.map((t) => [t.id, t.name, t.emoji, t.color, t.isArchived, t.createdAt]),
     data.entries.map((e) => [e.id, e.date, e.title, e.body, e.tagIds, e.createdAt, e.updatedAt]),
     data.movies.map((m) => [m.id, m.tmdbId, m.title, m.year, m.overview, m.posterPath, m.posterData, m.createdAt, m.fetchedAt]),
     data.movieLogs.map((l) => [l.id, l.movieId, l.rating, l.opinion, l.watchedDate, l.createdAt, l.updatedAt]),
-  ]);
+  ];
+  /* Only added when there are pictures, so journals without any keep their old fingerprint. */
+  if (data.images && data.images.length > 0) {
+    hashed.push(data.images.map((i) => [i.id, i.name, i.type, i.createdAt, i.data.length]));
+  }
+  const text = JSON.stringify(hashed);
   let h1 = 5381;
   let h2 = 52711;
   for (let i = 0; i < text.length; i++) {
@@ -70,6 +109,7 @@ export function summarize(data: BackupData) {
     tagCount: data.tags.length,
     movieCount: data.movies.length,
     movieLogCount: data.movieLogs.length,
+    imageCount: data.images?.length ?? 0,
     firstDate: dates[0] as string | undefined,
     lastDate: dates[dates.length - 1] as string | undefined,
   };
@@ -117,6 +157,26 @@ function parseEntry(raw: unknown, index: number): Entry {
     throw new Error(`The backup is damaged: ${where} has bad timestamps.`);
   }
   return { id, date, title, body, tagIds: tagIds as number[], createdAt, updatedAt };
+}
+
+const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+const BASE64 = /^[A-Za-z0-9+/]*={0,2}$/;
+
+function parseImage(raw: unknown, index: number): BackupImage {
+  const where = `picture number ${index + 1}`;
+  if (!isObject(raw)) throw new Error(`The backup is damaged: ${where} is not valid.`);
+  const { id, name, type, width, height, createdAt, data } = raw;
+  if (!isInt(id) || id < 1) throw new Error(`The backup is damaged: ${where} has a bad id.`);
+  if (!isStr(name)) throw new Error(`The backup is damaged: ${where} has a bad name.`);
+  if (!isStr(type) || !IMAGE_TYPES.includes(type)) {
+    throw new Error(`The backup is damaged: ${where} has an unsupported type.`);
+  }
+  if (!isInt(width) || width < 1 || !isInt(height) || height < 1) {
+    throw new Error(`The backup is damaged: ${where} has bad dimensions.`);
+  }
+  if (!isNum(createdAt)) throw new Error(`The backup is damaged: ${where} has a bad date.`);
+  if (!isStr(data) || !BASE64.test(data)) throw new Error(`The backup is damaged: ${where} has bad data.`);
+  return { id, name, type, width, height, createdAt, data };
 }
 
 const isNullableInt = (value: unknown): value is number | null => value === null || isInt(value);
@@ -186,10 +246,18 @@ export function parseBackup(text: string): BackupFile {
     throw new Error("The backup is damaged: it is missing its movies.");
   }
 
+  /* Files older than version 3 have no pictures. */
+  const rawImages = raw.images === undefined ? [] : raw.images;
+  if (!Array.isArray(rawImages)) throw new Error("The backup is damaged: its pictures are not a list.");
+
   const tags = raw.tags.map(parseTag);
   const entries = raw.entries.map(parseEntry);
   const movies = rawMovies.map(parseMovie);
   const movieLogs = rawLogs.map(parseMovieLog);
+  const images = rawImages.map(parseImage);
+  if (new Set(images.map((image) => image.id)).size !== images.length) {
+    throw new Error("The backup is damaged: duplicate picture ids.");
+  }
 
   const tagIdSet = new Set(tags.map((tag) => tag.id));
   if (tagIdSet.size !== tags.length) throw new Error("The backup is damaged: duplicate tag ids.");
@@ -224,5 +292,6 @@ export function parseBackup(text: string): BackupFile {
     entries,
     movies,
     movieLogs,
+    images,
   };
 }

@@ -9,6 +9,7 @@ import { editEntryPath } from "@/lib/paths";
 import { useEntry, useTagMap } from "@/lib/hooks";
 import type { Tag } from "@/lib/types";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { MarkdownView } from "./markdown/MarkdownView";
 import { TagChip } from "./TagChip";
 import { btnSecondary } from "./ui";
 
@@ -76,7 +77,9 @@ export function EntryDetail({ id }: { id: number }) {
       </div>
 
       {entry.body && (
-        <p className="mt-6 whitespace-pre-wrap text-base leading-relaxed">{entry.body}</p>
+        <div className="mt-6">
+          <MarkdownView value={entry.body} />
+        </div>
       )}
 
       {wasEdited && (

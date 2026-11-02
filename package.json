@@ -11,6 +11,11 @@
     "dev:clean": "node scripts/clean.mjs && next dev"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
     "dexie": "^4.4.7",
     "dexie-react-hooks": "^4.4.0",
     "emoji-picker-react": "^5.1.4",

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { formatFullDate, makeKey } from "@/lib/dates";
 import { yearPixels } from "@/lib/insights";
+import { plainText } from "@/lib/markdown";
 import { entryPath, newEntryPath } from "@/lib/paths";
 import type { Entry, Tag } from "@/lib/types";
 import { cardClass } from "./ui";
@@ -129,7 +130,7 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
                 .map((entry) => (
                   <li key={entry.id}>
                     <Link href={entryPath(entry.id)} className="text-brand-600 hover:underline dark:text-brand-400">
-                      {entry.title || entry.body.slice(0, 60) || "Untitled"}
+                      {entry.title || plainText(entry.body).slice(0, 60) || "Untitled"}
                     </Link>
                   </li>
                 ))}

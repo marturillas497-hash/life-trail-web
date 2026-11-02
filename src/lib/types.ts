@@ -48,3 +48,15 @@ export type MovieLog = {
   createdAt: number;
   updatedAt: number;
 };
+
+/* A picture added to an entry. The entry text points at it as ![name](image:ID). */
+export type StoredImage = {
+  id: number;
+  name: string;
+  /* MIME type, for example image/webp. */
+  type: string;
+  width: number;
+  height: number;
+  data: ArrayBuffer;
+  createdAt: number;
+};

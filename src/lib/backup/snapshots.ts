@@ -1,17 +1,36 @@
 import { db } from "../db";
 import { todayKey } from "../dates";
-import { hasContent, hashData, normalizeData, summarize, type BackupData } from "./format";
+import { base64ToBytes, bytesToBase64, hasContent, hashData, normalizeData, summarize, type BackupData } from "./format";
 import { selectIdsToKeep, type SnapshotKind } from "./retention";
 import { backupDb, type Snapshot } from "./store";
 
-/* Reads tags and entries together, so the copy is consistent. */
-export async function readCurrentData(): Promise<BackupData> {
-  return db.transaction("r", db.tags, db.entries, db.movies, db.movieLogs, async () => ({
+/*
+Reads the journal in one transaction, so the copy is consistent.
+Pictures are only read when asked for, because they are big. Backup files and
+the safety copy made before a restore include them. Daily snapshots do not.
+*/
+export async function readCurrentData(options: { withImages?: boolean } = {}): Promise<BackupData> {
+  const data = await db.transaction("r", db.tags, db.entries, db.movies, db.movieLogs, db.images, async () => ({
     tags: await db.tags.orderBy("id").toArray(),
     entries: await db.entries.orderBy("id").toArray(),
     movies: await db.movies.orderBy("id").toArray(),
     movieLogs: await db.movieLogs.orderBy("id").toArray(),
+    rows: options.withImages ? await db.images.orderBy("id").toArray() : null,
   }));
+  const { rows, ...rest } = data;
+  if (!rows) return rest;
+  return {
+    ...rest,
+    images: rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      type: row.type,
+      width: row.width,
+      height: row.height,
+      createdAt: row.createdAt,
+      data: bytesToBase64(row.data),
+    })),
+  };
 }
 
 async function prune(kind: SnapshotKind): Promise<void> {
@@ -45,7 +64,8 @@ export async function saveSnapshot(kind: SnapshotKind, data: BackupData): Promis
 
 /* Saves a copy of the journal as it is right now. Returns null if there is nothing to save. */
 export async function createSnapshot(kind: SnapshotKind): Promise<Snapshot | null> {
-  return saveSnapshot(kind, await readCurrentData());
+  /* The copy made before a restore keeps the pictures too, so the restore can be undone completely. */
+  return saveSnapshot(kind, await readCurrentData({ withImages: kind === "pre-restore" }));
 }
 
 /*
@@ -95,7 +115,21 @@ saved as a "pre-restore" snapshot first, so a restore can always be undone.
 export async function replaceJournal(data: BackupData): Promise<void> {
   await createSnapshot("pre-restore");
   const clean = normalizeData(data);
-  await db.transaction("rw", db.tags, db.entries, db.movies, db.movieLogs, async () => {
+  /* Decoded before the transaction starts, because it must not wait on anything but the database. */
+  const pictures = clean.images?.map((image) => ({
+    id: image.id,
+    name: image.name,
+    type: image.type,
+    width: image.width,
+    height: image.height,
+    createdAt: image.createdAt,
+    data: base64ToBytes(image.data),
+  }));
+  await db.transaction("rw", db.tags, db.entries, db.movies, db.movieLogs, db.images, async () => {
+    if (pictures) {
+      await db.images.clear();
+      await db.images.bulkAdd(pictures);
+    }
     await db.tags.clear();
     await db.entries.clear();
     await db.movies.clear();

@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT + SIDEBAR_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: `${THEME_INIT_SCRIPT};${SIDEBAR_INIT_SCRIPT}` }} />
       </head>
       <body className="h-full bg-sand-50 text-sand-900 dark:bg-sand-950 dark:text-sand-100">
         {/* Required by Next.js 16 because the shell reads the current URL. */}

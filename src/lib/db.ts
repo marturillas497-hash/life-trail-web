@@ -1,12 +1,13 @@
 import Dexie, { type EntityTable } from "dexie";
 import { DEFAULT_TAGS } from "./defaultTags";
-import type { Entry, Movie, MovieLog, Tag } from "./types";
+import type { Entry, Movie, MovieLog, StoredImage, Tag } from "./types";
 
 export const db = new Dexie("life-trail") as Dexie & {
   tags: EntityTable<Tag, "id">;
   entries: EntityTable<Entry, "id">;
   movies: EntityTable<Movie, "id">;
   movieLogs: EntityTable<MovieLog, "id">;
+  images: EntityTable<StoredImage, "id">;
 };
 
 db.version(1).stores({
@@ -39,6 +40,11 @@ db.version(2)
       entries: await tx.table("entries").toArray(),
     };
   });
+
+/* Version 3 adds pictures for entries. No existing data changes. */
+db.version(3).stores({
+  images: "++id, createdAt",
+});
 
 /* Runs once, when the database is first created. */
 db.on("populate", (tx) => {

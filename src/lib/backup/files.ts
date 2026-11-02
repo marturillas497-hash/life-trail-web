@@ -37,7 +37,7 @@ async function markFileBackup(hash: string): Promise<void> {
 /* ---------- Download and share ---------- */
 
 export async function downloadBackup(): Promise<void> {
-  const data = await readCurrentData();
+  const data = await readCurrentData({ withImages: true });
   const json = serializeBackup(buildBackupFile(data));
   const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
 
@@ -60,7 +60,7 @@ export function canShareFiles(): boolean {
 
 /* Returns false if the person closed the share sheet without sharing. */
 export async function shareBackup(): Promise<boolean> {
-  const data = await readCurrentData();
+  const data = await readCurrentData({ withImages: true });
   const json = serializeBackup(buildBackupFile(data));
   const file = new File([json], backupFileName(new Date(), true), { type: "application/json" });
   try {
@@ -156,7 +156,7 @@ export async function runFolderBackup(force = false): Promise<void> {
   try {
     if ((await handle.queryPermission({ mode: "readwrite" })) !== "granted") return;
 
-    const data = await readCurrentData();
+    const data = await readCurrentData({ withImages: true });
     if (!hasContent(data)) return;
 
     const hash = hashData(data);

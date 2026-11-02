@@ -8,6 +8,7 @@ import { entryPath } from "@/lib/paths";
 import { createEntry, updateEntry } from "@/lib/entries";
 import { useActiveTags, useTagMap } from "@/lib/hooks";
 import type { Entry, Tag } from "@/lib/types";
+import { MarkdownEditor } from "./markdown/MarkdownEditor";
 import { TagChip } from "./TagChip";
 import { TagEditorDialog } from "./TagEditorDialog";
 import { btnPrimary, inputClass } from "./ui";
@@ -144,13 +145,11 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
           className={inputClass}
         />
 
-        <textarea
+        <MarkdownEditor
           value={body}
-          onChange={(event) => setBody(event.target.value)}
+          onChange={setBody}
           placeholder="What happened today?"
-          aria-label="Entry text"
-          rows={12}
-          className={`${inputClass} min-h-64 resize-y`}
+          label="Entry text"
         />
 
         {error && <p className="text-sm text-red-600">{error}</p>}

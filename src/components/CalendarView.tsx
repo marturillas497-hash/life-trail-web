@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { plainText } from "@/lib/markdown";
 import { useMemo, useState } from "react";
 import {
   groupByDate,
@@ -184,7 +185,7 @@ export function CalendarView() {
                       {entry.title && <div className="font-medium">{entry.title}</div>}
                       {entry.body && (
                         <p className="mt-0.5 line-clamp-3 text-sm text-sand-600 dark:text-sand-400">
-                          {entry.body}
+                          {plainText(entry.body)}
                         </p>
                       )}
                       <div className="mt-2 flex flex-wrap gap-1.5">

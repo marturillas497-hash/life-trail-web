@@ -1,3 +1,4 @@
+import { plainText } from "./markdown";
 import type { Entry } from "./types";
 
 export type Period =
@@ -52,7 +53,7 @@ export type WritingStats = {
 };
 
 export function writingStats(entries: Entry[]): WritingStats {
-  const words = entries.reduce((sum, entry) => sum + wordCount(entry.body), 0);
+  const words = entries.reduce((sum, entry) => sum + wordCount(plainText(entry.body)), 0);
   return {
     entries: entries.length,
     activeDays: new Set(entries.map((entry) => entry.date)).size,

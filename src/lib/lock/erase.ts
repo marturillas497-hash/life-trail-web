@@ -4,11 +4,12 @@ import { backupDb } from "../backup/store";
 
 /*
 Last resort when both the PIN and the recovery code are lost.
-Wipes the journal, the movies, the snapshots and every setting, including the lock,
+Wipes the journal, the movies, the pictures, the snapshots and every setting, including the lock,
 and puts the default tags back. Backup files outside the browser are untouched.
 */
 export async function eraseEverything(): Promise<void> {
-  await db.transaction("rw", db.tags, db.entries, db.movies, db.movieLogs, async () => {
+  await db.transaction("rw", db.tags, db.entries, db.movies, db.movieLogs, db.images, async () => {
+    await db.images.clear();
     await db.entries.clear();
     await db.movies.clear();
     await db.movieLogs.clear();
