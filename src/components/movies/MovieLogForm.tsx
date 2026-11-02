@@ -1,5 +1,6 @@
 "use client";
 
+import { useSaveShortcut } from "@/lib/useSaveShortcut";
 import { useState } from "react";
 import { todayKey } from "@/lib/dates";
 import type { LogInput } from "@/lib/movies";
@@ -37,6 +38,8 @@ export function MovieLogForm({ initial, submitLabel, blocked = false, onSubmit, 
       setSaving(false);
     }
   }
+
+  useSaveShortcut(() => void submit());
 
   return (
     <form

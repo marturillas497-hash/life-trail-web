@@ -1,5 +1,6 @@
 "use client";
 
+import { useSaveShortcut } from "@/lib/useSaveShortcut";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { createTag, MAX_TAG_NAME_LENGTH, updateTag } from "@/lib/tags";
@@ -55,6 +56,10 @@ export function TagEditorDialog({ tag, onClose, onSaved }: Props) {
       setSaving(false);
     }
   }
+
+  useSaveShortcut(() => {
+    if (!saving && name.trim()) void save();
+  });
 
   return (
     <div

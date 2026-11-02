@@ -8,6 +8,7 @@ import { deleteEntry } from "@/lib/entries";
 import { editEntryPath } from "@/lib/paths";
 import { useEntry, useTagMap } from "@/lib/hooks";
 import type { Tag } from "@/lib/types";
+import { BackLink } from "./BackLink";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { MarkdownView } from "./markdown/MarkdownView";
 import { TagChip } from "./TagChip";
@@ -52,9 +53,9 @@ export function EntryDetail({ id }: { id: number }) {
   return (
     <article className="mx-auto max-w-2xl p-4 lg:p-8">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <Link href="/journal/" className="text-sm text-brand-600 lg:hidden">
-          &larr; Journal
-        </Link>
+        <BackLink href="/journal/" className="lg:hidden">
+          Journal
+        </BackLink>
         <div className="ml-auto flex gap-2">
           <Link href={editEntryPath(id)} className={btnSecondary}>
             Edit

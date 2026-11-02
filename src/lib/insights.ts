@@ -148,3 +148,43 @@ export function yearPixels(entries: Entry[], year: number): Map<string, Pixel> {
   }
   return pixels;
 }
+
+export type TagShare = {
+  tagId: number;
+  count: number;
+  /* 0 to 1, out of every tag use in the period, so the shares add up to 1. */
+  share: number;
+  /* Uses in the period before, or null when there is nothing to compare with. */
+  before: number | null;
+};
+
+/* How much of the period each tag takes up, and how that compares with the period before. */
+export function tagShares(entries: Entry[], previous: Entry[] | null): TagShare[] {
+  const counts = tagCounts(entries);
+  const total = counts.reduce((sum, item) => sum + item.count, 0);
+  const earlier = previous ? new Map(tagCounts(previous).map((item) => [item.tagId, item.count])) : null;
+  return counts.map(({ tagId, count }) => ({
+    tagId,
+    count,
+    share: total === 0 ? 0 : count / total,
+    before: earlier ? (earlier.get(tagId) ?? 0) : null,
+  }));
+}
+
+export type WeekdayMood = { weekday: number; entries: number; topTagId: number | null };
+
+function weekdayOf(key: string): number {
+  const [year, month, day] = key.split("-").map(Number);
+  return new Date(year, month - 1, day).getDay();
+}
+
+/* The feeling you write about most on each day of the week. weekStart is 0 for Sunday, 1 for Monday. */
+export function weekdayMoods(entries: Entry[], weekStart: number): WeekdayMood[] {
+  const buckets: Entry[][] = Array.from({ length: 7 }, () => []);
+  for (const entry of entries) buckets[weekdayOf(entry.date)].push(entry);
+  return Array.from({ length: 7 }, (_, i) => {
+    const weekday = (weekStart + i) % 7;
+    const list = buckets[weekday];
+    return { weekday, entries: list.length, topTagId: tagCounts(list)[0]?.tagId ?? null };
+  });
+}

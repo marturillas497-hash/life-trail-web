@@ -2,13 +2,14 @@
 
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
-import { EditorState } from "@codemirror/state";
+import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView, keymap, placeholder as placeholderExtension } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
 import { IMAGE_ACCEPT, addImage } from "@/lib/images";
 import {
   insertImageMarkdown,
   insertLink,
+  modeExtensions,
   previewExtensions,
   toggleLinePrefix,
   toggleWrap,
@@ -40,6 +41,8 @@ export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
   const onChangeRef = useRef(onChange);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [reading, setReading] = useState(false);
+  const mode = useRef(new Compartment());
 
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -83,8 +86,10 @@ export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
             { key: "Mod-i", run: (v) => toggleWrap(v, "*") },
             { key: "Mod-k", run: (v) => insertLink(v) },
           ]),
-          ...previewExtensions(true),
-          keymap.of([...defaultKeymap, ...historyKeymap]),
+          mode.current.of(modeExtensions(false)),
+          ...previewExtensions(),
+          /* Ctrl+Enter is taken by link opening and saving, so the default blank line shortcut goes. */
+          keymap.of([...defaultKeymap.filter((binding) => binding.key !== "Mod-Enter"), ...historyKeymap]),
           markdown({ base: markdownLanguage }),
           EditorView.lineWrapping,
           placeholderExtension(placeholder ?? ""),
@@ -129,6 +134,23 @@ export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
     }
   }, [value]);
 
+  /* Switches between writing and reading, like Obsidian. Ctrl+E does the same. */
+  useEffect(() => {
+    viewRef.current?.dispatch({ effects: mode.current.reconfigure(modeExtensions(reading)) });
+    if (reading) (document.activeElement as HTMLElement | null)?.blur();
+  }, [reading]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === "e") {
+        event.preventDefault();
+        setReading((current) => !current);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   function runTool(run: ToolbarButton["run"]) {
     const view = viewRef.current;
     if (!view) return;
@@ -150,9 +172,10 @@ export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
               type="button"
               title={tool.title}
               aria-label={tool.title}
+              disabled={reading}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => runTool(tool.run)}
-              className={`min-w-8 rounded-md px-2 py-1 text-sm text-sand-700 hover:bg-sand-100 dark:text-sand-300 dark:hover:bg-sand-800 ${tool.className ?? ""}`}
+              className={`min-w-8 rounded-md px-2 py-1 text-sm text-sand-700 hover:bg-sand-100 disabled:opacity-40 dark:text-sand-300 dark:hover:bg-sand-800 ${tool.className ?? ""}`}
             >
               {tool.label}
             </button>
@@ -161,12 +184,26 @@ export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
             type="button"
             title="Add a picture"
             aria-label="Add a picture"
-            disabled={busy}
+            disabled={busy || reading}
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => fileInput.current?.click()}
             className="ml-1 rounded-md px-2 py-1 text-sm text-sand-700 hover:bg-sand-100 disabled:opacity-60 dark:text-sand-300 dark:hover:bg-sand-800"
           >
             {busy ? "Adding..." : "🖼 Picture"}
+          </button>
+          <button
+            type="button"
+            title={reading ? "Back to editing (Ctrl+E)" : "Switch to reading view (Ctrl+E)"}
+            aria-pressed={reading}
+            data-testid="reading-toggle"
+            onClick={() => setReading((current) => !current)}
+            className={`ml-auto rounded-md px-2.5 py-1 text-sm font-medium ${
+              reading
+                ? "bg-gold-100 text-sand-900 dark:bg-gold-400/20 dark:text-gold-200"
+                : "text-sand-700 hover:bg-sand-100 dark:text-sand-300 dark:hover:bg-sand-800"
+            }`}
+          >
+            {reading ? "✏️ Edit" : "📖 Read"}
           </button>
           <input
             ref={fileInput}
@@ -184,7 +221,7 @@ export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
         <div ref={host} className="lt-md min-h-64" />
       </div>
       <p className="mt-1.5 text-xs text-sand-500">
-        Markdown works here. Paste or drop pictures, and press Ctrl+Enter on a link to open it.
+        Markdown works here. Paste or drop pictures. Ctrl+Enter opens a link, or saves when you are not on one. Ctrl+E switches to reading.
       </p>
       {notice && (
         <p role="alert" className="mt-1 text-sm text-red-600">

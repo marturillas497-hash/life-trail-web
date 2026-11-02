@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { BackLink } from "@/components/BackLink";
 
 export const metadata = { title: "Backup help | Life Trail" };
 
@@ -18,9 +18,7 @@ export default function HelpPage() {
   return (
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-2xl p-4 lg:p-8">
-        <Link href="/backup/" className="text-sm text-brand-600 underline">
-          &larr; Backup and restore
-        </Link>
+        <BackLink href="/backup/">Backup and restore</BackLink>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight">How your backups work</h1>
 
         <Section title="Where your journal lives">

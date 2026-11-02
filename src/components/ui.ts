@@ -12,3 +12,7 @@ export const inputClass =
 
 export const cardClass =
   "rounded-2xl border border-sand-200 bg-white p-4 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none";
+
+/* The look of a back or cancel link, so it reads as a button and not as plain text. */
+export const btnBack =
+  "inline-flex items-center gap-1.5 rounded-lg border border-sand-300 bg-white px-3 py-1.5 text-sm font-medium text-sand-800 shadow-sm hover:border-brand-300 hover:bg-brand-50 active:bg-brand-100 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100 dark:hover:border-brand-500 dark:hover:bg-sand-700 dark:active:bg-sand-700";

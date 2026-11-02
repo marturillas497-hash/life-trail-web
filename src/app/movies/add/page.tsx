@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { MovieLogForm } from "@/components/movies/MovieLogForm";
+import { BackLink } from "@/components/BackLink";
 import { Poster } from "@/components/movies/Poster";
 import { TmdbAttribution } from "@/components/movies/TmdbAttribution";
 import { btnSecondary, inputClass } from "@/components/ui";
@@ -237,9 +238,7 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl p-4 lg:p-8">
-        <Link href="/movies/" className="text-sm text-brand-600">
-          &larr; Movies
-        </Link>
+        <BackLink href="/movies/">Movies</BackLink>
         <h1 className="mt-2 text-xl font-semibold">{title}</h1>
         <div className="mt-4">{children}</div>
       </div>

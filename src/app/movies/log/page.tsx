@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { MovieLogForm } from "@/components/movies/MovieLogForm";
-import { Poster } from "@/components/movies/Poster";
+import { EnlargeablePoster } from "@/components/movies/EnlargeablePoster";
+import { BackLink } from "@/components/BackLink";
 import { StarDisplay } from "@/components/movies/StarRating";
 import { TmdbAttribution } from "@/components/movies/TmdbAttribution";
 import { btnPrimary, btnSecondary } from "@/components/ui";
@@ -51,9 +52,7 @@ export default function MovieLogPage() {
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-2xl p-4 lg:p-8">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <Link href="/movies/" className="text-sm text-brand-600">
-            &larr; Movies
-          </Link>
+          <BackLink href="/movies/">Movies</BackLink>
           {!editing && (
             <div className="flex gap-2">
               <button type="button" className={btnSecondary} onClick={() => setEditing(true)}>
@@ -67,7 +66,7 @@ export default function MovieLogPage() {
         </div>
 
         <div className="flex gap-4">
-          <Poster
+          <EnlargeablePoster
             title={movie.title}
             posterData={movie.posterData}
             posterPath={movie.posterPath}

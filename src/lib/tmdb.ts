@@ -98,7 +98,7 @@ export async function checkCredential(credential: TmdbCredential): Promise<void>
   await request(credential, "/configuration", {});
 }
 
-export const posterUrl = (path: string, size: "w92" | "w185" | "w342" = "w185") =>
+export const posterUrl = (path: string, size: "w92" | "w185" | "w342" | "w780" = "w185") =>
   `${TMDB_IMAGES}${size}${path}`;
 
 const MAX_POSTER_BYTES = 400_000;

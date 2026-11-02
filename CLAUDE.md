@@ -180,6 +180,12 @@ Done and tested in a real browser: theme toggle (class based dark mode, `html.da
 - Dependencies added by the person with `pnpm add`: @codemirror/state, view, commands, language, lang-markdown. Vercel installs with `--frozen-lockfile`, so `pnpm-lock.yaml` must be committed with them. Do not import `@lezer/common` directly, pnpm does not expose it.
 - Pictures live in the Dexie table `images` (database version 3) as `ArrayBuffer`, shrunk to 1600 px and stored as WebP (GIFs untouched, max 4 MB). Entry text refers to them as `![name](image:ID)`. Nothing deletes a picture automatically. The Backup page has a Pictures card with Remove unused.
 - Backup file version 3 adds `images` with base64 data. `BackupData.images` is optional: missing means "leave the pictures alone" on restore, present means replace. Daily and manual snapshots leave pictures out to stay small. The "before a restore" snapshot includes them so a restore can be undone completely. The hash only covers pictures when there are some. Erase clears them.
+- Reading view: the facet `readingMode` in `livePreview.ts` switches the editor between writing and reading (Read/Edit button, Ctrl+E). `MarkdownView` is the same thing locked to reading.
+- Ctrl+Enter: in the entry editor it opens the link under the cursor, and otherwise falls through to `useSaveShortcut` which saves (entry form, movie viewing form, tag dialog). The default CodeMirror Mod-Enter blank line binding is filtered out on purpose. Ctrl+S still saves entries.
+- Movie posters open in `Lightbox` through `EnlargeablePoster` (a sharper w780 copy loads from TMDB when online). `MovieCard` uses a stretched link so the poster can be its own button.
+- Back and Cancel links use `BackLink` and `btnBack` so they look like buttons.
+- Insights: the old Emotions bars were replaced by `FeelingsCard` (shares add up to 100% with change against the previous month or year), `MoodCalendar` (month view) and `WeekCard` (feeling per weekday).
+- `/guide/` is the How to use page, linked from the sidebar bottom and Settings. `/help/` is still the backup explainer.
 - Journal list, calendar and Year in Pixels previews and word counts use `plainText()` from `src/lib/markdown.ts`.
 - The head script that sets the theme and sidebar is two IIFEs joined with `;`. Without the `;` the second one never ran (found by the browser test).
 

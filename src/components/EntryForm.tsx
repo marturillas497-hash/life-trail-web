@@ -1,13 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { formatFullDate, todayKey } from "@/lib/dates";
 import { entryPath } from "@/lib/paths";
 import { createEntry, updateEntry } from "@/lib/entries";
 import { useActiveTags, useTagMap } from "@/lib/hooks";
 import type { Entry, Tag } from "@/lib/types";
+import { useSaveShortcut } from "@/lib/useSaveShortcut";
+import { BackLink } from "./BackLink";
 import { MarkdownEditor } from "./markdown/MarkdownEditor";
 import { TagChip } from "./TagChip";
 import { TagEditorDialog } from "./TagEditorDialog";
@@ -69,16 +70,7 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
     }
   }, [canSave, title, body, tagIds, initial, createDate, router]);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
-        event.preventDefault();
-        void save();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [save]);
+  useSaveShortcut(() => void save(), ["s"]);
 
   function toggleTag(id: number) {
     setTagIds((current) =>
@@ -89,16 +81,14 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
   return (
     <div>
       <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-sand-200 bg-sand-50/90 px-4 py-3 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
-        <Link href={backHref} className="text-sm text-sand-600 hover:underline dark:text-sand-400">
-          Cancel
-        </Link>
+        <BackLink href={backHref}>Cancel</BackLink>
         <h1 className="font-semibold">{initial ? "Edit entry" : "New entry"}</h1>
         <button
           type="button"
           className={btnPrimary}
           disabled={!canSave}
           onClick={() => void save()}
-          title="Save (Ctrl+S)"
+          title="Save (Ctrl+Enter)"
         >
           Save
         </button>

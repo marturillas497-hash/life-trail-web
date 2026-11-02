@@ -83,6 +83,21 @@ function Shell({ children }: { children: ReactNode }) {
         <span role="status" className="sr-only">
           {quickBackup.feedback?.long}
         </span>
+        <Link
+          href="/guide/"
+          title={collapsed ? "How to use" : undefined}
+          aria-current={isActive("/guide/") ? "page" : undefined}
+          className={`mt-1 flex items-center overflow-hidden whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-600 ${
+            isActive("/guide/")
+              ? "bg-gold-100 text-sand-900 dark:bg-gold-400/15 dark:text-gold-200"
+              : "text-sand-700 hover:bg-sand-200 dark:text-sand-300 dark:hover:bg-sand-800"
+          }`}
+        >
+          <span aria-hidden="true" className="w-6 shrink-0 text-center">
+            ❓
+          </span>
+          <span className="ml-3 transition-opacity duration-200 collapsed:opacity-0">How to use</span>
+        </Link>
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}

@@ -1,5 +1,5 @@
 import { syntaxTree } from "@codemirror/language";
-import { EditorState, type Extension, type Range } from "@codemirror/state";
+import { EditorState, Facet, type Extension, type Range } from "@codemirror/state";
 import {
   Decoration,
   EditorView,
@@ -11,6 +11,11 @@ import {
 } from "@codemirror/view";
 import { resolveImageSrc } from "@/lib/images";
 import { safeUrl } from "@/lib/markdown";
+
+/* True in the reading view: nothing is editable and every Markdown symbol stays hidden. */
+export const readingMode = Facet.define<boolean, boolean>({
+  combine: (values) => values.some(Boolean),
+});
 
 /* The parser library is not a direct dependency, so its node type is taken from the tree. */
 type SyntaxNode = ReturnType<typeof syntaxTree>["topNode"];
@@ -139,8 +144,10 @@ type Built = { visible: DecorationSet; atomic: DecorationSet };
 
 const IMAGE_SOURCE = /^!\[([^\]\n]*)\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)$/;
 
-function build(view: EditorView, interactive: boolean): Built {
+function build(view: EditorView): Built {
   const { state } = view;
+  const reading = state.facet(readingMode);
+  const interactive = !reading;
   const doc = state.doc;
   const visible: Range<Decoration>[] = [];
   const atomic: Range<Decoration>[] = [];
@@ -241,7 +248,7 @@ function build(view: EditorView, interactive: boolean): Built {
           const match = IMAGE_SOURCE.exec(doc.sliceString(node.from, node.to));
           if (match && !touches(node.from, node.to)) {
             replaceWith(
-              Decoration.replace({ widget: new ImageWidget(match[2], match[1], !interactive) }),
+              Decoration.replace({ widget: new ImageWidget(match[2], match[1], reading) }),
               node.from,
               node.to,
             );
@@ -312,12 +319,12 @@ function build(view: EditorView, interactive: boolean): Built {
   return { visible: Decoration.set(visible, true), atomic: Decoration.set(atomic, true) };
 }
 
-function livePreviewPlugin(interactive: boolean): Extension {
+function livePreviewPlugin(): Extension {
   const plugin = ViewPlugin.fromClass(
     class {
       built: Built;
       constructor(view: EditorView) {
-        this.built = build(view, interactive);
+        this.built = build(view);
       }
       update(update: ViewUpdate) {
         if (
@@ -325,9 +332,10 @@ function livePreviewPlugin(interactive: boolean): Extension {
           update.viewportChanged ||
           update.selectionSet ||
           update.focusChanged ||
+          update.startState.facet(readingMode) !== update.state.facet(readingMode) ||
           syntaxTree(update.startState) !== syntaxTree(update.state)
         ) {
-          this.built = build(update.view, interactive);
+          this.built = build(update.view);
         }
       }
     },
@@ -424,10 +432,10 @@ export function insertImageMarkdown(view: EditorView, markdown: string, at?: num
 }
 
 function linkKeymap() {
+  /* Not on a link: do nothing here, so the same shortcut can save the entry instead. */
   const open = (view: EditorView) => {
     const url = urlAtPosition(view.state, view.state.selection.main.head);
-    if (url) openLink(url);
-    return true;
+    return url ? openLink(url) : false;
   };
   return keymap.of([
     { key: "Mod-Enter", run: open },
@@ -436,10 +444,10 @@ function linkKeymap() {
 }
 
 /* Click on a link: Ctrl or Cmd while editing, a plain click in the read only view. */
-function linkClicks(interactive: boolean): Extension {
+function linkClicks(): Extension {
   return EditorView.domEventHandlers({
-    mousedown(event) {
-      if (!interactive) return false;
+    mousedown(event, view) {
+      if (view.state.facet(readingMode)) return false;
       if (!(event.ctrlKey || event.metaKey) || event.button !== 0) return false;
       const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-url]");
       const url = target?.dataset.url;
@@ -448,8 +456,8 @@ function linkClicks(interactive: boolean): Extension {
       openLink(url);
       return true;
     },
-    click(event) {
-      if (interactive) return false;
+    click(event, view) {
+      if (!view.state.facet(readingMode)) return false;
       const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-url]");
       const url = target?.dataset.url;
       if (!url) return false;
@@ -460,6 +468,11 @@ function linkClicks(interactive: boolean): Extension {
   });
 }
 
-export function previewExtensions(interactive: boolean): Extension[] {
-  return [livePreviewPlugin(interactive), linkClicks(interactive), ...(interactive ? [linkKeymap()] : [])];
+export function previewExtensions(): Extension[] {
+  return [livePreviewPlugin(), linkClicks(), linkKeymap()];
+}
+
+/* The extensions that switch the editor between writing and reading. */
+export function modeExtensions(reading: boolean): Extension[] {
+  return [readingMode.of(reading), EditorView.editable.of(!reading), EditorState.readOnly.of(reading)];
 }

@@ -4,7 +4,7 @@ import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { useEffect, useRef } from "react";
-import { previewExtensions } from "./livePreview";
+import { modeExtensions, previewExtensions } from "./livePreview";
 
 /* Shows saved entry text exactly as the editor renders it, with nothing editable. */
 export function MarkdownView({ value }: { value: string }) {
@@ -17,9 +17,8 @@ export function MarkdownView({ value }: { value: string }) {
       state: EditorState.create({
         doc: value,
         extensions: [
-          EditorState.readOnly.of(true),
-          EditorView.editable.of(false),
-          ...previewExtensions(false),
+          ...modeExtensions(true),
+          ...previewExtensions(),
           markdown({ base: markdownLanguage }),
           EditorView.lineWrapping,
         ],
