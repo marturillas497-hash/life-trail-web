@@ -107,3 +107,43 @@ export function matchesQuery(entry: Entry, query: string, tagNames: string[]): b
   const haystack = `${entry.title}\n${entry.body}\n${tagNames.join(" ")}`.toLowerCase();
   return words.every((word) => haystack.includes(word));
 }
+
+/*
+The tag that colors a day in Year in Pixels: the one used by the most entries that day.
+Ties go to the tag selected first, reading the day's entries oldest first.
+*/
+export function dayTopTag(dayEntries: Entry[]): number | null {
+  const counts = new Map<number, number>();
+  const ordered = [...dayEntries].sort((a, b) => a.createdAt - b.createdAt);
+  for (const entry of ordered) {
+    for (const id of new Set(entry.tagIds)) counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  let best: number | null = null;
+  let bestCount = 0;
+  /* Map keeps insertion order, which is first-selected order, so only a strictly higher count wins. */
+  for (const [id, count] of counts) {
+    if (count > bestCount) {
+      best = id;
+      bestCount = count;
+    }
+  }
+  return best;
+}
+
+export type Pixel = { date: string; entries: Entry[]; topTagId: number | null };
+
+/* Entries grouped by day for one year, keyed by YYYY-MM-DD. Days without entries are absent. */
+export function yearPixels(entries: Entry[], year: number): Map<string, Pixel> {
+  const byDate = new Map<string, Entry[]>();
+  for (const entry of entries) {
+    if (!entry.date.startsWith(`${year}-`)) continue;
+    const list = byDate.get(entry.date);
+    if (list) list.push(entry);
+    else byDate.set(entry.date, [entry]);
+  }
+  const pixels = new Map<string, Pixel>();
+  for (const [date, list] of byDate) {
+    pixels.set(date, { date, entries: list, topTagId: dayTopTag(list) });
+  }
+  return pixels;
+}

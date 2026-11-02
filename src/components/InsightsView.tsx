@@ -13,6 +13,7 @@ import {
   type Period,
 } from "@/lib/insights";
 import { btnSecondary, cardClass } from "./ui";
+import { YearInPixels } from "./YearInPixels";
 
 type Kind = Period["kind"];
 
@@ -118,6 +119,10 @@ export function InsightsView() {
               <Stat label="Words" value={stats.words.toLocaleString()} />
               <Stat label="Words per entry" value={stats.averageWords} />
             </section>
+
+            {period.kind === "year" && (
+              <YearInPixels year={period.year} entries={entries} tagMap={tagMap} today={today} />
+            )}
 
             <section className={cardClass}>
               <h2 className="font-semibold">Emotions</h2>
