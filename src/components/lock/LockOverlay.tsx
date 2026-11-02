@@ -67,9 +67,8 @@ export function LockOverlay() {
     <div className={shell} role="dialog" aria-modal="true" aria-label="App locked">
       <div className="w-full max-w-sm space-y-5">
         <div className="text-center">
-          <div className="text-4xl" aria-hidden="true">
-            🔒
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-mark.png" alt="" width={96} height={96} className="mx-auto h-24 w-24" />
           <h1 className="mt-2 text-xl font-semibold">Life Trail is locked</h1>
         </div>
 

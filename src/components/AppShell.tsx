@@ -31,7 +31,11 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-dvh" inert={status === "loading" || status === "locked"}>
       <aside className="hidden w-60 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50 p-4 lg:flex dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="px-2 py-3 text-lg font-semibold tracking-tight">Life Trail</div>
+        <div className="flex items-center gap-2.5 px-2 py-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-mark.png" alt="" width={36} height={36} className="h-9 w-9" />
+          <span className="text-lg font-semibold tracking-tight">Life Trail</span>
+        </div>
         <nav className="mt-4 flex flex-col gap-1">
           {NAV.map((item) => (
             <Link
