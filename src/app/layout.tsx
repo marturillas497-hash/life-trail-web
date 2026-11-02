@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense, type ReactNode } from "react";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
 export const metadata: Metadata = {
   title: "Life Trail",
@@ -21,7 +22,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="h-full bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
         {/* Required by Next.js 16 because the shell reads the current URL. */}
         <Suspense fallback={<p className="p-6 text-sm text-zinc-500">Loading...</p>}>

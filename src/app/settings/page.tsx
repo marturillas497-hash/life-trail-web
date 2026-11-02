@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AppLockCard } from "@/components/lock/AppLockCard";
 import { TmdbKeyCard } from "@/components/movies/TmdbKeyCard";
 import { InstallCard } from "@/components/pwa/InstallCard";
+import { ThemeCard } from "@/components/ThemeCard";
 import { cardClass } from "@/components/ui";
 import { useIsClient } from "@/lib/hooks";
 
@@ -16,6 +17,7 @@ export default function SettingsPage() {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-8">
         <h1 className="text-xl font-semibold">Settings</h1>
+        <ThemeCard />
         <InstallCard />
         <AppLockCard />
         <TmdbKeyCard />
