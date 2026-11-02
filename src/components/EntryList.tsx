@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { formatShortDate } from "@/lib/dates";
+import { matchesQuery } from "@/lib/insights";
 import { entryPath, newEntryPath, normalizePath, parseId } from "@/lib/paths";
 import { useEntries, useTagMap } from "@/lib/hooks";
 import type { Tag } from "@/lib/types";
 import { TagChip } from "./TagChip";
-import { btnPrimary } from "./ui";
+import { btnPrimary, inputClass } from "./ui";
 
 export function EntryList() {
   const entries = useEntries();
@@ -15,6 +17,19 @@ export function EntryList() {
   const pathname = normalizePath(usePathname());
   const openId = parseId(useSearchParams().get("id"));
   const viewingEntry = pathname.startsWith("/journal/entry");
+  const [query, setQuery] = useState("");
+
+  const visible = useMemo(() => {
+    if (!entries || !tagMap) return undefined;
+    return entries.filter((entry) =>
+      matchesQuery(
+        entry,
+        query,
+        entry.tagIds.map((id) => tagMap.get(id)?.name ?? ""),
+      ),
+    );
+  }, [entries, tagMap, query]);
+  const searching = query.trim() !== "";
 
   return (
     <>
@@ -25,8 +40,26 @@ export function EntryList() {
         </Link>
       </header>
 
+      {entries && entries.length > 0 && (
+        <div className="border-b border-zinc-200 px-4 py-2 dark:border-zinc-800">
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search entries and tags"
+            aria-label="Search entries"
+            className={inputClass}
+          />
+          {searching && visible && (
+            <p className="mt-1 text-xs text-zinc-500" aria-live="polite">
+              {visible.length} {visible.length === 1 ? "match" : "matches"}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="min-h-0 flex-1 overflow-y-auto">
-        {!entries || !tagMap ? (
+        {!visible || !entries || !tagMap ? (
           <p className="p-6 text-sm text-zinc-500">Loading...</p>
         ) : entries.length === 0 ? (
           <p className="p-6 text-center text-sm text-zinc-500">
@@ -34,9 +67,11 @@ export function EntryList() {
             <br />
             Tap New entry to write your first one.
           </p>
+        ) : visible.length === 0 ? (
+          <p className="p-6 text-center text-sm text-zinc-500">No entries match your search.</p>
         ) : (
           <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
-            {entries.map((entry) => {
+            {visible.map((entry) => {
               const selected = viewingEntry && openId === entry.id;
               const tags = entry.tagIds
                 .map((id) => tagMap.get(id))

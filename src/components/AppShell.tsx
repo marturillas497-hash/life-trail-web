@@ -15,6 +15,7 @@ const NAV: { href: string; label: string; icon: string; mobile?: boolean }[] = [
   { href: "/journal/", label: "Journal", icon: "📓" },
   { href: "/calendar/", label: "Calendar", icon: "🗓️" },
   { href: "/movies/", label: "Movies", icon: "🎬" },
+  { href: "/insights/", label: "Insights", icon: "📊" },
   { href: "/tags/", label: "Tags", icon: "🏷️" },
   { href: "/backup/", label: "Backup", icon: "🛡️", mobile: false },
   { href: "/settings/", label: "Settings", icon: "⚙️" },
