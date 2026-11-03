@@ -14,11 +14,12 @@ import { useQuickBackup } from "./backup/useQuickBackup";
 
 /* Add an item here and it shows up in the sidebar and the phone tab bar. */
 const NAV: { href: string; label: string; icon: string; mobile?: boolean }[] = [
+  { href: "/", label: "Home", icon: "🏠" },
   { href: "/journal/", label: "Journal", icon: "📓" },
   { href: "/calendar/", label: "Calendar", icon: "🗓️" },
-  { href: "/movies/", label: "Movies", icon: "🎬" },
+  { href: "/movies/", label: "Movies/Shows", icon: "🎬" },
   { href: "/insights/", label: "Insights", icon: "📊" },
-  { href: "/tags/", label: "Tags", icon: "🏷️" },
+  { href: "/tags/", label: "Tags", icon: "🏷️", mobile: false },
   { href: "/backup/", label: "Backup", icon: "🛡️", mobile: false },
   { href: "/settings/", label: "Settings", icon: "⚙️" },
 ];
@@ -36,13 +37,17 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-dvh" inert={status === "loading" || status === "locked"}>
       <aside className="hidden w-60 shrink-0 flex-col overflow-hidden border-r border-sand-200 bg-sand-50 p-3 transition-[width] duration-300 ease-in-out motion-reduce:transition-none lg:flex collapsed:w-[4.5rem] dark:border-sand-800 dark:bg-sand-900">
-        <div className="flex items-center gap-2.5 whitespace-nowrap px-1.5 py-3">
+        <Link
+          href="/"
+          aria-label="Life Trail home"
+          className="flex items-center gap-2.5 whitespace-nowrap rounded-lg px-1.5 py-3 focus-visible:outline-2 focus-visible:outline-brand-600"
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-mark.png" alt="" width={36} height={36} className="h-9 w-9 shrink-0" />
           <span className="font-display text-xl font-semibold tracking-tight transition-opacity duration-200 collapsed:opacity-0">
             Life Trail
           </span>
-        </div>
+        </Link>
         <nav className="mt-4 flex flex-col gap-1">
           {NAV.map((item) => (
             <Link
@@ -128,7 +133,7 @@ function Shell({ children }: { children: ReactNode }) {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive(item.href) ? "page" : undefined}
-                className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs ${
+                className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-center text-[11px] leading-tight ${
                   isActive(item.href)
                     ? "font-semibold text-brand-600 dark:text-brand-400"
                     : "text-sand-500"

@@ -1,10 +1,14 @@
+import type { MediaKind } from "./types";
+
 export const TMDB_API = "https://api.themoviedb.org/3";
 export const TMDB_IMAGES = "https://image.tmdb.org/t/p/";
 
 /* A v4 "API Read Access Token" is sent as a header, a v3 "API Key" as a query value. */
 export type TmdbCredential = { kind: "token" | "key"; value: string };
 
+/* A search result, either a film or a show. */
 export type TmdbMovie = {
+  kind: MediaKind;
   tmdbId: number;
   title: string;
   year: number | null;
@@ -57,35 +61,40 @@ async function request(
 
 type RawResult = {
   id?: unknown;
+  media_type?: unknown;
   title?: unknown;
+  name?: unknown;
   release_date?: unknown;
+  first_air_date?: unknown;
   overview?: unknown;
   poster_path?: unknown;
 };
 
-export async function searchMovies(
+/* One search over films and shows. People that TMDB also returns are skipped. */
+export async function searchTitles(
   credential: TmdbCredential,
   query: string,
   signal?: AbortSignal,
 ): Promise<TmdbMovie[]> {
   const body = (await request(
     credential,
-    "/search/movie",
+    "/search/multi",
     { query, include_adult: "false", language: "en-US", page: "1" },
     signal,
   )) as { results?: RawResult[] };
 
   const results: TmdbMovie[] = [];
   for (const raw of body.results ?? []) {
-    if (typeof raw.id !== "number" || typeof raw.title !== "string" || !raw.title.trim()) continue;
-    const year =
-      typeof raw.release_date === "string" && /^\d{4}/.test(raw.release_date)
-        ? Number(raw.release_date.slice(0, 4))
-        : null;
+    const kind: MediaKind | null = raw.media_type === "movie" ? "movie" : raw.media_type === "tv" ? "tv" : null;
+    if (!kind || typeof raw.id !== "number") continue;
+    const title = kind === "movie" ? raw.title : raw.name;
+    if (typeof title !== "string" || !title.trim()) continue;
+    const date = kind === "movie" ? raw.release_date : raw.first_air_date;
     results.push({
+      kind,
       tmdbId: raw.id,
-      title: raw.title.trim(),
-      year,
+      title: title.trim(),
+      year: typeof date === "string" && /^\d{4}/.test(date) ? Number(date.slice(0, 4)) : null,
       overview: typeof raw.overview === "string" ? raw.overview : "",
       posterPath: typeof raw.poster_path === "string" ? raw.poster_path : null,
     });

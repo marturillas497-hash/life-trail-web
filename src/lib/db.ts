@@ -46,6 +46,15 @@ db.version(3).stores({
   images: "++id, createdAt",
 });
 
+/*
+Version 4 adds TV shows. TMDB numbers movies and shows separately, so the same id can mean
+both a film and a show. The unique index is therefore on the kind and the id together.
+Every movie saved before this version is a film.
+*/
+db.version(4)
+  .stores({ movies: "++id, &[kind+tmdbId], title" })
+  .upgrade((tx) => tx.table("movies").toCollection().modify({ kind: "movie" }));
+
 /* Runs once, when the database is first created. */
 db.on("populate", (tx) => {
   const now = Date.now();

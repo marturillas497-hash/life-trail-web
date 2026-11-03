@@ -2,8 +2,8 @@ import { isValidKey } from "../dates";
 import type { Entry, Movie, MovieLog, Tag } from "../types";
 
 export const BACKUP_APP = "life-trail";
-/* Version 2 added movies and version 3 added pictures. Older files are still accepted. */
-export const BACKUP_VERSION = 3;
+/* Version 2 added movies, version 3 pictures and version 4 TV shows. Older files are still accepted. */
+export const BACKUP_VERSION = 4;
 
 /* A picture inside a backup file. The bytes are stored as base64 text. */
 export type BackupImage = {
@@ -37,7 +37,8 @@ export function normalizeData(data: Partial<BackupData>): BackupData {
   return {
     tags: data.tags ?? [],
     entries: data.entries ?? [],
-    movies: data.movies ?? [],
+    /* Copies made before shows existed have no kind, and everything in them is a film. */
+    movies: (data.movies ?? []).map((m) => ({ ...m, kind: m.kind ?? "movie" })),
     movieLogs: data.movieLogs ?? [],
     ...(data.images ? { images: data.images } : {}),
   };
@@ -84,7 +85,11 @@ export function hashData(data: BackupData): string {
   const hashed: unknown[] = [
     data.tags.map((t) => [t.id, t.name, t.emoji, t.color, t.isArchived, t.createdAt]),
     data.entries.map((e) => [e.id, e.date, e.title, e.body, e.tagIds, e.createdAt, e.updatedAt]),
-    data.movies.map((m) => [m.id, m.tmdbId, m.title, m.year, m.overview, m.posterPath, m.posterData, m.createdAt, m.fetchedAt]),
+    data.movies.map((m) => {
+      const fields = [m.id, m.tmdbId, m.title, m.year, m.overview, m.posterPath, m.posterData, m.createdAt, m.fetchedAt];
+      /* Only shows add a field, so journals with only films keep their old fingerprint. */
+      return m.kind === "tv" ? [...fields, m.kind] : fields;
+    }),
     data.movieLogs.map((l) => [l.id, l.movieId, l.rating, l.opinion, l.watchedDate, l.createdAt, l.updatedAt]),
   ];
   /* Only added when there are pictures, so journals without any keep their old fingerprint. */
@@ -185,6 +190,9 @@ function parseMovie(raw: unknown, index: number): Movie {
   const where = `movie number ${index + 1}`;
   if (!isObject(raw)) throw new Error(`The backup is damaged: ${where} is not valid.`);
   const { id, tmdbId, title, year, overview, posterPath, posterData, createdAt, fetchedAt } = raw;
+  /* Files from before shows existed have no kind. */
+  const kind = raw.kind === undefined ? "movie" : raw.kind;
+  if (kind !== "movie" && kind !== "tv") throw new Error(`The backup is damaged: ${where} has a bad type.`);
   if (!isInt(id) || id < 1) throw new Error(`The backup is damaged: ${where} has a bad id.`);
   if (!isNullableInt(tmdbId)) throw new Error(`The backup is damaged: ${where} has a bad TMDB id.`);
   if (!isStr(title) || !title.trim()) throw new Error(`The backup is damaged: ${where} has no title.`);
@@ -194,7 +202,7 @@ function parseMovie(raw: unknown, index: number): Movie {
   if (posterData !== null && !isStr(posterData)) throw new Error(`The backup is damaged: ${where} has a bad poster.`);
   if (!isNum(createdAt)) throw new Error(`The backup is damaged: ${where} has a bad date.`);
   if (fetchedAt !== null && !isNum(fetchedAt)) throw new Error(`The backup is damaged: ${where} has a bad date.`);
-  return { id, tmdbId, title, year, overview, posterPath, posterData, createdAt, fetchedAt };
+  return { id, kind, tmdbId, title, year, overview, posterPath, posterData, createdAt, fetchedAt };
 }
 
 function parseMovieLog(raw: unknown, index: number): MovieLog {
@@ -275,6 +283,8 @@ export function parseBackup(text: string): BackupFile {
 
   const movieIdSet = new Set(movies.map((movie) => movie.id));
   if (movieIdSet.size !== movies.length) throw new Error("The backup is damaged: duplicate movie ids.");
+  const known = movies.filter((m) => m.tmdbId !== null).map((m) => `${m.kind}:${m.tmdbId}`);
+  if (new Set(known).size !== known.length) throw new Error("The backup is damaged: duplicate TMDB ids.");
   if (new Set(movieLogs.map((log) => log.id)).size !== movieLogs.length) {
     throw new Error("The backup is damaged: duplicate movie log ids.");
   }

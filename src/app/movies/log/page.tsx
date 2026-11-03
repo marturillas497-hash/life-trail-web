@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { MovieLogForm } from "@/components/movies/MovieLogForm";
+import { KindBadge } from "@/components/movies/KindBadge";
 import { EnlargeablePoster } from "@/components/movies/EnlargeablePoster";
 import { BackLink } from "@/components/BackLink";
 import { StarDisplay } from "@/components/movies/StarRating";
@@ -52,7 +53,7 @@ export default function MovieLogPage() {
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-2xl p-4 lg:p-8">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <BackLink href="/movies/">Movies</BackLink>
+          <BackLink href="/movies/">Movies/Shows</BackLink>
           {!editing && (
             <div className="flex gap-2">
               <button type="button" className={btnSecondary} onClick={() => setEditing(true)}>
@@ -74,6 +75,7 @@ export default function MovieLogPage() {
             className="w-28 sm:w-36"
           />
           <div className="min-w-0">
+            <KindBadge kind={movie.kind} className="mb-1" />
             <h1 className="text-2xl font-semibold tracking-tight">
               {movie.title}
               {movie.year && <span className="font-normal text-sand-500"> ({movie.year})</span>}
@@ -115,7 +117,7 @@ export default function MovieLogPage() {
 
         {!editing && (
           <div className="mt-8 border-t border-sand-200 pt-6 dark:border-sand-800">
-            <h2 className="text-sm font-semibold">Other viewings of this movie</h2>
+            <h2 className="text-sm font-semibold">Other viewings of this {movie.kind === "tv" ? "show" : "movie"}</h2>
             {others.length === 0 ? (
               <p className="mt-2 text-sm text-sand-500">This is the only one so far.</p>
             ) : (

@@ -21,8 +21,12 @@ export type Entry = {
   updatedAt: number;
 };
 
+/* Whether a title is a film or a TV show. TMDB uses "tv" for shows. */
+export type MediaKind = "movie" | "tv";
+
 export type Movie = {
   id: number;
+  kind: MediaKind;
   /* null for movies added by hand. */
   tmdbId: number | null;
   title: string;

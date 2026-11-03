@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Life Trail",
     short_name: "Life Trail",
     description: "A private, offline-first journal.",
-    start_url: "/journal/",
+    start_url: "/",
     scope: "/",
     display: "standalone",
     background_color: "#102e46",

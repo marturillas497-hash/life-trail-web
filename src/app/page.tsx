@@ -1,13 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { HomeView } from "@/components/home/HomeView";
+import { useIsClient } from "@/lib/hooks";
 
-/* A static site cannot redirect on the server, so the home page sends you on. */
 export default function Home() {
-  const router = useRouter();
-  useEffect(() => {
-    router.replace("/journal/");
-  }, [router]);
-  return <p className="p-6 text-sm text-sand-500">Loading...</p>;
+  /* Today's date and the time of day only exist in the browser, so wait for it. */
+  const isClient = useIsClient();
+  if (!isClient) return <p className="p-6 text-sm text-sand-500">Loading...</p>;
+  return <HomeView />;
 }

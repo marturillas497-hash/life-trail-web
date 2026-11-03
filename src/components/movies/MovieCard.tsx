@@ -30,7 +30,10 @@ export function MovieCard({ item }: { item: MovieLogWithMovie }) {
           {movie.year && <span className="font-normal text-sand-500"> ({movie.year})</span>}
         </div>
         <StarDisplay value={log.rating} className="text-lg" />
-        <div className="text-xs text-sand-500">Watched {formatShortDate(log.watchedDate)}</div>
+        <div className="text-xs text-sand-500">
+          {movie.kind === "tv" && <span className="font-medium text-gold-700 dark:text-gold-300">📺 Show · </span>}
+          Watched {formatShortDate(log.watchedDate)}
+        </div>
         {log.opinion && (
           <p className="mt-1 line-clamp-2 break-words text-sm text-sand-600 dark:text-sand-400">{log.opinion}</p>
         )}

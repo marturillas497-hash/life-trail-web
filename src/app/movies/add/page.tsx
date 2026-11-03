@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { KindBadge, kindLabel } from "@/components/movies/KindBadge";
 import { MovieLogForm } from "@/components/movies/MovieLogForm";
+import { Segmented } from "@/components/Segmented";
 import { BackLink } from "@/components/BackLink";
 import { Poster } from "@/components/movies/Poster";
 import { TmdbAttribution } from "@/components/movies/TmdbAttribution";
@@ -12,12 +14,18 @@ import { useSetting } from "@/lib/backup/hooks";
 import { useMovie } from "@/lib/hooks";
 import { logMovie, logTmdbMovie, type LogInput } from "@/lib/movies";
 import { movieLogPath, parseId } from "@/lib/paths";
-import { parseCredential, searchMovies, type TmdbMovie } from "@/lib/tmdb";
+import { parseCredential, searchTitles, type TmdbMovie } from "@/lib/tmdb";
+import type { MediaKind } from "@/lib/types";
 
 type Picked = { kind: "tmdb"; movie: TmdbMovie } | { kind: "manual" };
 type SearchState = { query: string; results?: TmdbMovie[]; error?: string };
 
 const MIN_QUERY = 2;
+
+const KIND_OPTIONS: { value: MediaKind; label: string }[] = [
+  { value: "movie", label: "Movie" },
+  { value: "tv", label: "Show" },
+];
 
 export default function AddMoviePage() {
   const router = useRouter();
@@ -31,6 +39,7 @@ export default function AddMoviePage() {
   const [picked, setPicked] = useState<Picked | null>(null);
   const [manualTitle, setManualTitle] = useState("");
   const [manualYear, setManualYear] = useState("");
+  const [manualKind, setManualKind] = useState<MediaKind>("movie");
 
   const text = query.trim();
   const searching = credential !== null && text.length >= MIN_QUERY && picked === null;
@@ -41,7 +50,7 @@ export default function AddMoviePage() {
     const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
-        const results = await searchMovies(credential, text, controller.signal);
+        const results = await searchTitles(credential, text, controller.signal);
         setSearch({ query: text, results });
       } catch (error) {
         if (controller.signal.aborted) return;
@@ -68,6 +77,7 @@ export default function AddMoviePage() {
       logId = await logMovie(
         {
           movie: {
+            kind: manualKind,
             tmdbId: null,
             title: manualTitle,
             year,
@@ -88,9 +98,9 @@ export default function AddMoviePage() {
     if (existing === null) {
       return (
         <div className="p-6 text-sm">
-          <p className="text-sand-500">That movie no longer exists.</p>
+          <p className="text-sand-500">That title no longer exists.</p>
           <Link href="/movies/" className="mt-2 inline-block text-brand-600 underline">
-            Back to movies
+            Back to movies and shows
           </Link>
         </div>
       );
@@ -98,6 +108,7 @@ export default function AddMoviePage() {
     return (
       <Shell title="Log another viewing">
         <MovieHeader
+          kind={existing.kind}
           title={existing.title}
           year={existing.year}
           posterData={existing.posterData}
@@ -114,9 +125,10 @@ export default function AddMoviePage() {
   if (picked) {
     const manualBlocked = picked.kind === "manual" && manualTitle.trim() === "";
     return (
-      <Shell title="Log a movie">
+      <Shell title={picked.kind === "tmdb" ? `Log a ${kindLabel(picked.movie.kind).toLowerCase()}` : "Log a movie or show"}>
         {picked.kind === "tmdb" ? (
           <MovieHeader
+            kind={picked.movie.kind}
             title={picked.movie.title}
             year={picked.movie.year}
             posterData={null}
@@ -125,12 +137,13 @@ export default function AddMoviePage() {
           />
         ) : (
           <div className="space-y-3">
+            <Segmented label="Type" value={manualKind} options={KIND_OPTIONS} onChange={setManualKind} />
             <input
               type="text"
               value={manualTitle}
               onChange={(event) => setManualTitle(event.target.value)}
-              placeholder="Movie title"
-              aria-label="Movie title"
+              placeholder={`${kindLabel(manualKind)} title`}
+              aria-label={`${kindLabel(manualKind)} title`}
               autoFocus
               className={inputClass}
             />
@@ -160,10 +173,10 @@ export default function AddMoviePage() {
 
   /* ---- Search ---- */
   return (
-    <Shell title="Log a movie">
+    <Shell title="Log a movie or show">
       {keyRow !== undefined && !credential && (
         <p className="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
-          To search for movies, add your free TMDB key in{" "}
+          To search for movies and shows, add your free TMDB key in{" "}
           <Link href="/settings/" className="underline">
             Settings
           </Link>
@@ -175,8 +188,8 @@ export default function AddMoviePage() {
         type="search"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search for a movie"
-        aria-label="Search for a movie"
+        placeholder="Search for a movie or show"
+        aria-label="Search for a movie or show"
         disabled={!credential}
         autoFocus
         className={inputClass}
@@ -186,12 +199,12 @@ export default function AddMoviePage() {
         {loading && <p className="text-sm text-sand-500">Searching...</p>}
         {searching && settled && search.error && <p className="text-sm text-red-600">{search.error}</p>}
         {searching && settled && search.results && search.results.length === 0 && (
-          <p className="text-sm text-sand-500">No movies found. Try fewer words.</p>
+          <p className="text-sm text-sand-500">Nothing found. Try fewer words.</p>
         )}
         {searching && settled && search.results && search.results.length > 0 && (
           <ul className="space-y-2">
             {search.results.map((movie) => (
-              <li key={movie.tmdbId}>
+              <li key={`${movie.kind}-${movie.tmdbId}`}>
                 <button
                   type="button"
                   onClick={() => setPicked({ kind: "tmdb", movie })}
@@ -209,6 +222,7 @@ export default function AddMoviePage() {
                       {movie.title}
                       {movie.year && <span className="font-normal text-sand-500"> ({movie.year})</span>}
                     </span>
+                    <KindBadge kind={movie.kind} className="mt-1" />
                     {movie.overview && (
                       <span className="mt-0.5 line-clamp-2 block text-sm text-sand-600 dark:text-sand-400">
                         {movie.overview}
@@ -238,7 +252,7 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl p-4 lg:p-8">
-        <BackLink href="/movies/">Movies</BackLink>
+        <BackLink href="/movies/">Movies/Shows</BackLink>
         <h1 className="mt-2 text-xl font-semibold">{title}</h1>
         <div className="mt-4">{children}</div>
       </div>
@@ -247,6 +261,7 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function MovieHeader(props: {
+  kind: MediaKind;
   title: string;
   year: number | null;
   posterData: string | null;
@@ -263,6 +278,7 @@ function MovieHeader(props: {
         className="w-24"
       />
       <div className="min-w-0">
+        <KindBadge kind={props.kind} className="mb-1" />
         <div className="text-lg font-semibold">
           {props.title}
           {props.year && <span className="font-normal text-sand-500"> ({props.year})</span>}

@@ -26,6 +26,13 @@ export default function SettingsPage() {
             Open the guide
           </Link>
         </section>
+        <section className={cardClass}>
+          <h2 className="font-semibold">Your tags</h2>
+          <p className="mt-1 text-sm text-sand-500">Add, rename or hide the feelings you pick for your entries.</p>
+          <Link href="/tags/" className={`${btnSecondary} mt-3`}>
+            Manage tags
+          </Link>
+        </section>
         <ThemeCard />
         <InstallCard />
         <AppLockCard />

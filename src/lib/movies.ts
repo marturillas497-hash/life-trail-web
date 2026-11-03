@@ -3,7 +3,7 @@ import { isValidKey, todayKey } from "./dates";
 import { fetchPosterData, type TmdbMovie } from "./tmdb";
 import type { Movie } from "./types";
 
-export type NewMovie = Pick<Movie, "tmdbId" | "title" | "year" | "overview" | "posterPath" | "posterData">;
+export type NewMovie = Pick<Movie, "kind" | "tmdbId" | "title" | "year" | "overview" | "posterPath" | "posterData">;
 
 export type LogInput = {
   /* 0.5 to 5 in steps of 0.5. */
@@ -36,7 +36,7 @@ export async function logMovie(
 
   if ("movie" in target) {
     const title = target.movie.title.trim();
-    if (!title) throw new Error("Enter the movie's title.");
+    if (!title) throw new Error(target.movie.kind === "tv" ? "Enter the show's title." : "Enter the movie's title.");
   }
 
   return db.transaction("rw", db.movies, db.movieLogs, async () => {
@@ -49,7 +49,9 @@ export async function logMovie(
     } else {
       const { movie } = target;
       const existing =
-        movie.tmdbId !== null ? await db.movies.where("tmdbId").equals(movie.tmdbId).first() : undefined;
+        movie.tmdbId !== null
+          ? await db.movies.where("[kind+tmdbId]").equals([movie.kind, movie.tmdbId]).first()
+          : undefined;
       movieId = existing
         ? existing.id
         : await db.movies.add({
@@ -82,15 +84,16 @@ export async function deleteMovieLog(id: number): Promise<void> {
 }
 
 /*
-Logs a movie found on TMDB. The poster is copied into the journal so it shows
+Logs a movie or show found on TMDB. The poster is copied into the journal so it shows
 offline. If the movie is already on your list, its saved poster is reused.
 */
 export async function logTmdbMovie(movie: TmdbMovie, input: LogInput): Promise<number> {
-  const known = await db.movies.where("tmdbId").equals(movie.tmdbId).first();
+  const known = await db.movies.where("[kind+tmdbId]").equals([movie.kind, movie.tmdbId]).first();
   const posterData = known ? known.posterData : await fetchPosterData(movie.posterPath);
   return logMovie(
     {
       movie: {
+        kind: movie.kind,
         tmdbId: movie.tmdbId,
         title: movie.title,
         year: movie.year,

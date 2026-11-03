@@ -7,11 +7,19 @@ import { TmdbAttribution } from "@/components/movies/TmdbAttribution";
 import { Segmented } from "@/components/Segmented";
 import { btnPrimary, btnSecondary, inputClass } from "@/components/ui";
 import { todayKey } from "@/lib/dates";
+import type { MediaKind } from "@/lib/types";
 import { useMovieLogs } from "@/lib/hooks";
 import { addMoviePath } from "@/lib/paths";
 import { inRange, rangeFor, rangeTitle, shiftAnchor, type WatchView } from "@/lib/watchPeriod";
 
 type Sort = "recent" | "rating" | "title";
+type KindFilter = "all" | MediaKind;
+
+const KINDS: { value: KindFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "movie", label: "Movies" },
+  { value: "tv", label: "Shows" },
+];
 
 const VIEWS: { value: WatchView; label: string }[] = [
   { value: "week", label: "Week" },
@@ -24,6 +32,7 @@ export default function MoviesPage() {
   const items = useMovieLogs();
   const [sort, setSort] = useState<Sort>("recent");
   const [filter, setFilter] = useState("");
+  const [kind, setKind] = useState<KindFilter>("all");
   const [today] = useState(() => todayKey());
   const [view, setView] = useState<WatchView>("all");
   const [anchor, setAnchor] = useState(today);
@@ -43,18 +52,25 @@ export default function MoviesPage() {
     [items, range],
   );
 
+  const ofKind = useMemo(
+    () => (kind === "all" ? inPeriod : inPeriod.filter((item) => item.movie.kind === kind)),
+    [inPeriod, kind],
+  );
+
   const stats = useMemo(() => {
-    if (inPeriod.length === 0) return null;
-    const movieCount = new Set(inPeriod.map((item) => item.movie.id)).size;
-    const average = inPeriod.reduce((sum, item) => sum + item.log.rating, 0) / inPeriod.length;
-    return { logs: inPeriod.length, movies: movieCount, average };
-  }, [inPeriod]);
+    if (ofKind.length === 0) return null;
+    const unique = new Map(ofKind.map((item) => [item.movie.id, item.movie.kind]));
+    const movies = [...unique.values()].filter((value) => value === "movie").length;
+    const shows = unique.size - movies;
+    const average = ofKind.reduce((sum, item) => sum + item.log.rating, 0) / ofKind.length;
+    return { logs: ofKind.length, titles: unique.size, movies, shows, average };
+  }, [ofKind]);
 
   const shown = useMemo(() => {
     const needle = filter.trim().toLowerCase();
     const list = needle
-      ? inPeriod.filter((item) => item.movie.title.toLowerCase().includes(needle))
-      : [...inPeriod];
+      ? ofKind.filter((item) => item.movie.title.toLowerCase().includes(needle))
+      : [...ofKind];
     list.sort((a, b) => {
       if (sort === "title") return a.movie.title.localeCompare(b.movie.title);
       if (sort === "rating") {
@@ -63,15 +79,15 @@ export default function MoviesPage() {
       return b.log.watchedDate.localeCompare(a.log.watchedDate) || b.log.createdAt - a.log.createdAt;
     });
     return list;
-  }, [inPeriod, sort, filter]);
+  }, [ofKind, sort, filter]);
 
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-5xl p-4 lg:p-8">
         <header className="flex items-center justify-between gap-3">
-          <h1 className="text-xl font-semibold">Movies</h1>
+          <h1 className="text-xl font-semibold">Movies/Shows</h1>
           <Link href={addMoviePath()} className={btnPrimary}>
-            Log a movie
+            Log a movie or show
           </Link>
         </header>
 
@@ -79,9 +95,9 @@ export default function MoviesPage() {
           <p className="mt-6 text-sm text-sand-500">Loading...</p>
         ) : items.length === 0 ? (
           <p className="mt-10 text-center text-sm text-sand-500">
-            Your movie shelf is empty.
+            Your shelf is empty.
             <br />
-            Log the last one you watched, with your rating and what you thought.
+            Log the last movie or show you watched, with your rating and what you thought.
           </p>
         ) : (
           <>
@@ -113,25 +129,31 @@ export default function MoviesPage() {
 
             {stats && (
               <p className="mt-3 text-sm text-sand-500">
-                {stats.movies} {stats.movies === 1 ? "movie" : "movies"}
-                {stats.logs !== stats.movies && `, ${stats.logs} viewings`}, average rating{" "}
+                {[
+                  stats.movies > 0 && `${stats.movies} ${stats.movies === 1 ? "movie" : "movies"}`,
+                  stats.shows > 0 && `${stats.shows} ${stats.shows === 1 ? "show" : "shows"}`,
+                ]
+                  .filter(Boolean)
+                  .join(" and ")}
+                {stats.logs !== stats.titles && `, ${stats.logs} viewings`}, average rating{" "}
                 {stats.average.toFixed(1)} of 5
               </p>
             )}
 
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Segmented label="Show only" value={kind} options={KINDS} onChange={setKind} />
               <input
                 type="search"
                 value={filter}
                 onChange={(event) => setFilter(event.target.value)}
-                placeholder="Search your movies"
-                aria-label="Search your movies"
+                placeholder="Search your movies and shows"
+                aria-label="Search your movies and shows"
                 className={inputClass}
               />
               <select
                 value={sort}
                 onChange={(event) => setSort(event.target.value as Sort)}
-                aria-label="Sort movies"
+                aria-label="Sort"
                 className={`${inputClass} sm:w-56`}
               >
                 <option value="recent">Recently watched</option>
@@ -140,12 +162,13 @@ export default function MoviesPage() {
               </select>
             </div>
 
-            {inPeriod.length === 0 ? (
+            {ofKind.length === 0 ? (
               <p className="mt-8 text-center text-sm text-sand-500">
-                No movies watched {view === "all" ? "yet" : `in ${title}`}.
+                No {kind === "movie" ? "movies" : kind === "tv" ? "shows" : "movies or shows"} watched{" "}
+                {view === "all" ? "yet" : `in ${title}`}.
               </p>
             ) : shown.length === 0 ? (
-              <p className="mt-8 text-center text-sm text-sand-500">No movie matches that.</p>
+              <p className="mt-8 text-center text-sm text-sand-500">Nothing matches that.</p>
             ) : (
               <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {shown.map((item) => (
