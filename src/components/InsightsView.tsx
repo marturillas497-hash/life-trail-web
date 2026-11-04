@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { recapPath } from "@/lib/paths";
 import { todayKey } from "@/lib/dates";
 import { useEntries, useTagMap } from "@/lib/hooks";
 import {
@@ -90,6 +92,12 @@ export function InsightsView() {
             </div>
           )}
         </div>
+
+        {period.kind === "year" && (
+          <Link href={recapPath(period.year)} className={btnSecondary}>
+            ✨ Watch your {period.year} recap
+          </Link>
+        )}
 
         {!entries || !tagMap ? (
           <p className="text-sm text-sand-500">Loading...</p>

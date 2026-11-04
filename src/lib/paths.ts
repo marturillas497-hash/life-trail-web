@@ -15,6 +15,8 @@ export const newEntryPath = (date?: string, options: { daily?: boolean } = {}) =
   return query ? `/journal/new/?${query}` : "/journal/new/";
 };
 
+export const recapPath = (year: number) => `/recap/?year=${year}`;
+
 /* A new entry that starts from the daily note template. */
 export const dailyNotePath = (date?: string) => newEntryPath(date, { daily: true });
 

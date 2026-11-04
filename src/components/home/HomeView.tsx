@@ -7,7 +7,8 @@ import { useEntries, useMovieLogs, useTagMap } from "@/lib/hooks";
 import { dayTopTag, streaks } from "@/lib/insights";
 import { previewText } from "@/lib/markdown";
 import { promptFor } from "@/lib/dailyNote";
-import { addMoviePath, dailyNotePath, editEntryPath, entryPath, movieLogPath, newEntryPath } from "@/lib/paths";
+import { addMoviePath, dailyNotePath, editEntryPath, entryPath, movieLogPath, newEntryPath, recapPath } from "@/lib/paths";
+import { buildRecap } from "@/lib/recap";
 import type { Entry } from "@/lib/types";
 import { Poster } from "../movies/Poster";
 import { StarDisplay } from "../movies/StarRating";
@@ -84,6 +85,11 @@ export function HomeView() {
     .slice(0, 3);
   const firstTime = entries.length === 0 && logs.length === 0;
 
+  /* The recap shows up for the last two months of the year, and in January for the year that just ended. */
+  const monthNumber = Number(today.slice(5, 7));
+  const recapYear = monthNumber >= 11 ? Number(today.slice(0, 4)) : monthNumber === 1 ? Number(today.slice(0, 4)) - 1 : null;
+  const recap = recapYear !== null ? buildRecap(recapYear, entries, logs, today) : null;
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-3xl space-y-6 p-4 lg:p-8">
@@ -140,6 +146,28 @@ export function HomeView() {
             )}
           </div>
         </section>
+
+        {recap && recap.hasData && recapYear !== null && (
+          <section className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-gold-300 bg-gradient-to-r from-gold-100 to-brand-50 p-5 shadow-sm dark:border-gold-400/40 dark:from-gold-400/15 dark:to-brand-500/15">
+            <div className="min-w-0">
+              <h2 className="font-display text-xl font-semibold">
+                ✨ Your {recapYear} recap{recapYear === Number(today.slice(0, 4)) ? " is ready" : ""}
+              </h2>
+              <p className="mt-1 text-sm text-sand-700 dark:text-sand-300">
+                {[
+                  recap.writing.entries > 0 && `${recap.writing.entries} ${recap.writing.entries === 1 ? "entry" : "entries"}`,
+                  recap.watched.titles > 0 && `${recap.watched.titles} ${recap.watched.titles === 1 ? "title" : "titles"} watched`,
+                ]
+                  .filter(Boolean)
+                  .join(" and ")}
+                . See how your year went.
+              </p>
+            </div>
+            <Link href={recapPath(recapYear)} className={btnPrimary}>
+              Watch your recap
+            </Link>
+          </section>
+        )}
 
         <section aria-label="This month" className="grid grid-cols-3 gap-3">
           <div className={cardClass}>

@@ -53,6 +53,7 @@ const CONTENTS = [
   ["find", "Tags, search and calendar"],
   ["movies", "Movies"],
   ["insights", "Insights"],
+  ["recap", "Year recap"],
   ["backup", "Backups"],
   ["look", "Look, lock and install"],
   ["keys", "Keyboard shortcuts"],
@@ -218,6 +219,28 @@ export default function GuidePage() {
               <strong>Days of the week</strong> shows which feeling shows up on which weekday, once you have a handful of
               entries.
             </li>
+          </ul>
+        </Section>
+
+        <Section id="recap" title="Year recap">
+          <p>
+            A story of your year, a bit like a streaming service&apos;s year in review. It is made only from what is
+            already in your journal, and nothing leaves your device.
+          </p>
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>
+              In November and December a card on Home says the recap is ready, and in January it points to the year that
+              just ended. You can open it any time from Insights, in the Year view.
+            </li>
+            <li>
+              Move through the slides with Next and Back, the arrow keys, or the bar at the top. The year picker switches
+              between years that have entries or viewings.
+            </li>
+            <li>
+              It shows how much you wrote, your longest streak, your busiest month and weekday, your feeling of the year,
+              month by month feelings, your year in pixels, one memorable entry, and what you watched with your top picks.
+            </li>
+            <li>Slides that have nothing to show are skipped, so a year without movies simply has no movie slides.</li>
           </ul>
         </Section>
 

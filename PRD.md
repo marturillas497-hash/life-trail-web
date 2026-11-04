@@ -43,7 +43,7 @@ Writing, tags, calendar, pictures, Markdown, search, movies and shows log, insig
 
 ### Out of scope (for now)
 
-Accounts, cloud sync, sharing entries, collaborative editing, a server, analytics, ads, payments, AI features, importing from other apps, a native mobile app (planned later, see section 11).
+Accounts, cloud sync between devices, sharing entries or the recap, collaborative editing, a server, analytics, ads, payments, AI features, importing from other apps, exporting to PDF or CSV (decided against), a native mobile app (planned later, see section 11).
 
 ## 6. Feature requirements
 
@@ -122,7 +122,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | I4 | Year in Pixels for a year: one pixel per day colored by the feeling used most that day, ties going to the one chosen first. Tapping a day reads or writes that day | Done |
 | I5 | How you felt: one bar split between feelings so the parts add up to 100%, a sentence naming the top feeling, and the change since the previous month or year | Done |
 | I6 | Days of the week: the main feeling for each weekday, once there are at least 7 entries | Done |
-| I7 | Year-end recap including movies and shows | Planned |
+| I7 | Year recap: a story of the year in slides (writing, streak, busiest month and weekday, feeling of the year, month by month feelings, Year in Pixels, a memorable entry, movies and shows watched with top picks, a summary). Opened from a Home card in November, December and January, or from Insights. Years with data can be picked. Slides without data are skipped | Done |
 
 ### 6.7 Backups and restore
 
@@ -135,7 +135,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | B5 | Backup files include pictures. Daily and manual snapshots do not, to stay small | Done |
 | B6 | Restore from a snapshot or a file after a preview. A copy of the current journal is saved first, so the restore can be undone | Done |
 | B7 | Older backup files (versions 1 to 3) still load. Damaged files are refused with a clear message | Done |
-| B8 | Export to PDF or CSV | Planned |
+| B8 | Export to PDF or CSV | Decided against (November 2026). Backups stay JSON |
 | B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Planned (researched) |
 
 ### 6.8 Privacy and security
@@ -201,7 +201,7 @@ Rules: dates are local days so they never shift with time zones. A tag is archiv
 
 ## 10. Current status
 
-Built and tested in a real browser by Claude: everything marked Done above, including the daily note.
+Built and tested in a real browser by Claude: everything marked Done above, including the daily note and the year recap.
 
 Not tested yet, and the first things to check by hand:
 
@@ -214,13 +214,11 @@ Not tested yet, and the first things to check by hand:
 
 | Order | Item | Why |
 |---|---|---|
-| 1 | Year-end recap including movies and shows | The planned "wrapped" moment, and a reason to keep logging |
-| 2 | Export to PDF or CSV | Gives the owner a copy that does not depend on this app |
-| 3 | Backup to Google Drive | A second safe place that needs no cable or manual copying |
-| 4 | Season level logging for shows | Lets a show be rated per season |
-| 5 | Prompts and templates | Helps on days with nothing to say |
-| 6 | Fingerprint unlock | Faster than a PIN on phones |
-| 7 | Mobile version | Wrapping the static site with Capacitor gives an Android app and native reminders |
+| 1 | Backup to Google Drive (if the owner wants it) | A second safe place that needs no cable or manual copying |
+| 2 | Season level logging for shows | Lets a show be rated per season |
+| 3 | More templates | Different notes for different days |
+| 4 | Fingerprint unlock | Faster than a PIN on phones |
+| 5 | Mobile version | Wrapping the static site with Capacitor gives an Android app and native reminders |
 
 ## 12. Success criteria
 
@@ -228,7 +226,7 @@ This is a personal project, so success is felt rather than measured:
 
 - The owner writes in it on most days for three months without being nagged.
 - The owner has restored from a backup at least once and trusts the process.
-- Looking back at a month or a year through Home, the mood calendar or Year in Pixels is something the owner enjoys.
+- Looking back at a month or a year through Home, the mood calendar, Year in Pixels or the year recap is something the owner enjoys.
 - No entry is ever lost.
 
 ## 13. Risks and open questions
