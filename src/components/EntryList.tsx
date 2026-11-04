@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { formatShortDate } from "@/lib/dates";
 import { matchesQuery } from "@/lib/insights";
-import { plainText } from "@/lib/markdown";
+import { previewText } from "@/lib/markdown";
 import { entryPath, newEntryPath, normalizePath, parseId } from "@/lib/paths";
 import { useEntries, useTagMap } from "@/lib/hooks";
 import type { Tag } from "@/lib/types";
@@ -97,7 +97,7 @@ export function EntryList() {
                     )}
                     {entry.body && (
                       <p className="mt-0.5 line-clamp-2 text-sm text-sand-600 dark:text-sand-400">
-                        {plainText(entry.body)}
+                        {previewText(entry.body)}
                       </p>
                     )}
                     <div className="mt-2 flex flex-wrap gap-1.5">

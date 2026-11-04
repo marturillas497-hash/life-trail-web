@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { normalizePath } from "@/lib/paths";
-import { useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { todayNotePath } from "@/lib/todayNote";
 import { isCollapsed, setCollapsed, subscribeSidebar } from "@/lib/sidebar";
 import { BackupBanner } from "./backup/BackupBanner";
 import { BackupRunner } from "./backup/BackupRunner";
@@ -28,6 +29,21 @@ function Shell({ children }: { children: ReactNode }) {
   const { status } = useLock();
   const collapsed = useSyncExternalStore(subscribeSidebar, isCollapsed, () => false);
   const quickBackup = useQuickBackup();
+  const router = useRouter();
+
+  /* Alt+T opens today's note from anywhere. */
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (status === "loading" || status === "locked") return;
+      if (event.altKey && !event.ctrlKey && !event.metaKey && event.key.toLowerCase() === "t") {
+        event.preventDefault();
+        void todayNotePath().then((path) => router.push(path));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [router, status]);
+
   const pathname = normalizePath(usePathname());
   const isActive = (href: string) => {
     const base = normalizePath(href);

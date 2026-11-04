@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { plainText } from "@/lib/markdown";
+import { previewText } from "@/lib/markdown";
 import { useMemo, useState } from "react";
 import {
   groupByDate,
@@ -13,7 +13,7 @@ import {
   type MonthCursor,
 } from "@/lib/calendar";
 import { formatFullDate, makeKey, todayKey } from "@/lib/dates";
-import { entryPath, newEntryPath } from "@/lib/paths";
+import { dailyNotePath, entryPath } from "@/lib/paths";
 import { useMonthEntries, useTagMap } from "@/lib/hooks";
 import type { Entry, Tag } from "@/lib/types";
 import { TagChip } from "./TagChip";
@@ -161,7 +161,7 @@ export function CalendarView() {
           <h2 className="font-semibold">{formatFullDate(selected)}</h2>
 
           {canWrite && (
-            <Link href={newEntryPath(selected)} className={`${btnPrimary} mt-3`}>
+            <Link href={dailyNotePath(selected)} className={`${btnPrimary} mt-3`}>
               {selected === today ? "Write today's entry" : "Write an entry for this day"}
             </Link>
           )}
@@ -185,7 +185,7 @@ export function CalendarView() {
                       {entry.title && <div className="font-medium">{entry.title}</div>}
                       {entry.body && (
                         <p className="mt-0.5 line-clamp-3 text-sm text-sand-600 dark:text-sand-400">
-                          {plainText(entry.body)}
+                          {previewText(entry.body)}
                         </p>
                       )}
                       <div className="mt-2 flex flex-wrap gap-1.5">

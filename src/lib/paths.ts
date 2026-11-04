@@ -10,8 +10,13 @@ export function normalizePath(path: string): string {
 
 export const entryPath = (id: number) => `/journal/entry/?id=${id}`;
 export const editEntryPath = (id: number) => `/journal/entry/edit/?id=${id}`;
-export const newEntryPath = (date?: string) =>
-  date ? `/journal/new/?date=${date}` : "/journal/new/";
+export const newEntryPath = (date?: string, options: { daily?: boolean } = {}) => {
+  const query = [date ? `date=${date}` : "", options.daily ? "daily=1" : ""].filter(Boolean).join("&");
+  return query ? `/journal/new/?${query}` : "/journal/new/";
+};
+
+/* A new entry that starts from the daily note template. */
+export const dailyNotePath = (date?: string) => newEntryPath(date, { daily: true });
 
 /* Returns NaN for anything that is not a whole number. */
 export function parseId(raw: string | null): number {

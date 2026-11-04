@@ -14,18 +14,27 @@ import { TagChip } from "./TagChip";
 import { TagEditorDialog } from "./TagEditorDialog";
 import { btnPrimary, inputClass } from "./ui";
 
+type Props = {
+  initial?: Entry;
+  date?: string;
+  /* Text to start a new entry with, used for the daily note template. */
+  initialBody?: string;
+  /* A question to show above the text, used for the daily note. */
+  prompt?: string;
+};
+
 /*
 Used for both creating and editing.
 Pass `initial` to edit, leave it out to create a new entry.
 `date` (YYYY-MM-DD) is only used when creating, and defaults to today.
 */
-export function EntryForm({ initial, date }: { initial?: Entry; date?: string }) {
+export function EntryForm({ initial, date, initialBody, prompt }: Props) {
   const router = useRouter();
   const activeTags = useActiveTags();
   const tagMap = useTagMap();
 
   const [title, setTitle] = useState(initial?.title ?? "");
-  const [body, setBody] = useState(initial?.body ?? "");
+  const [body, setBody] = useState(initial?.body ?? initialBody ?? "");
   const [tagIds, setTagIds] = useState<number[]>(initial?.tagIds ?? []);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -135,11 +144,18 @@ export function EntryForm({ initial, date }: { initial?: Entry; date?: string })
           className={inputClass}
         />
 
+        {prompt && (
+          <p className="rounded-xl border border-gold-200 bg-gold-50 px-4 py-2.5 text-sm text-gold-900 dark:border-gold-400/30 dark:bg-gold-400/10 dark:text-gold-200">
+            <span className="font-medium">Prompt for today:</span> {prompt}
+          </p>
+        )}
+
         <MarkdownEditor
           value={body}
           onChange={setBody}
           placeholder="What happened today?"
           label="Entry text"
+          autoFocus={initialBody !== undefined}
         />
 
         {error && <p className="text-sm text-red-600">{error}</p>}

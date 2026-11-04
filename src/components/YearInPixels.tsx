@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { formatFullDate, makeKey } from "@/lib/dates";
 import { yearPixels } from "@/lib/insights";
-import { plainText } from "@/lib/markdown";
-import { entryPath, newEntryPath } from "@/lib/paths";
+import { previewText } from "@/lib/markdown";
+import { dailyNotePath, entryPath } from "@/lib/paths";
 import type { Entry, Tag } from "@/lib/types";
 import { cardClass } from "./ui";
 
@@ -130,7 +130,7 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
                 .map((entry) => (
                   <li key={entry.id}>
                     <Link href={entryPath(entry.id)} className="text-brand-600 hover:underline dark:text-brand-400">
-                      {entry.title || plainText(entry.body).slice(0, 60) || "Untitled"}
+                      {entry.title || previewText(entry.body).slice(0, 60) || "Untitled"}
                     </Link>
                   </li>
                 ))}
@@ -138,7 +138,7 @@ export function YearInPixels({ year, entries, tagMap, today }: Props) {
           ) : selected <= today ? (
             <p className="mt-1 text-sand-500">
               No entry this day.{" "}
-              <Link href={newEntryPath(selected)} className="text-brand-600 hover:underline dark:text-brand-400">
+              <Link href={dailyNotePath(selected)} className="text-brand-600 hover:underline dark:text-brand-400">
                 Write one
               </Link>
             </p>

@@ -55,10 +55,10 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 |---|---|---|
 | H1 | The site opens on Home, not on the journal. Installed copies also start there | Done |
 | H2 | Time of day greeting and today's date | Done |
-| H3 | One clear primary action: write today's entry (or write another, or read today's) | Done |
+| H3 | One clear primary action: open today's note (or continue it, read it, or write another entry) | Done |
 | H4 | Quick action to log a movie or show. First time visitors also see a link to the guide | Done |
 | H5 | Day streak, entries this month, titles watched this month | Done |
-| H6 | The last 7 days as tiles showing each day's main feeling. Tapping opens that day's entry, or starts one for a past empty day | Done |
+| H6 | The last 7 days as tiles showing each day's main feeling. Tapping opens that day's entry, or starts a note from the template for a past empty day | Done |
 | H7 | "On this day": entries from the same date in earlier years, hidden when there are none | Done |
 | H8 | Three most recent entries and three most recently watched titles, each linking to the full page | Done |
 | H9 | A name for the greeting | Planned (open question) |
@@ -69,7 +69,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 |---|---|---|
 | J1 | Create, edit and delete entries, each with a date, optional title, text and at least one feeling tag | Done |
 | J2 | Two pane layout on large screens, single pane on phones | Done |
-| J3 | Write for a past day from the calendar or the Home strip. Future days are not allowed | Done |
+| J3 | Write for a past day from the calendar or the Home strip, using the template for that day. Future days are not allowed | Done |
 | J4 | Search over titles, text and tag names. Every typed word must match | Done |
 | J5 | Entry text is Markdown shown as a live preview: headings, bold, italic, strikethrough, inline code, lists that continue on Enter, task checkboxes that can be ticked, quotes, rules. Tables stay as plain text | Done |
 | J6 | The syntax marks hide until the cursor touches that line or word, as in Obsidian | Done |
@@ -78,8 +78,8 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | J9 | Links: Ctrl+Enter or Ctrl+click opens the link under the cursor in a new tab. In saved entries a normal click opens it. Only web and email links open | Done |
 | J10 | Ctrl+Enter saves entries, edits, viewings and tags when the cursor is not on a link. Ctrl+S also saves entries | Done |
 | J11 | Pictures: add by button, paste or drag and drop. Shrunk to a sensible size, shown inline, and opened larger on click. Pictures no entry uses can be removed from the Backup page | Done |
-| J12 | Daily note created automatically each day | Planned |
-| J13 | Prompts and templates | Planned |
+| J12 | Daily note: one press (Home button or Alt+T) opens today's note from an editable template, with the cursor ready and a question of the day above it. If today already has an entry, the same press continues it. Nothing is saved until the person writes and saves, so there are no empty entries | Done |
+| J13 | One daily prompt (60 rotating questions) and one editable template in Settings with {{date}}, {{weekday}} and {{prompt}}. More than one template | Done for one template, more templates planned |
 | J14 | Real tables in the editor | Planned (low) |
 
 ### 6.3 Tags (feelings)
@@ -136,6 +136,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | B6 | Restore from a snapshot or a file after a preview. A copy of the current journal is saved first, so the restore can be undone | Done |
 | B7 | Older backup files (versions 1 to 3) still load. Damaged files are refused with a clear message | Done |
 | B8 | Export to PDF or CSV | Planned |
+| B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Planned (researched) |
 
 ### 6.8 Privacy and security
 
@@ -195,11 +196,12 @@ Rules: dates are local days so they never shift with time zones. A tag is archiv
 - **Static site, no server.** So there is no sync, no server side reminders and no shared TMDB key. Each person pastes their own free TMDB key.
 - **Origin bound data.** The journal belongs to one exact web address. Changing the domain starts an empty journal there. Moving needs a backup file.
 - **Browser limits.** Folder saving needs the File System Access API, which Brave turns off by default. Install, offline and the lock need https or localhost.
-- **Scheduled reminders** cannot fire reliably from a closed web app. A real reminder needs a server and web push, or the later mobile version.
+- **Scheduled reminders** cannot fire reliably from a closed web app. A real reminder needs a server and web push, or the later mobile version. The daily note is built without one.
+- **Google accounts.** A site with no server can use Google sign in only for short lived access tokens, with no refresh token. So Google Drive backup can be a one press button but not a silent background sync.
 
 ## 10. Current status
 
-Built and tested in a real browser by Claude: everything marked Done above.
+Built and tested in a real browser by Claude: everything marked Done above, including the daily note.
 
 Not tested yet, and the first things to check by hand:
 
@@ -213,8 +215,8 @@ Not tested yet, and the first things to check by hand:
 | Order | Item | Why |
 |---|---|---|
 | 1 | Year-end recap including movies and shows | The planned "wrapped" moment, and a reason to keep logging |
-| 2 | Daily note | The most useful part of the reminder idea that works without a server |
-| 3 | Export to PDF or CSV | Gives the owner a copy that does not depend on this app |
+| 2 | Export to PDF or CSV | Gives the owner a copy that does not depend on this app |
+| 3 | Backup to Google Drive | A second safe place that needs no cable or manual copying |
 | 4 | Season level logging for shows | Lets a show be rated per season |
 | 5 | Prompts and templates | Helps on days with nothing to say |
 | 6 | Fingerprint unlock | Faster than a PIN on phones |
@@ -237,6 +239,7 @@ This is a personal project, so success is felt rather than measured:
 | Shows from real TMDB behave differently from the test data | Check with a real search before relying on it |
 | The paused Flutter repository | Keep, or archive it |
 | Do shows need seasons? | Decide after using the show log for a while |
+| Google Drive backup needs the owner to create a Google Cloud OAuth client | A one time setup of about ten minutes. Decide whether the convenience is worth it |
 | A name for the Home greeting | A small Settings field would do |
 | Changing the web address later | Plan a backup and restore, or pick the final address now |
 

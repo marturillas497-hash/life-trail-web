@@ -52,3 +52,14 @@ export function plainText(markdown: string): string {
     .replace(/[ \t]+\n/g, "\n")
     .trim();
 }
+
+/*
+One line of plain text for list previews. Heading lines are skipped, so a note that starts
+with template sections shows what was written under them. Notes made only of headings keep them.
+*/
+export function previewText(markdown: string): string {
+  const lines = markdown.split("\n");
+  const body = lines.filter((line) => !/^\s{0,3}#{1,6}\s/.test(line));
+  const source = body.some((line) => line.trim() !== "") ? body : lines;
+  return plainText(source.join("\n")).replace(/\s*\n+\s*/g, " ").trim();
+}

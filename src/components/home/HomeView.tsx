@@ -5,8 +5,9 @@ import { useMemo, useState } from "react";
 import { formatFullDate, formatShortDate, makeKey, todayKey } from "@/lib/dates";
 import { useEntries, useMovieLogs, useTagMap } from "@/lib/hooks";
 import { dayTopTag, streaks } from "@/lib/insights";
-import { plainText } from "@/lib/markdown";
-import { addMoviePath, entryPath, movieLogPath, newEntryPath } from "@/lib/paths";
+import { previewText } from "@/lib/markdown";
+import { promptFor } from "@/lib/dailyNote";
+import { addMoviePath, dailyNotePath, editEntryPath, entryPath, movieLogPath, newEntryPath } from "@/lib/paths";
 import type { Entry } from "@/lib/types";
 import { Poster } from "../movies/Poster";
 import { StarDisplay } from "../movies/StarRating";
@@ -34,7 +35,7 @@ function weekdayShort(key: string): string {
 }
 
 function preview(entry: Entry): string {
-  return entry.title || plainText(entry.body).split("\n")[0].slice(0, 90) || "Untitled";
+  return entry.title || previewText(entry.body).slice(0, 90) || "Untitled";
 }
 
 function SectionHeader({ title, href, label }: { title: string; href?: string; label?: string }) {
@@ -70,7 +71,7 @@ export function HomeView() {
   if (!entries || !logs || !tagMap) return <p className="p-6 text-sm text-sand-500">Loading...</p>;
 
   const month = today.slice(0, 7);
-  const todays = byDate.get(today) ?? [];
+  const todays = [...(byDate.get(today) ?? [])].sort((a, b) => a.createdAt - b.createdAt);
   const streak = streaks(entries, today).current;
   const monthEntries = entries.filter((entry) => entry.date.startsWith(month)).length;
   const monthWatched = logs.filter((item) => item.log.watchedDate.startsWith(month)).length;
@@ -102,20 +103,32 @@ export function HomeView() {
               Welcome to Life Trail. Write your first entry to start your trail, or read the guide to see what you can do.
             </p>
           ) : todays.length === 0 ? (
-            <p className="mt-2 text-sand-700 dark:text-sand-200">Where did today take you?</p>
+            <>
+              <p className="mt-2 text-sand-700 dark:text-sand-200">Where did today take you?</p>
+              <p className="mt-1 max-w-md text-sm italic text-sand-600 dark:text-sand-300">{promptFor(today)}</p>
+            </>
           ) : (
             <p className="mt-2 text-sand-700 dark:text-sand-200">
               You have written {todays.length} {todays.length === 1 ? "entry" : "entries"} today. Nice.
             </p>
           )}
           <div className="mt-5 flex flex-wrap gap-3">
-            <Link href={newEntryPath()} className={btnPrimary}>
-              {todays.length === 0 ? "Write today's entry" : "Write another"}
-            </Link>
-            {todays.length > 0 && (
-              <Link href={entryPath(todays[0].id)} className={btnSecondary}>
-                Read today&apos;s entry
+            {todays.length === 0 ? (
+              <Link href={dailyNotePath()} className={btnPrimary} title="Today's note (Alt+T)">
+                Open today&apos;s note
               </Link>
+            ) : (
+              <>
+                <Link href={editEntryPath(todays[0].id)} className={btnPrimary} title="Today's note (Alt+T)">
+                  Continue today&apos;s note
+                </Link>
+                <Link href={entryPath(todays[0].id)} className={btnSecondary}>
+                  Read it
+                </Link>
+                <Link href={newEntryPath()} className={btnSecondary}>
+                  Write another
+                </Link>
+              </>
             )}
             <Link href={addMoviePath()} className={btnSecondary}>
               Log a movie or show
@@ -151,7 +164,7 @@ export function HomeView() {
               const top = list.length > 0 ? dayTopTag(list) : null;
               const tag = top !== null ? tagMap.get(top) : undefined;
               const isToday = date === today;
-              const href = list.length > 0 ? entryPath(list[0].id) : newEntryPath(date);
+              const href = list.length > 0 ? entryPath(list[0].id) : dailyNotePath(date);
               return (
                 <li key={date}>
                   <Link

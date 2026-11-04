@@ -2,7 +2,7 @@
 
 Context file for continuing this project in a new chat. Read it fully before doing anything, and read `PRD.md` next to it (the product requirements). The project is in the uploaded `life-trail-web.zip`. The old `PLAN.md` belongs to the abandoned Flutter version and is out of date.
 
-Last refreshed: November 2026, at the end of the chat that added Markdown, pictures, the warm design, shows and the Home page.
+Last refreshed: November 2026, at the end of the chat that added the daily note (after Markdown, pictures, the warm design, shows and the Home page).
 
 ## Project
 
@@ -16,6 +16,7 @@ Life Trail (final name, brand kit with logo, navy, gold and green): a personal j
 
 ### What exists
 
+- **Daily note**: "Open today's note" on Home and Alt+T anywhere. No entry yet today: opens a new entry prefilled from a template (Settings, Daily note) with the cursor in the text and the prompt of the day (60 rotating questions) shown above it. Entry exists: "Continue today's note" opens the first entry of the day for editing. Empty past days on the Home strip and the calendar's write button open the template for that day. Nothing is saved until the person writes, picks a feeling and saves, so there are no empty auto-created entries and streaks stay honest.
 - **Home** (`/`): greeting, today's prompt and quick actions, streak and month counts, the last 7 days with each day's feeling (tap to read or backfill), On this day (same date in earlier years), recent entries, recently watched. The site opens here, not on the journal.
 - **Journal**: entry list and detail side by side on PC, single pane on phone. Create, edit, delete. Feelings first, then text. Write for a past day from the calendar or the Home strip. Search box over titles, text and tag names.
 - **Markdown entries** (Obsidian style live preview with CodeMirror 6): headings, bold, italic, strikethrough, inline code, bullet and numbered lists with auto continue, task checkboxes, quotes, rules, links, pictures. Read/Edit toggle, toolbar, Ctrl+B/I/K/E. Ctrl+Enter opens the link under the cursor, otherwise saves.
@@ -33,11 +34,12 @@ Life Trail (final name, brand kit with logo, navy, gold and green): a personal j
 
 ### Not built yet
 
-- Daily note auto-created each day, and the daily reminder (postponed on purpose, see Next steps).
+- A daily reminder or notification (browsers cannot fire scheduled notifications reliably when the app is closed, see Next steps).
+- Google account or Google Drive connection (researched, see Next steps).
 - Year-end recap (Spotify Wrapped style) including movies and shows.
 - Export to PDF or CSV (backups are JSON only).
 - Fingerprint or device unlock for the app lock (PIN only).
-- Prompts and templates.
+- Several templates or per-day-of-week templates (there is one daily note template and one prompt of the day).
 - Season level logging for shows (a show is logged as one title with its own viewings).
 - Tables render as plain text in the editor, not as real tables.
 - The official TMDB logo file (the person is adding `public/tmdb-logo.svg` themselves, see Gotchas).
@@ -57,7 +59,7 @@ Life Trail (final name, brand kit with logo, navy, gold and green): a personal j
 
 - Never use em dashes.
 - Keep code comments minimal and straight to the point. Use a block comment when more than one line is needed, not many inline comments.
-- When code is needed, deliver a zip laid out in the project's file paths (extract into the project root), named `life-trail-web-partN.zip` (parts 1 to 8 exist so far, part 8 bundles everything done since part 7, the next is part 9), plus the PowerShell commands:
+- When code is needed, deliver a zip laid out in the project's file paths (extract into the project root), named `life-trail-web-partN.zip` (parts 1 to 9 exist so far, part 8 bundled everything from after part 7 up to the Home page, part 9 adds the daily note, the next is part 10), plus the PowerShell commands:
   ```powershell
   Expand-Archive -Path "$HOME\Desktop\life-trail-web-plan\life-trail-web-partN.zip" -DestinationPath . -Force
   ```
@@ -94,7 +96,7 @@ Things that bit us:
   - Version 3 added `images` (no data change).
   - Version 4 added TV shows: every old movie gets `kind: "movie"`, and the unique index moved from `tmdbId` to `[kind+tmdbId]`, because TMDB numbers films and shows separately and one id can be both. Versions 3 and 4 have no pre-upgrade snapshot, because they change nothing that can be lost.
 - `life-trail-backups`: `snapshots` (`++id, createdAt, day, kind`) and `settings` (`key`).
-- Settings keys: `lastFileBackupAt`, `lastFileBackupHash`, `remindAfter`, `folderHandle`, `folderError`, `storagePersisted`, `appLock`, `tmdbKey`.
+- Settings keys: `lastFileBackupAt`, `lastFileBackupHash`, `remindAfter`, `folderHandle`, `folderError`, `storagePersisted`, `appLock`, `tmdbKey`, `dailyTemplate` (a string, missing means the default, an empty string means blank notes; like the other settings it is not part of backups).
 - Types are in `src/lib/types.ts`. Entry and viewing dates are local-day strings `YYYY-MM-DD` (so they never shift with time zones). Timestamps are epoch milliseconds (UTC). Tags are archived, never deleted. `Movie.kind` is `"movie"` or `"tv"`. Tag `isArchived` is 0 or 1 because IndexedDB cannot index booleans.
 - Pictures are `ArrayBuffer` rows (not Blob, so they clone cleanly everywhere). Entry text refers to them as `![name](image:ID)`. Nothing deletes a picture automatically. The Backup page has Remove unused.
 - Dexie gotcha: define the db with `new Dexie(...) as Dexie & {...}` (not a class with typed fields).
@@ -134,7 +136,9 @@ Things that bit us:
 
 **Navigation.** The `NAV` array in `AppShell.tsx` (Home, Journal, Calendar, Movies/Shows, Insights, Tags, Backup, Settings). `mobile: false` hides an item from the phone tab bar (Tags and Backup, both reachable from Settings). Sidebar bottom: Back up now, How to use, Collapse. The logo links home. The manifest `start_url` is `/` (its `id` stays `/journal/` so installed copies are not treated as a new app).
 
-**Keyboard shortcuts.** Ctrl+Enter saves entry, edit, viewing and tag (opens a link when on one in the editor), Ctrl+S saves an entry, Ctrl+B/I/K and Ctrl+E in the editor, Alt+N new entry, Esc closes dialogs and the poster viewer. Ctrl+N cannot be used because browsers reserve it.
+**Daily note (src/lib/dailyNote.ts, todayNote.ts, DailyNoteCard).** `DEFAULT_TEMPLATE` is three sections (Highlights, On my mind, Grateful for). `renderTemplate` fills `{{date}}`, `{{weekday}}`, `{{prompt}}` (case and spaces ignored, unknown placeholders stay). `promptFor(date)` picks one of 60 prompts by day number. The route is `/journal/new/?daily=1` (add `&date=` for a past day). The new entry page waits for the template setting to load before mounting the form, because `EntryForm` reads its initial body once. `todayNotePath()` decides between the edit page of the first entry today and a fresh note. List previews use `previewText()` which skips heading lines, so template sections do not become the preview.
+
+**Keyboard shortcuts.** Ctrl+Enter saves entry, edit, viewing and tag (opens a link when on one in the editor), Ctrl+S saves an entry, Ctrl+B/I/K and Ctrl+E in the editor, Alt+T opens today's note (Alt+D was avoided because it focuses the address bar), Alt+N new blank entry in the journal, Esc closes dialogs and the poster viewer. Ctrl+N cannot be used because browsers reserve it.
 
 **Deployment (Vercel).** `vercel.json` sets `"framework": null` (plain static site), `outputDirectory: "out"`, `trailingSlash: true`, install and build commands pinned to `npx --yes pnpm@12.15.0 ...` (Vercel only documents pnpm up to 10), a no-cache header for `/sw.js`, immutable caching for `/_next/static/`, and basic security headers. Setting the framework to Next.js together with `outputDirectory: "out"` fails with NEXT_NO_ROUTES_MANIFEST, which is why the framework is null. Keep Vercel "Deployment Protection" off for production, or the manifest and service worker get a login redirect and install breaks. `robots.txt` and a meta tag keep the site out of search engines.
 
@@ -153,7 +157,7 @@ src/
     movies/add/page.tsx        search or manual, rate (?movieId= logs another viewing)
     movies/log/page.tsx        one viewing (?id=)
   components/
-    AppShell, BackLink, ConfirmDialog, Lightbox, Segmented, ThemeCard, ui.ts
+    AppShell, BackLink, ConfirmDialog, DailyNoteCard, Lightbox, Segmented, ThemeCard, ui.ts
     EntryList, EntryDetail, EntryForm, CalendarView, TagChip, TagEditorDialog, EmojiPickerPanel
     InsightsView, YearInPixels, insights/ (FeelingsCard, MoodCalendar, WeekCard)
     home/HomeView
@@ -165,7 +169,7 @@ src/
     pwa/      ServiceWorkerRegister, InstallCard
   lib/
     db, types, defaultTags, dates, paths, hooks, entries, tags, tagColors, calendar, movies, tmdb, install
-    markdown, images, insights, watchPeriod, theme, sidebar, useSaveShortcut
+    markdown, images, insights, watchPeriod, theme, sidebar, useSaveShortcut, dailyNote, todayNote
     backup/   format, retention, store, snapshots, files, runner, hooks
     lock/     crypto, store, actions, context, erase
 scripts/    generate-sw.mjs, clean.mjs, patch-package-json.mjs (already applied)
@@ -205,21 +209,31 @@ The sandbox resets between chats, so recreate what is needed. `life-trail-tests.
 - **Real browser.** In this chat a Chrome was already installed at `/opt/google/chrome/chrome`. Use `npm i puppeteer-core` and launch with `executablePath: "/opt/google/chrome/chrome"`, `headless: "new"`, `args: ["--no-sandbox", "--disable-gpu"]`. If it is missing, the older recipe was `@sparticuz/chromium`. Serve `out/` with `python3 -m http.server 3300` started with `setsid nohup`, from inside `out/`.
 - **Servers in the sandbox.** Start them in the same command as the test or with `setsid nohup`. Never use `pkill -f "next dev"` inside a command containing that text, use `fuser -k PORT/tcp`.
 - **Unit tests.** `fake-indexeddb/auto` plus `tsx`, importing the app's modules from a `scratch/` folder: `formattest`, `movietest`, `upgradetest`, `locktest`, `imagetest`, `showtest`. Install `tsx`, `fake-indexeddb`, `jsdom` only in the sandbox and restore `package.json` afterwards (do not deliver them).
-- **Browser suites** (`browser/`): `editor.mjs` (Markdown, links, Ctrl+Enter, pictures, reader, sidebar), `features.mjs` (reading view, Ctrl+Enter save, poster viewer, insights, guide), `shows.mjs` (shows, Home, phone bar). They seed IndexedDB directly and intercept TMDB.
+- **Browser suites** (`browser/`): `editor.mjs` (Markdown, links, Ctrl+Enter, pictures, reader, sidebar), `features.mjs` (reading view, Ctrl+Enter save, poster viewer, insights, guide), `shows.mjs` (shows, Home, phone bar), `daily.mjs` (daily note, template settings, Alt+T, previews). Unit tests also include `dailytest.ts`. They seed IndexedDB directly and intercept TMDB.
 - **TMDB.** The sandbox cannot reach TMDB. Tests intercept `api.themoviedb.org` and `image.tmdb.org` with puppeteer request interception.
 - **Helper gotchas.** Triple-click does not select text in password inputs, so focus then call `el.select()`. Typing an empty string does not clear a field, press Backspace. Simulate leaving the tab by overriding `document.visibilityState`. When a test clicks a card with an offset, mind the card width.
-- **What a browser test caught that tsc and lint did not:** two start-up scripts joined without a `;` (the sidebar state never loaded); the Markdown parser lacking GitHub features; the same TMDB id existing for a film and a show.
+- **What a browser test caught that tsc and lint did not:** the guide lacking the daily note; a test that matched the editor placeholder as real text; two start-up scripts joined without a `;` (the sidebar state never loaded); the Markdown parser lacking GitHub features; the same TMDB id existing for a film and a show.
 
 ## Next steps
 
 1. Ask what the person wants next. Candidates:
    - Year-end recap including movies and shows.
-   - Daily note and reminder. Reality check already given: browsers cannot reliably fire scheduled notifications when the app is closed. A real reminder needs Web Push plus a server that sends it on a schedule. The recommendation is to build the daily note now and do the reminder in the mobile version.
    - Export to PDF or CSV.
-   - Season level logging for shows.
-   - Prompts and templates, a name for the greeting on Home, fingerprint unlock through WebAuthn.
-2. Later: a mobile version. The static export is compatible with wrapping the site in Capacitor (Android app, native notifications). Not started.
-3. Remind the person to commit and push after each part, and to test the Vercel deployment at its address.
+   - Backup to the person's own Google Drive (see the research below), once they have created the Google Cloud client ID.
+   - Season level logging for shows, more templates, a name for the Home greeting, fingerprint unlock through WebAuthn.
+2. Reminders: browsers cannot reliably fire scheduled notifications when the app is closed. A real reminder needs Web Push plus a server, or the later mobile version. The daily note is built without one.
+3. Later: a mobile version. The static export is compatible with wrapping the site in Capacitor (Android app, native notifications). Not started.
+4. Remind the person to commit and push after each part, and to test the Vercel deployment at its address.
+
+### Google account and Drive (researched November 2026, nothing built)
+
+- Free. No paywall. The costs are the person's own Google Drive space (15 GB shared across Google services) and a few setup steps.
+- Plan: an opt in "Back up to Google Drive" button that uploads the same JSON backup file. Use only the scope `drive.file` (or `drive.appdata` for a hidden app folder). Both are classed non-sensitive by Google, which avoids the restricted scope verification and the annual security assessment that full Drive access needs. Never request the full `drive` scope.
+- A site with no server can only use the Google Identity Services token flow. That gives an access token that lasts about an hour and no refresh token, and getting a new token needs a user gesture (a button press). So Drive backup works as a one press button, and cannot run silently in the background.
+- The person must create a Google Cloud project, enable the Drive API, configure the consent screen, add themselves as a test user (Testing mode is capped at 100 users and is enough for one person, or publish the consent screen, which for non-sensitive scopes needs no review), and create a web OAuth client ID with authorized origins `https://life-trail-web.vercel.app` and `http://localhost:3000`. The client ID is public and goes in the code or in Settings.
+- Cannot be tested in the sandbox (needs a real Google sign in). Brave's shields might interfere with the popup.
+- Not planned: real sync between devices (conflict handling, much larger work) and "sign in with Google" as an app login (pointless without a server).
+- Privacy note for the PRD principle "data never leaves the device": Drive backup is opt in and goes to the person's own Drive. Consider encrypting the file with a passphrase before upload.
 
 ## Open questions
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AppLockCard } from "@/components/lock/AppLockCard";
 import { TmdbKeyCard } from "@/components/movies/TmdbKeyCard";
 import { InstallCard } from "@/components/pwa/InstallCard";
+import { DailyNoteCard } from "@/components/DailyNoteCard";
 import { ThemeCard } from "@/components/ThemeCard";
 import { btnSecondary, cardClass } from "@/components/ui";
 import { useIsClient } from "@/lib/hooks";
@@ -33,6 +34,7 @@ export default function SettingsPage() {
             Manage tags
           </Link>
         </section>
+        <DailyNoteCard />
         <ThemeCard />
         <InstallCard />
         <AppLockCard />

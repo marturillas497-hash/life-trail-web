@@ -46,6 +46,7 @@ function Table({ head, rows }: { head: [string, string]; rows: [ReactNode, React
 
 const CONTENTS = [
   ["start", "Getting started"],
+  ["daily", "Daily note"],
   ["writing", "Writing with Markdown"],
   ["links", "Links and pictures"],
   ["reading", "Reading view"],
@@ -81,7 +82,7 @@ export default function GuidePage() {
 
         <Section id="start" title="Getting started">
           <ol className="list-decimal space-y-1.5 pl-5">
-            <li>Open Journal and press New entry.</li>
+            <li>Press Open today&apos;s note on Home. Or open Journal and press New entry for a blank one.</li>
             <li>Pick how you are feeling. You need at least one.</li>
             <li>Write whatever you like. A title is optional.</li>
             <li>
@@ -92,6 +93,35 @@ export default function GuidePage() {
             Everything is saved inside this browser on this device. Because of that, make a backup now and then (see
             Backups below).
           </p>
+        </Section>
+
+        <Section id="daily" title="Daily note">
+          <p>
+            The fastest way to write is today&apos;s note. Press <strong>Open today&apos;s note</strong> on Home, or{" "}
+            <Kbd>Alt</Kbd> + <Kbd>T</Kbd> from anywhere in the app.
+          </p>
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>
+              If you have not written today, a fresh note opens from your template, with the cursor already in the text.
+              A question of the day is shown above it as a gentle nudge.
+            </li>
+            <li>
+              If you already wrote today, the same button says Continue today&apos;s note and opens that entry for
+              editing. Write another starts a separate blank entry.
+            </li>
+            <li>
+              Nothing is saved until you write something, pick a feeling and press Save. An unused note leaves no empty
+              entry behind, and your streak only counts days you really wrote.
+            </li>
+            <li>
+              Empty days in the last 7 days on Home, and the Write button in the calendar, open a note for that day from
+              the same template.
+            </li>
+            <li>
+              Change the template in Settings, under Daily note. You can use <code>{"{{date}}"}</code>,{" "}
+              <code>{"{{weekday}}"}</code> and <code>{"{{prompt}}"}</code>, or leave it empty for blank notes.
+            </li>
+          </ul>
         </Section>
 
         <Section id="writing" title="Writing with Markdown">
@@ -236,6 +266,18 @@ export default function GuidePage() {
                   <Kbd>Ctrl</Kbd> + <Kbd>S</Kbd>
                 </span>,
                 "Save the entry",
+              ],
+              [
+                <span key="2b">
+                  <Kbd>Alt</Kbd> + <Kbd>T</Kbd>
+                </span>,
+                "Open today's note from anywhere",
+              ],
+              [
+                <span key="2c">
+                  <Kbd>Alt</Kbd> + <Kbd>N</Kbd>
+                </span>,
+                "Start a new blank entry (in the Journal)",
               ],
               [
                 <span key="3">

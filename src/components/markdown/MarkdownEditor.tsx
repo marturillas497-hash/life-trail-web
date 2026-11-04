@@ -20,6 +20,8 @@ type Props = {
   onChange: (value: string) => void;
   placeholder?: string;
   label: string;
+  /* Puts the cursor at the end of the text as soon as the editor opens. */
+  autoFocus?: boolean;
 };
 
 type ToolbarButton = { label: string; title: string; run: (view: EditorView) => void; className?: string };
@@ -34,7 +36,7 @@ const TOOLS: ToolbarButton[] = [
   { label: "”", title: "Quote", run: (view) => toggleLinePrefix(view, "> ") },
 ];
 
-export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
+export function MarkdownEditor({ value, onChange, placeholder, label, autoFocus = false }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -118,11 +120,16 @@ export function MarkdownEditor({ value, onChange, placeholder, label }: Props) {
       }),
     });
     viewRef.current = view;
+    if (autoFocus) {
+      view.dispatch({ selection: { anchor: view.state.doc.length } });
+      view.focus();
+    }
     return () => {
       view.destroy();
       viewRef.current = null;
     };
     // The editor is created once. Later changes to value are synced by the effect below.
+    // autoFocus only matters on the first render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
