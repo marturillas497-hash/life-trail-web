@@ -9,6 +9,7 @@ import { isCollapsed, setCollapsed, subscribeSidebar } from "@/lib/sidebar";
 import { BackupBanner } from "./backup/BackupBanner";
 import { BackupRunner } from "./backup/BackupRunner";
 import { LockOverlay } from "./lock/LockOverlay";
+import { NativeBridge } from "./native/NativeBridge";
 import { ServiceWorkerRegister } from "./pwa/ServiceWorkerRegister";
 import { LockProvider, useLock } from "@/lib/lock/context";
 import { useQuickBackup } from "./backup/useQuickBackup";
@@ -139,6 +140,7 @@ function Shell({ children }: { children: ReactNode }) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <ServiceWorkerRegister />
+        <NativeBridge />
         <BackupBanner />
         <main className="min-h-0 flex-1">{children}</main>
 

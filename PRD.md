@@ -1,6 +1,6 @@
 # Life Trail: Product Requirements Document
 
-Version 1.0, November 2026. Owner: Arendiem. Companion file: `CLAUDE.md` (technical context and working rules). When the two disagree about what the product should do, this document wins. When they disagree about how it is built, `CLAUDE.md` wins.
+Version 1.1, November 2026. Owner: Arendiem. Companion file: `CLAUDE.md` (technical context and working rules). When the two disagree about what the product should do, this document wins. When they disagree about how it is built, `CLAUDE.md` wins.
 
 ## 1. Summary
 
@@ -43,11 +43,11 @@ Writing, tags, calendar, pictures, Markdown, search, movies and shows log, insig
 
 ### Out of scope (for now)
 
-Accounts, cloud sync between devices, sharing entries or the recap, collaborative editing, a server, analytics, ads, payments, AI features, importing from other apps, exporting to PDF or CSV (decided against), a native mobile app (planned later, see section 11).
+Accounts, cloud sync between devices, sharing entries or the recap, collaborative editing, a server, analytics, ads, payments, AI features, importing from other apps, exporting to PDF or CSV (decided against), a store release of the Android app (the Android app itself is in scope as a sideloaded APK, see 6.10), an iPhone app.
 
 ## 6. Feature requirements
 
-Status key: **Done** (built and tested in a real browser by Claude), **Done, partly untested** (built, but something could not be run in the sandbox), **Planned**.
+Status key: **Done** (built and tested in a real browser by Claude), **Done, partly untested** (built, but something could not be run in the sandbox), **Built, not run on a phone** (written and checked only in a browser simulation, never built or run on a device), **Planned**.
 
 ### 6.1 Home
 
@@ -136,7 +136,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | B6 | Restore from a snapshot or a file after a preview. A copy of the current journal is saved first, so the restore can be undone | Done |
 | B7 | Older backup files (versions 1 to 3) still load. Damaged files are refused with a clear message | Done |
 | B8 | Export to PDF or CSV | Decided against (November 2026). Backups stay JSON |
-| B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Planned (researched) |
+| B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Shelved (the owner said to forget it for now, November 2026). Research is kept in `CLAUDE.md` |
 
 ### 6.8 Privacy and security
 
@@ -160,6 +160,20 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | A6 | Back and Cancel links look like buttons | Done |
 | A7 | Motion is gentle. Hovering changes colors only and never moves or resizes a control. Respects "reduce motion" | Done |
 | A8 | An in-app guide (How to use) from the sidebar and from Settings | Done |
+
+### 6.10 Android app
+
+| ID | Requirement | Status |
+|---|---|---|
+| N1 | An installable Android app (APK) with the same screens and the same on device data as the website, built in the cloud so the owner's PC needs no Android tools | Built, not run on a phone (the build has never run) |
+| N2 | A daily reminder: one notification at a chosen time, asking for permission when switched on. Tapping it opens today's note. Stored on the phone only | Built, not run on a phone |
+| N3 | Back up now opens the Android share sheet with a backup file, so it can be saved to Google Drive, Files or sent to oneself. The folder backup card is hidden | Built, not run on a phone |
+| N4 | Links in entries open in the phone's browser | Built, not run on a phone |
+| N5 | Website only parts are hidden or off in the app: the install card, the update bar and the service worker | Done in a browser simulation |
+| N6 | The app keeps its own journal, separate from the website's. Moving data uses a backup file and Restore. Uninstalling the app deletes its journal, and the Backup page says so | Built, not run on a phone |
+| N7 | Android's own cloud backup is switched off, so nothing leaves the device except by the owner's action | Done |
+| N8 | Every build is signed with one fixed key so an update installs over the old app and keeps the journal | Done, not tested |
+| N9 | Play Store release | Not planned |
 
 ## 7. Data model
 
@@ -189,36 +203,39 @@ Rules: dates are local days so they never shift with time zones. A tag is archiv
 | Browsers | Current Chromium based browsers first (the owner uses Brave). Firefox and Safari should work for everything except saving into a folder |
 | Storage | Uses the browser's storage quota. The app asks the browser to keep the data persistent |
 | Security | App lock uses PBKDF2 hashing through WebCrypto. Backups are plain JSON and are only as private as where they are saved |
-| Hosting | A static site on Vercel's free plan, deployed from the `main` branch |
+| Hosting | A static site on Vercel's free plan, deployed from the `main` branch. The APK is built by a manual GitHub Actions workflow and downloaded by the owner |
 
 ## 9. Technical constraints that shape the product
 
 - **Static site, no server.** So there is no sync, no server side reminders and no shared TMDB key. Each person pastes their own free TMDB key.
 - **Origin bound data.** The journal belongs to one exact web address. Changing the domain starts an empty journal there. Moving needs a backup file.
 - **Browser limits.** Folder saving needs the File System Access API, which Brave turns off by default. Install, offline and the lock need https or localhost.
-- **Scheduled reminders** cannot fire reliably from a closed web app. A real reminder needs a server and web push, or the later mobile version. The daily note is built without one.
+- **Scheduled reminders** cannot fire reliably from a closed web app. The website has none. The Android app has one (local notification, no server). The daily note itself needs no reminder.
+- **Android shell.** The app is the static site inside Capacitor. It needs the files inside the APK, so there is no service worker there. Android 16 forces edge to edge drawing, which may need safe area padding after the first test on a phone.
 - **Google accounts.** A site with no server can use Google sign in only for short lived access tokens, with no refresh token. So Google Drive backup can be a one press button but not a silent background sync.
 
 ## 10. Current status
 
 Built and tested in a real browser by Claude: everything marked Done above, including the daily note and the year recap.
 
-Not tested yet, and the first things to check by hand:
+Written but never built or run on a phone: the Android app (6.10). The first things to check by hand:
 
-1. A real TMDB search that returns shows (for example Loki), with the owner's key.
-2. The folder picker and the one press backup in Brave after enabling the flag.
-3. Everything on a phone.
-4. The Vercel build and the live site after the latest push.
+1. The GitHub workflow producing an APK, then installing it on the phone.
+2. Every tab, the back button, the status bar area and the editor on the phone.
+3. The daily reminder, the share sheet backup and restoring a file inside the app.
+4. A real TMDB search that returns shows (for example Loki), with the owner's key, on the website and in the app.
+5. The folder picker and the one press backup in Brave after enabling the flag.
+6. The Vercel build and the live site after the latest push.
 
 ## 11. Roadmap
 
 | Order | Item | Why |
 |---|---|---|
-| 1 | Backup to Google Drive (if the owner wants it) | A second safe place that needs no cable or manual copying |
+| 1 | **Get the Android app built and tested on the phone** | The code exists (6.10) but has never been built or run. Expect fixes after the first run |
 | 2 | Season level logging for shows | Lets a show be rated per season |
 | 3 | More templates | Different notes for different days |
 | 4 | Fingerprint unlock | Faster than a PIN on phones |
-| 5 | Mobile version | Wrapping the static site with Capacitor gives an Android app and native reminders |
+| 5 | Backup to Google Drive | Shelved, only if the owner returns to it |
 
 ## 12. Success criteria
 
@@ -233,11 +250,13 @@ This is a personal project, so success is felt rather than measured:
 
 | Risk or question | Notes |
 |---|---|
-| Browser data is erased (cleared site data, a new browser, a changed address) | The main risk. Mitigated by file backups and the reminder banner. A cloud synced backup folder would be best |
+| Browser data is erased (cleared site data, a new browser, a changed address), or the Android app is uninstalled | The main risk. Mitigated by file backups and the reminder banner. A cloud synced backup folder would be best |
 | Shows from real TMDB behave differently from the test data | Check with a real search before relying on it |
 | The paused Flutter repository | Keep, or archive it |
 | Do shows need seasons? | Decide after using the show log for a while |
-| Google Drive backup needs the owner to create a Google Cloud OAuth client | A one time setup of about ten minutes. Decide whether the convenience is worth it |
+| Google Drive backup | Shelved by the owner. Revisit only if asked |
+| Android app route | Decided: Capacitor with the APK built in the cloud. Open risks: the first Gradle build may need fixes, and a hard load of a page other than Home inside the app would show the wrong page (checked by tapping through the app) |
+| The phone layout has never been tested on a real phone | The first APK is the moment to test it, including the status bar area under Android's edge to edge drawing |
 | A name for the Home greeting | A small Settings field would do |
 | Changing the web address later | Plan a backup and restore, or pick the final address now |
 

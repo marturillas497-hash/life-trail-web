@@ -8,6 +8,7 @@ import {
   runFolderBackup,
 } from "@/lib/backup/files";
 import { useFolderState, useSetting } from "@/lib/backup/hooks";
+import { isNative } from "@/lib/native/platform";
 import { btnPrimary, btnSecondary, cardClass } from "../ui";
 
 const BRAVE_FLAG = "brave://flags/#file-system-access-api";
@@ -56,6 +57,9 @@ export function FolderBackupCard() {
       await runFolderBackup(true);
       return `Backups will be saved to "${name}". The first backup file is already there.`;
     });
+
+  /* The Android app has no folder access, the share sheet covers it. */
+  if (isNative()) return null;
 
   return (
     <section className={cardClass}>

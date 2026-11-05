@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { quickBackup } from "@/lib/backup/files";
+import { isNative } from "@/lib/native/platform";
 
 export type QuickBackupFeedback = {
   /* Fits on a button. */
@@ -30,7 +31,9 @@ export function useQuickBackup() {
       if (result.kind === "folder") {
         next = { short: "Saved ✓", long: `Backup saved to the folder "${result.folderName}".`, failed: false };
       } else if (result.kind === "download") {
-        next = { short: "Downloaded ✓", long: "Backup file downloaded to your Downloads folder.", failed: false };
+        next = isNative()
+          ? { short: "Shared ✓", long: "Backup file shared. Keep it in Google Drive or Files, outside this app.", failed: false }
+          : { short: "Downloaded ✓", long: "Backup file downloaded to your Downloads folder.", failed: false };
       } else if (result.kind === "empty") {
         next = {
           short: "Nothing yet",

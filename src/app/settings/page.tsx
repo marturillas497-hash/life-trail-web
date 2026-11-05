@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AppLockCard } from "@/components/lock/AppLockCard";
 import { TmdbKeyCard } from "@/components/movies/TmdbKeyCard";
+import { ReminderCard } from "@/components/native/ReminderCard";
 import { InstallCard } from "@/components/pwa/InstallCard";
 import { DailyNoteCard } from "@/components/DailyNoteCard";
 import { ThemeCard } from "@/components/ThemeCard";
@@ -35,6 +36,7 @@ export default function SettingsPage() {
           </Link>
         </section>
         <DailyNoteCard />
+        <ReminderCard />
         <ThemeCard />
         <InstallCard />
         <AppLockCard />

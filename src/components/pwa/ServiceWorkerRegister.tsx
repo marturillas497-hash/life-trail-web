@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { startInstallListener } from "@/lib/install";
+import { isNative } from "@/lib/native/platform";
 import { btnPrimary } from "../ui";
 
 /*
@@ -14,6 +15,9 @@ export function ServiceWorkerRegister() {
   const applying = useRef(false);
 
   useEffect(() => {
+    /* The Android app ships its files inside the APK, so it needs no service worker. */
+    if (isNative()) return;
+
     startInstallListener();
 
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { canShareFiles, downloadBackup, shareBackup } from "@/lib/backup/files";
 import { createSnapshot } from "@/lib/backup/snapshots";
+import { isNative } from "@/lib/native/platform";
 import { btnPrimary, btnSecondary, cardClass } from "../ui";
 
 export function ManualBackupCard() {
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [native] = useState(() => isNative());
   const [canShare] = useState(() => canShareFiles());
 
   async function run(action: () => Promise<string | null>) {
@@ -37,15 +39,17 @@ export function ManualBackupCard() {
           disabled={busy}
           onClick={() =>
             run(async () => {
-              await downloadBackup();
-              return "Backup file downloaded. Check your Downloads folder.";
+              if (!(await downloadBackup())) return null;
+              return native
+                ? "Backup file shared. Keep it in Google Drive or Files."
+                : "Backup file downloaded. Check your Downloads folder.";
             })
           }
         >
-          Download backup file
+          {native ? "Save or share backup file" : "Download backup file"}
         </button>
 
-        {canShare && (
+        {canShare && !native && (
           <button
             type="button"
             className={btnSecondary}

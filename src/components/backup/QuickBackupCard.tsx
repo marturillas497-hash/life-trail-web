@@ -1,6 +1,7 @@
 "use client";
 
 import { useFolderState, useSetting } from "@/lib/backup/hooks";
+import { isNative } from "@/lib/native/platform";
 import { btnPrimary, cardClass } from "../ui";
 import { useQuickBackup } from "./useQuickBackup";
 
@@ -12,8 +13,10 @@ export function QuickBackupCard() {
   const folderName = folder?.value?.name;
   const hasFolder = state === "ready" || state === "needs-permission";
 
-  const description =
-    state === "unsupported"
+  const native = isNative();
+  const description = native
+    ? "One press opens the share sheet with a fresh backup file. Save it to Google Drive or Files, or send it to yourself, so a copy lives outside this app. Uninstalling the app deletes its journal, so back up first."
+    : state === "unsupported"
       ? "This browser cannot save into a folder by itself, so one press downloads the backup file to your Downloads folder. To save straight into a folder, see the folder section below."
       : hasFolder
         ? `One press saves a fresh backup file into "${folderName ?? "your backup folder"}".`

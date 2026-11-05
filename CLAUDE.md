@@ -2,7 +2,7 @@
 
 Context file for continuing this project in a new chat. Read it fully before doing anything, and read `PRD.md` next to it (the product requirements). The project is in the uploaded `life-trail-web.zip`. The old `PLAN.md` belongs to the abandoned Flutter version and is out of date.
 
-Last refreshed: November 2026, at the end of the chat that added the year recap (after the daily note, Markdown, pictures, the warm design, shows and the Home page).
+Last refreshed: November 2026, at the end of the chat that added the Android app (Capacitor, APK built in the cloud by GitHub Actions). Before that: the year recap, the daily note, Markdown, pictures, the warm design, shows and the Home page. The Android app was written and checked in a browser simulation but NEVER built or run on a phone, see "Android app (Capacitor)" under Architecture decisions and Next steps.
 
 ## Project
 
@@ -12,7 +12,7 @@ Life Trail (final name, brand kit with logo, navy, gold and green): a personal j
 - Hosted on Vercel (free Hobby plan) at https://life-trail-web.vercel.app, auto-deploys on every push to `main`.
 - Local-first. Everything works offline except TMDB search of movies and shows, and the sharper poster in the poster viewer.
 - Emotion tags only, no separate mood score. Users can create their own tags and pick an emoji for each.
-- The earlier Flutter/Android version (repo `life-trail`) is paused. The person chose to build the web version first and make a mobile version later.
+- The earlier Flutter/Android version (repo `life-trail`) is paused. The person chose to build the web version first and make a mobile version later. The web version is now feature complete enough, and the person wants an APK next.
 
 ### What exists
 
@@ -31,19 +31,20 @@ Life Trail (final name, brand kit with logo, navy, gold and green): a personal j
 - **PWA**: manifest (starts at `/`), icons from the brand kit, install card, offline service worker, update bar.
 - **Design**: warm palette, serif headings, light/dark/match device toggle, collapsible desktop sidebar, motion rules (see Design system).
 - **Guide** (`/guide/`): the in-app How to use page, linked from the sidebar bottom and Settings. `/help/` is the separate backup explainer.
-- **Settings**: How to use, Tags link, Appearance, Install, App lock, TMDB key, link to backups.
+- **Settings**: How to use, Tags link, Daily note template, Daily reminder (Android app only), Appearance, Install (hidden in the Android app), App lock, TMDB key, link to backups.
+- **Android app** (`android/`, `capacitor.config.ts`, `.github/workflows/android-apk.yml`): Capacitor 8 wrapper around the static export, with a daily reminder (local notification), backups through the Android share sheet, links opening in the phone browser. Written, not yet built or run on a phone.
 
 ### Not built yet
 
-- A daily reminder or notification (browsers cannot fire scheduled notifications reliably when the app is closed, see Next steps).
-- Google account or Google Drive connection (researched, see Next steps).
+- A daily reminder on the website (browsers cannot fire scheduled notifications when closed). The Android app has one, untested on a device.
+- Google Drive backup. Shelved: the person said to forget it for now (November 2026). The research is kept at the end of Next steps. Do not bring it up unless asked.
 - Export to PDF or CSV. The person decided against it (November 2026), do not suggest it again unless asked.
 - Fingerprint or device unlock for the app lock (PIN only).
 - Several templates or per-day-of-week templates (there is one daily note template and one prompt of the day).
 - Season level logging for shows (a show is logged as one title with its own viewings).
 - Tables render as plain text in the editor, not as real tables.
 - The official TMDB logo file (the person is adding `public/tmdb-logo.svg` themselves, see Gotchas).
-- Mobile app version.
+- Proof that the Android app builds and runs. Nothing native has been tested on a real phone. Play Store release (needs a real upload key and a store listing) is not planned.
 
 ## About the user
 
@@ -59,7 +60,7 @@ Life Trail (final name, brand kit with logo, navy, gold and green): a personal j
 
 - Never use em dashes.
 - Keep code comments minimal and straight to the point. Use a block comment when more than one line is needed, not many inline comments.
-- When code is needed, deliver a zip laid out in the project's file paths (extract into the project root), named `life-trail-web-partN.zip` (parts 1 to 10 exist so far, part 8 bundled everything from after part 7 up to the Home page, part 9 added the daily note, part 10 adds the year recap, the next is part 11), plus the PowerShell commands:
+- When code is needed, deliver a zip laid out in the project's file paths (extract into the project root), named `life-trail-web-partN.zip` (parts 1 to 11 exist so far, part 8 bundled everything from after part 7 up to the Home page, part 9 added the daily note, part 10 added the year recap, part 11 added the Android app, the next is part 12), plus the PowerShell commands:
   ```powershell
   Expand-Archive -Path "$HOME\Desktop\life-trail-web-plan\life-trail-web-partN.zip" -DestinationPath . -Force
   ```
@@ -74,7 +75,7 @@ Life Trail (final name, brand kit with logo, navy, gold and green): a personal j
 
 ## Versions in use (November 2026)
 
-Next.js 16.4.3 (Turbopack, App Router), React 19.3.0, TypeScript 5.9, Tailwind CSS 4.3.3 through `@tailwindcss/turbopack`, Dexie 4.4.7, dexie-react-hooks 4.4.0, emoji-picker-react 5.1.4, serve 14.2.6 (dev dependency, for `pnpm preview`), pnpm 12.15.0 (`packageManager` in package.json), Node 24.x (`engines`; local 24.13.1).
+Capacitor 8.6.0 (`@capacitor/core`, `android`, `cli`), plugins local-notifications 8.3.1, filesystem 8.1.5, share 8.0.3, browser 8.0.5 (Capacitor 8 needs Node 22+, JDK 21, AGP 8.13, Gradle 8.14.3, compileSdk and targetSdk 36, minSdk 24), Next.js 16.4.3 (Turbopack, App Router), React 19.3.0, TypeScript 5.9, Tailwind CSS 4.3.3 through `@tailwindcss/turbopack`, Dexie 4.4.7, dexie-react-hooks 4.4.0, emoji-picker-react 5.1.4, serve 14.2.6 (dev dependency, for `pnpm preview`), pnpm 12.15.0 (`packageManager` in package.json), Node 24.x (`engines`; local 24.13.1).
 
 Things that bit us:
 - `cacheComponents` and `partialPrefetching` cannot be used with `output: "export"` ("PPR cannot be enabled in export mode"). They were removed.
@@ -146,6 +147,18 @@ Things that bit us:
 
 **Origin-bound data.** The journal belongs to one exact web address. localhost:3000, localhost:4000 and the Vercel address each have their own journal. Renaming the project, changing the domain or adding a custom domain starts an empty journal there. Move data with a backup file (download there, restore here), then re-enter the TMDB key and set the app lock again.
 
+**Android app (Capacitor).** The APK is the static export in `out/` inside a native shell. Route C was chosen: the APK is built in the cloud, no Android Studio on the PC.
+- Files: `capacitor.config.ts` (appId `com.lifetrail.app`, never change it after the first install, appName Life Trail, webDir `out`), `android/` (generated by `cap add android`, committed, with the launcher icons and splash made by `@capacitor/assets` from `assets/`, a notification icon `ic_stat_life_trail`, `allowBackup="false"` so Android never copies the journal to Google), `.github/workflows/android-apk.yml`.
+- Build: GitHub, Actions tab, Android APK, Run workflow (manual only). It installs with pnpm 12.15.0, runs `pnpm build`, `cap sync android`, `./gradlew assembleDebug -PversionCode=<run number>`, and uploads `life-trail.apk` as an artifact (kept 30 days).
+- Signing: `android/app/debug.keystore` is committed on purpose (password `android`, alias `androiddebugkey`) and `build.gradle` signs with it. A fixed key is required: with a random key per run, an update would not install over the old app, and uninstalling deletes the journal. Fine for personal sideloading in a private repo. A Play Store release needs a real upload key kept in GitHub Secrets.
+- Native layer: `src/lib/native/` (`platform.ts` has `isNative()` and `openExternal()`, `share.ts` writes a backup to the cache folder and opens the share sheet, `reminder.ts` schedules one repeating daily local notification), `src/components/native/NativeBridge.tsx` (mounted in `AppShell`, re-applies the reminder on open and sends a notification tap to `todayNotePath()`), `ReminderCard.tsx` (Settings, Android only). Plugins are imported dynamically inside native branches so the website bundle stays small.
+- Behaviour changes in the app: `downloadBackup()` now returns a boolean and in the app opens the share sheet (false when closed without choosing); `shareBackup` and `quickBackup` follow; `isFolderBackupSupported()` is false; `FolderBackupCard` and `InstallCard` render nothing; `ServiceWorkerRegister` does nothing (the files ship inside the APK, and a service worker would keep old files after an APK update); `openLink` uses the Browser plugin; clicking a picture does nothing (a blob URL cannot open in the browser).
+- Reminder: a repeating notification (`schedule.on` hour and minute, `allowWhileIdle`, inexact, so no exact alarm permission is needed) on channel `daily-note`, id 1001. Stored in the `reminder` setting (`{ enabled, time }`), per device, not in backups. Asks for the notification permission when switched on. If permission is later removed, `syncReminder` switches the setting off.
+- Data is separate per origin: the app has its own empty journal. Move data with a backup file (version 4 includes pictures) and Restore. Uninstalling the app deletes its journal.
+- Android 16 / targetSdk 36 forces edge to edge. The viewport has no `viewport-fit=cover`, so Capacitor should pad the WebView natively and the existing layout needs no safe area CSS. Unverified. If the status bar or gesture bar overlaps the app, add `viewport-fit=cover` and use `env(safe-area-inset-*)` or the `--safe-area-inset-*` variables from the SystemBars plugin.
+- Routing risk: Capacitor's Android server answers any path without a dot (such as `/journal/`) with the root `index.html`. In app navigation is client side (`.txt` payloads have dots, so they load as files) and nothing calls `location.reload`, so it should work, but a hard load of a deep route would show the wrong page. First thing to check on the phone: tap every tab, open an entry, press back.
+- The simulated native test (see Testing) sets `window.androidBridge` before load so `Capacitor.isNativePlatform()` is true.
+
 ## Project structure
 
 ```
@@ -189,6 +202,8 @@ pnpm preview      # serve out/ at http://localhost:4000 (run pnpm build first)
 pnpm lint
 ```
 
+Android (normally done by the GitHub workflow, not locally): `pnpm build`, then `npx cap sync android` copies `out/` and the plugins into `android/`. Building the APK needs JDK 21 and the Android SDK, so it is done in the cloud. Do not run `cap add android` again, `android/` already exists.
+
 The `start` script (`next start`) does not work with a static export and can be ignored.
 
 ## Gotchas and known issues
@@ -198,6 +213,7 @@ The `start` script (`next start`) does not work with a static export and can be 
 - **Insecure addresses.** Install, offline and the app lock need https or localhost. They will not work on a PC's network address such as http://192.168.x.x.
 - **Offline console noise.** While offline, `HEAD` requests for link prefetching fail in the console. Harmless.
 - **Cruft in the zip.** The uploaded zip contains `out/` (build output, ignore it) and default `README.md`. The unused starter SVGs are in `public/`.
+- **Untested by Claude, Android:** the Gradle build (the sandbox cannot reach Gradle or Google's Maven), the workflow, installing and running the APK, the reminder and its permission prompt, a notification tap opening today's note, the share sheet backup, restoring from a file picked in the app, TMDB search from the app's origin (`https://localhost`, TMDB should allow it), the app lock in the WebView, edge to edge layout, back button behaviour, the phone layout in general.
 - **Untested by Claude** (could not run in the sandbox): real TMDB responses and the real key flow, the Vercel build and its routing (the person's build log showed install and build working, and they reported the deployment working after the output directory fix), the real folder picker, real devices, Brave itself.
 - **TMDB logo.** TMDB requires its approved logo. It could not be fetched from the sandbox. The person saves the official file as `public/tmdb-logo.svg` (from themoviedb.org/about/logos-attribution) and the notice component shows it next to the text. Do not use third party copies.
 - **Mobile bar.** The phone tab bar has six items (Home, Journal, Calendar, Movies/Shows, Insights, Settings). Adding a seventh needs a different layout.
@@ -212,6 +228,7 @@ The sandbox resets between chats, so recreate what is needed. `life-trail-tests.
 - **Real browser.** In this chat a Chrome was already installed at `/opt/google/chrome/chrome`. Use `npm i puppeteer-core` and launch with `executablePath: "/opt/google/chrome/chrome"`, `headless: "new"`, `args: ["--no-sandbox", "--disable-gpu"]`. If it is missing, the older recipe was `@sparticuz/chromium`. Serve `out/` with `python3 -m http.server 3300` started with `setsid nohup`, from inside `out/`.
 - **Servers in the sandbox.** Start them in the same command as the test or with `setsid nohup`. Never use `pkill -f "next dev"` inside a command containing that text, use `fuser -k PORT/tcp`.
 - **Unit tests.** `fake-indexeddb/auto` plus `tsx`, importing the app's modules from a `scratch/` folder: `formattest`, `movietest`, `upgradetest`, `locktest`, `imagetest`, `showtest`. Install `tsx`, `fake-indexeddb`, `jsdom` only in the sandbox and restore `package.json` afterwards (do not deliver them).
+- **Simulated native check.** `puppeteer-core` against `out/` served on port 3300, with `window.androidBridge = { postMessage() {} }` injected through `evaluateOnNewDocument` so Capacitor reports Android. It confirmed the Reminder card appears, the Install and Backup folder cards disappear and the backup wording changes, and that the website view is unchanged. Plugin calls fail there by design, so it proves the UI branches only.
 - **Browser suites** (`browser/`): `editor.mjs` (Markdown, links, Ctrl+Enter, pictures, reader, sidebar), `features.mjs` (reading view, Ctrl+Enter save, poster viewer, insights, guide), `shows.mjs` (shows, Home, phone bar), `daily.mjs` (daily note, template settings, Alt+T, previews), `recap.mjs` (Home card, all ten slides, keyboard, year picker, empty year, phone width). Unit tests also include `dailytest.ts` and `recaptest.ts`. They seed IndexedDB directly and intercept TMDB.
 - **TMDB.** The sandbox cannot reach TMDB. Tests intercept `api.themoviedb.org` and `image.tmdb.org` with puppeteer request interception.
 - **Helper gotchas.** Triple-click does not select text in password inputs, so focus then call `el.select()`. Typing an empty string does not clear a field, press Backspace. Simulate leaving the tab by overriding `document.visibilityState`. When a test clicks a card with an offset, mind the card width.
@@ -219,14 +236,14 @@ The sandbox resets between chats, so recreate what is needed. `life-trail-tests.
 
 ## Next steps
 
-1. Ask what the person wants next. Candidates:
-   - Backup to the person's own Google Drive (see the research below), once they have created the Google Cloud client ID. The person asked how it works and has not decided yet.
-   - Season level logging for shows, more templates, a name for the Home greeting, fingerprint unlock through WebAuthn.
-2. Reminders: browsers cannot reliably fire scheduled notifications when the app is closed. A real reminder needs Web Push plus a server, or the later mobile version. The daily note is built without one.
-3. Later: a mobile version. The static export is compatible with wrapping the site in Capacitor (Android app, native notifications). Not started.
-4. Remind the person to commit and push after each part, and to test the Vercel deployment at its address.
+1. **Get the first APK built and onto the phone.** The person must: run the `pnpm add` line from part 11, extract the zip, commit and push, then run the workflow on GitHub and download `life-trail.apk` from the run's Artifacts, copy it to the phone and install it (allow installs from the source). If the workflow fails, ask for the red log text and fix it, the Gradle build has never run. Gotchas to expect: action versions, an SDK package missing, a plugin needing a newer compileSdk.
+2. **Test on the phone** (first time ever): every tab and back button (see the routing risk), status bar and gesture bar overlap, the Daily reminder (permission prompt, time, tap opens today's note), Back up now share sheet, restoring a backup file into the app, TMDB key and search, app lock, keyboard covering the editor, the toolbar and tab bar at phone width. Fix what shows.
+3. Move the journal from the website to the app with a backup file when the person is ready, and remind them that uninstalling the app deletes its journal.
+4. Google Drive backup is shelved. The research is at the end of this file in case they return to it.
+5. Smaller ideas, only if asked: season level logging for shows, more daily note templates, a name for the Home greeting, fingerprint unlock (WebAuthn on the website, a biometric plugin in the app). Export to PDF or CSV was rejected.
+6. Remind the person to commit and push after each part, and to test the Vercel deployment at its address. The website must keep working: Vercel only builds the Next.js site, the `android/` folder does not affect it.
 
-### Google account and Drive (researched November 2026, nothing built)
+### Google account and Drive (researched November 2026, nothing built, SHELVED by the person)
 
 - Free. No paywall. The costs are the person's own Google Drive space (15 GB shared across Google services) and a few setup steps.
 - Plan: an opt in "Back up to Google Drive" button that uploads the same JSON backup file. Use only the scope `drive.file` (or `drive.appdata` for a hidden app folder). Both are classed non-sensitive by Google, which avoids the restricted scope verification and the annual security assessment that full Drive access needs. Never request the full `drive` scope.

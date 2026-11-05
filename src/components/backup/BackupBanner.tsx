@@ -6,6 +6,7 @@ import { useState } from "react";
 import { downloadBackup, grantFolderAccess } from "@/lib/backup/files";
 import { useBackupDue, useFolderState } from "@/lib/backup/hooks";
 import { setSetting } from "@/lib/backup/store";
+import { isNative } from "@/lib/native/platform";
 import { normalizePath } from "@/lib/paths";
 import { btnPrimary, btnSecondary } from "../ui";
 
@@ -65,7 +66,7 @@ export function BackupBanner() {
             }
           }}
         >
-          Download backup
+          {isNative() ? "Back up now" : "Download backup"}
         </button>
         <button
           type="button"

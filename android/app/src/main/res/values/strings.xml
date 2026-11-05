@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Life Trail</string>
+    <string name="title_activity_main">Life Trail</string>
+    <string name="package_name">com.lifetrail.app</string>
+    <string name="custom_url_scheme">com.lifetrail.app</string>
+</resources>

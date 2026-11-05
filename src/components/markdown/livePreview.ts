@@ -11,6 +11,7 @@ import {
 } from "@codemirror/view";
 import { resolveImageSrc } from "@/lib/images";
 import { safeUrl } from "@/lib/markdown";
+import { isNative, openExternal } from "@/lib/native/platform";
 
 /* True in the reading view: nothing is editable and every Markdown symbol stays hidden. */
 export const readingMode = Facet.define<boolean, boolean>({
@@ -23,7 +24,8 @@ type SyntaxNode = ReturnType<typeof syntaxTree>["topNode"];
 export function openLink(raw: string): boolean {
   const url = safeUrl(raw);
   if (!url) return false;
-  window.open(url, "_blank", "noopener,noreferrer");
+  if (isNative()) void openExternal(url);
+  else window.open(url, "_blank", "noopener,noreferrer");
   return true;
 }
 
@@ -128,6 +130,8 @@ class ImageWidget extends WidgetType {
     wrap.append(img);
     wrap.addEventListener("click", (event) => {
       if (!this.openOnClick && !(event.ctrlKey || event.metaKey)) return;
+      /* A picture cannot be opened in a separate browser tab inside the Android app. */
+      if (isNative()) return;
       void resolveImageSrc(this.src).then((url) => url && window.open(url, "_blank", "noopener,noreferrer"));
     });
     return wrap;

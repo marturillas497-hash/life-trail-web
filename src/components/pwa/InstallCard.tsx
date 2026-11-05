@@ -7,6 +7,7 @@ import {
   promptInstall,
   useInstallInfo,
 } from "@/lib/install";
+import { isNative } from "@/lib/native/platform";
 import { btnPrimary, cardClass } from "../ui";
 
 export function InstallCard() {
@@ -14,6 +15,10 @@ export function InstallCard() {
   const [installed] = useState(() => isRunningInstalled());
   const [apple] = useState(() => isAppleTouchDevice());
   const [message, setMessage] = useState<string | null>(null);
+  const [native] = useState(() => isNative());
+
+  /* Already the installed Android app. */
+  if (native) return null;
 
   return (
     <section className={cardClass}>

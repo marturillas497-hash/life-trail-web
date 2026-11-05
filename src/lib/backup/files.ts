@@ -2,6 +2,8 @@ import { hasContent, hashData, buildBackupFile, serializeBackup, type BackupData
 import { readCurrentData } from "./snapshots";
 import { deleteSetting, getSetting, setSetting } from "./store";
 import { todayKey } from "../dates";
+import { isNative } from "../native/platform";
+import { shareJsonFile } from "../native/share";
 
 const KEEP_FOLDER_FILES = 30;
 const FILE_PATTERN = /^life-trail-backup-\d{4}-\d{2}-\d{2}\.json$/;
@@ -36,23 +38,35 @@ async function markFileBackup(hash: string): Promise<void> {
 
 /* ---------- Download and share ---------- */
 
-export async function downloadBackup(): Promise<void> {
+/*
+In a browser this downloads the file. In the Android app it opens the share
+sheet instead, because the app has no Downloads folder of its own. Returns
+false if the share sheet was closed without choosing anything.
+*/
+export async function downloadBackup(): Promise<boolean> {
   const data = await readCurrentData({ withImages: true });
   const json = serializeBackup(buildBackupFile(data));
-  const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+  const name = backupFileName(new Date(), true);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = backupFileName(new Date(), true);
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  if (isNative()) {
+    if (!(await shareJsonFile(name, json))) return false;
+  } else {
+    const url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  }
 
   await markFileBackup(hashData(data));
+  return true;
 }
 
 export function canShareFiles(): boolean {
+  if (isNative()) return true;
   if (typeof navigator === "undefined" || typeof navigator.share !== "function") return false;
   const probe = new File(["{}"], "probe.json", { type: "application/json" });
   return navigator.canShare?.({ files: [probe] }) === true;
@@ -60,6 +74,7 @@ export function canShareFiles(): boolean {
 
 /* Returns false if the person closed the share sheet without sharing. */
 export async function shareBackup(): Promise<boolean> {
+  if (isNative()) return downloadBackup();
   const data = await readCurrentData({ withImages: true });
   const json = serializeBackup(buildBackupFile(data));
   const file = new File([json], backupFileName(new Date(), true), { type: "application/json" });
@@ -76,7 +91,7 @@ export async function shareBackup(): Promise<boolean> {
 /* ---------- Automatic backups to a folder (Chrome and Edge on a computer) ---------- */
 
 export function isFolderBackupSupported(): boolean {
-  return typeof window !== "undefined" && "showDirectoryPicker" in window;
+  return typeof window !== "undefined" && !isNative() && "showDirectoryPicker" in window;
 }
 
 async function getHandle(): Promise<FolderHandle | undefined> {
@@ -197,8 +212,7 @@ Call it directly from a click, because the picker and the permission prompt requ
 export async function quickBackup(): Promise<QuickBackupResult> {
   if (!isFolderBackupSupported()) {
     if (!hasContent(await readCurrentData())) return { kind: "empty" };
-    await downloadBackup();
-    return { kind: "download" };
+    return (await downloadBackup()) ? { kind: "download" } : { kind: "cancelled" };
   }
 
   let handle = await getHandle();
