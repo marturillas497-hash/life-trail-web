@@ -76,7 +76,7 @@ export default function MovieLogPage() {
           />
           <div className="min-w-0">
             <KindBadge kind={movie.kind} className="mb-1" />
-            <h1 className="text-2xl font-semibold tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               {movie.title}
               {movie.year && <span className="font-normal text-sand-500"> ({movie.year})</span>}
             </h1>

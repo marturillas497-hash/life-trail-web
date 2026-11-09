@@ -1,6 +1,15 @@
 @import "tailwindcss";
 
 /* Dark styles follow the .dark class so the Settings toggle can override the device. */
+/* Headings use Nunito, shipped inside the app so no request leaves the device. Licence: public/fonts/Nunito-OFL.txt */
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/nunito-latin-wght-normal.woff2") format("woff2-variations");
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* True while the desktop sidebar is collapsed. */
@@ -45,7 +54,7 @@
   --color-gold-800: #6e4a12;
   --color-gold-900: #4a320d;
 
-  --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --font-display: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
 
   --animate-page-in: page-in 240ms ease-out;
   --animate-fade-in: fade-in 160ms ease-out;
@@ -141,6 +150,13 @@ html.dark body {
 h1,
 h2 {
   font-family: var(--font-display);
+}
+
+@layer base {
+  h2 {
+    font-size: 1.125rem;
+    line-height: 1.35;
+  }
 }
 
 /* ---------- Markdown editor and reader ---------- */

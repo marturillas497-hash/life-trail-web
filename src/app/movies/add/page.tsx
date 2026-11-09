@@ -253,7 +253,7 @@ function Shell({ title, children }: { title: string; children: ReactNode }) {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl p-4 lg:p-8">
         <BackLink href="/movies/">Movies/Shows</BackLink>
-        <h1 className="mt-2 text-xl font-semibold">{title}</h1>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{title}</h1>
         <div className="mt-4">{children}</div>
       </div>
     </div>

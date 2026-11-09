@@ -35,7 +35,7 @@ export function EntryList() {
   return (
     <>
       <header className="flex items-center justify-between border-b border-sand-200 px-4 py-3 dark:border-sand-800">
-        <h1 className="text-xl font-semibold">Journal</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Journal</h1>
         <Link href={newEntryPath()} className={btnPrimary} title="New entry (Alt+N)">
           New entry
         </Link>

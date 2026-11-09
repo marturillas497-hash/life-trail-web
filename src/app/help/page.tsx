@@ -19,7 +19,7 @@ export default function HelpPage() {
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-2xl p-4 lg:p-8">
         <BackLink href="/backup/">Backup and restore</BackLink>
-        <h1 className="mt-3 text-2xl font-semibold tracking-tight">How your backups work</h1>
+        <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">How your backups work</h1>
 
         <Section title="Where your journal lives">
           <p>

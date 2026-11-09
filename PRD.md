@@ -29,7 +29,7 @@ Not targeted: teams, public blogging, people who need sync across devices, or an
 ## 4. Product principles
 
 1. **Private by construction.** Data never leaves the device unless the person downloads a file. The only outgoing requests are to TMDB, and only when searching or viewing a poster.
-2. **Calm and warm.** The app should feel approachable, never clinical. Soft colors, a serif heading font, gentle motion.
+2. **Calm and warm.** The app should feel approachable, never clinical. Soft colors, a rounded sans heading font (Nunito, shipped inside the app), gentle motion.
 3. **Write first.** The shortest path from opening the app to typing a sentence should stay short. Home puts "Write today's entry" at the top.
 4. **Safe by default.** Nothing is lost by a wrong click: deletes ask first, restores save a safety copy, archived tags keep old entries correct.
 5. **Honest limits.** The app says plainly what it cannot do (browser storage can be erased, folder saving needs a flag in Brave) and offers a workaround.
@@ -157,7 +157,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | A2 | Works offline. A new version waits for the person to press "Reload to update", so a draft is never lost | Done |
 | A3 | Light, dark, OLED black (true black surfaces) or match device, chosen in Settings and remembered | Done |
 | A4 | A collapsible sidebar on large screens that remembers its state | Done |
-| A5 | A bottom tab bar with six items on phones | Done |
+| A5 | A bottom tab bar with six items on phones. It tucks away when scrolling down and returns when scrolling up, near the top of a page, and on a new page | Done |
 | A6 | Back and Cancel links look like buttons | Done |
 | A7 | Motion is gentle. Hovering changes colors only and never moves or resizes a control. Respects "reduce motion" | Done |
 | A8 | An in-app guide (How to use) from the sidebar and from Settings | Done |

@@ -18,7 +18,7 @@ export default function SettingsPage() {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-8">
-        <h1 className="text-xl font-semibold">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Settings</h1>
         <section className={cardClass}>
           <h2 className="font-semibold">How to use Life Trail</h2>
           <p className="mt-1 text-sm text-sand-500">

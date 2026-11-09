@@ -61,7 +61,7 @@ export function WelcomeFlow() {
       <div className="mx-auto flex min-h-full max-w-xl flex-col justify-center py-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/logo-mark.png" alt="" width={56} height={56} className="h-14 w-14" />
-        <h1 id="welcome-title" className="mt-3 font-display text-3xl font-semibold tracking-tight">
+        <h1 id="welcome-title" className="mt-3 font-display text-4xl font-bold tracking-tight">
           Welcome to Life Trail
         </h1>
         <p className="mt-2 text-sm text-sand-600 dark:text-sand-300">

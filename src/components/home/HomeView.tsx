@@ -103,7 +103,7 @@ export function HomeView() {
             className="pointer-events-none absolute -right-4 -top-4 size-36 opacity-20 sm:size-40"
           />
           <p className="text-sm text-sand-600 dark:text-sand-300">{formatFullDate(today)}</p>
-          <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight">{greeting(hour)}</h1>
+          <h1 className="mt-1 font-display text-4xl font-bold tracking-tight">{greeting(hour)}</h1>
           {firstTime ? (
             <p className="mt-2 max-w-md text-sm text-sand-700 dark:text-sand-200">
               Welcome to Life Trail. Write your first entry to start your trail, or read the guide to see what you can do.

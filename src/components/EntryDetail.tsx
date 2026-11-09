@@ -68,7 +68,7 @@ export function EntryDetail({ id }: { id: number }) {
 
       <p className="text-sm font-medium text-sand-500">{formatFullDate(entry.date)}</p>
       {entry.title && (
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">{entry.title}</h1>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">{entry.title}</h1>
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">

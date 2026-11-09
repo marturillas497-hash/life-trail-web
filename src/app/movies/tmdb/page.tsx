@@ -55,7 +55,7 @@ export default function TmdbSetupPage() {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl p-4 lg:p-8">
         <BackLink href="/movies/">Movies/Shows</BackLink>
-        <h1 className="mt-2 text-xl font-semibold">Set up movie search</h1>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Set up movie search</h1>
         <p className="mt-2 text-sm text-sand-600 dark:text-sand-300">
           Life Trail searches TMDB, a free movie and show database. You need your own free key. It
           takes about two minutes, and the key stays on this device only.

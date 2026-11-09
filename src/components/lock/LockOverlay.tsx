@@ -69,7 +69,7 @@ export function LockOverlay() {
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-mark.png" alt="" width={96} height={96} className="mx-auto h-24 w-24" />
-          <h1 className="mt-2 text-xl font-semibold">Life Trail is locked</h1>
+          <h1 className="mt-2 text-2xl font-bold">Life Trail is locked</h1>
         </div>
 
         {view === "enter" && (

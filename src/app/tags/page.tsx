@@ -55,7 +55,7 @@ export default function TagsPage() {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl p-4 lg:p-8">
         <header className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Tags</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Tags</h1>
           <button type="button" className={btnPrimary} onClick={() => setEditing({})}>
             New tag
           </button>

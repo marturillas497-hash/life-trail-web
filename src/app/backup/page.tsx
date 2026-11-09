@@ -22,7 +22,7 @@ export default function BackupPage() {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-8">
         <header className="flex items-center justify-between gap-3">
-          <h1 className="text-xl font-semibold">Backup and restore</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Backup and restore</h1>
           <Link href="/help/" className="text-sm text-brand-600 underline">
             How it works
           </Link>

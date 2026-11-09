@@ -87,9 +87,9 @@ export default function MoviesPage() {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-5xl p-4 lg:p-8">
-        <header className="flex items-center justify-between gap-3">
-          <h1 className="text-xl font-semibold">Movies/Shows</h1>
-          <div className="flex flex-wrap justify-end gap-2">
+        <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Movies/Shows</h1>
+          <div className="flex gap-2 whitespace-nowrap">
             <Link href={tmdbSetupPath()} className={btnSecondary}>
               TMDB key
             </Link>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { normalizePath } from "@/lib/paths";
-import { useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { todayNotePath } from "@/lib/todayNote";
 import { isCollapsed, setCollapsed, subscribeSidebar } from "@/lib/sidebar";
 import { BackupBanner } from "./backup/BackupBanner";
@@ -16,6 +16,7 @@ import { useQuickBackup } from "./backup/useQuickBackup";
 import { WelcomeFlow } from "./welcome/WelcomeFlow";
 import { useWelcomeNeeded } from "@/lib/welcome";
 import { applyTheme, readTheme } from "@/lib/theme";
+import { useHideOnScroll } from "@/lib/useHideOnScroll";
 
 /* Add an item here and it shows up in the sidebar and the phone tab bar. */
 const NAV: { href: string; label: string; icon: string; mobile?: boolean }[] = [
@@ -53,6 +54,8 @@ function Shell({ children }: { children: ReactNode }) {
   }, [router, status]);
 
   const pathname = normalizePath(usePathname());
+  const column = useRef<HTMLDivElement>(null);
+  const navHidden = useHideOnScroll(column, pathname);
   const isActive = (href: string) => {
     const base = normalizePath(href);
     return pathname === base || pathname.startsWith(`${base}/`);
@@ -145,14 +148,21 @@ function Shell({ children }: { children: ReactNode }) {
         </button>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div ref={column} className="flex min-w-0 flex-1 flex-col">
         <ServiceWorkerRegister />
         <NativeBridge />
         <BackupBanner />
         <main className="min-h-0 flex-1">{children}</main>
 
         {NAV.length > 1 && (
-          <nav className="flex border-t border-sand-200 bg-sand-50 lg:hidden dark:border-sand-800 dark:bg-sand-950">
+          <div
+            inert={navHidden}
+            className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out lg:hidden ${
+              navHidden ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
+            }`}
+          >
+            <nav className="min-h-0 overflow-hidden">
+              <div className="flex border-t border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
             {NAV.filter((item) => item.mobile !== false).map((item) => (
               <Link
                 key={item.href}
@@ -170,7 +180,9 @@ function Shell({ children }: { children: ReactNode }) {
                 {item.label}
               </Link>
             ))}
-          </nav>
+              </div>
+            </nav>
+          </div>
         )}
       </div>
     </div>

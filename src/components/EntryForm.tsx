@@ -91,7 +91,7 @@ export function EntryForm({ initial, date, initialBody, prompt }: Props) {
     <div>
       <header className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-sand-200 bg-sand-50/90 px-4 py-3 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
         <BackLink href={backHref}>Cancel</BackLink>
-        <h1 className="font-semibold">{initial ? "Edit entry" : "New entry"}</h1>
+        <h1 className="text-xl font-bold">{initial ? "Edit entry" : "New entry"}</h1>
         <button
           type="button"
           className={btnPrimary}

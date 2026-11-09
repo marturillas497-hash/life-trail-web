@@ -76,7 +76,7 @@ export function InsightsView() {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-8">
-        <h1 className="text-xl font-semibold">Insights</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Insights</h1>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Segmented label="Period" value={kind} options={KINDS} onChange={setKind} />

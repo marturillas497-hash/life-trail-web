@@ -64,7 +64,7 @@ export default function GuidePage() {
     <div className="h-full overflow-y-auto">
       <article className="mx-auto max-w-2xl p-4 pb-16 lg:p-8">
         <BackLink href="/journal/">Journal</BackLink>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight">How to use Life Trail</h1>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">How to use Life Trail</h1>
         <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
           A private journal that lives in your browser. No account, no server, nobody else can read it.
         </p>
