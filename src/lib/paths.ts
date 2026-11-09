@@ -25,6 +25,7 @@ export function parseId(raw: string | null): number {
   return raw !== null && /^\d+$/.test(raw) ? Number(raw) : Number.NaN;
 }
 
+export const tmdbSetupPath = () => "/movies/tmdb/";
 export const movieLogPath = (id: number) => `/movies/log/?id=${id}`;
 export const addMoviePath = (movieId?: number) =>
   movieId === undefined ? "/movies/add/" : `/movies/add/?movieId=${movieId}`;

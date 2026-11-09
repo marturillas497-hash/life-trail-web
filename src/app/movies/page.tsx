@@ -6,10 +6,12 @@ import { MovieCard } from "@/components/movies/MovieCard";
 import { TmdbAttribution } from "@/components/movies/TmdbAttribution";
 import { Segmented } from "@/components/Segmented";
 import { btnPrimary, btnSecondary, inputClass } from "@/components/ui";
+import { useSetting } from "@/lib/backup/hooks";
 import { todayKey } from "@/lib/dates";
 import type { MediaKind } from "@/lib/types";
 import { useMovieLogs } from "@/lib/hooks";
-import { addMoviePath } from "@/lib/paths";
+import { addMoviePath, tmdbSetupPath } from "@/lib/paths";
+import { parseCredential } from "@/lib/tmdb";
 import { inRange, rangeFor, rangeTitle, shiftAnchor, type WatchView } from "@/lib/watchPeriod";
 
 type Sort = "recent" | "rating" | "title";
@@ -30,6 +32,7 @@ const VIEWS: { value: WatchView; label: string }[] = [
 
 export default function MoviesPage() {
   const items = useMovieLogs();
+  const keyRow = useSetting<string>("tmdbKey");
   const [sort, setSort] = useState<Sort>("recent");
   const [filter, setFilter] = useState("");
   const [kind, setKind] = useState<KindFilter>("all");
@@ -86,10 +89,24 @@ export default function MoviesPage() {
       <div className="mx-auto max-w-5xl p-4 lg:p-8">
         <header className="flex items-center justify-between gap-3">
           <h1 className="text-xl font-semibold">Movies/Shows</h1>
-          <Link href={addMoviePath()} className={btnPrimary}>
-            Log a movie or show
-          </Link>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Link href={tmdbSetupPath()} className={btnSecondary}>
+              TMDB key
+            </Link>
+            <Link href={addMoviePath()} className={btnPrimary}>
+              Log a movie or show
+            </Link>
+          </div>
         </header>
+
+        {keyRow !== undefined && !parseCredential(keyRow.value) && (
+          <div className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+            Want to find movies and shows by name, with posters? Connect your free TMDB key.{" "}
+            <Link href={tmdbSetupPath()} className="font-medium underline">
+              Set up movie search
+            </Link>
+          </div>
+        )}
 
         {items === undefined ? (
           <p className="mt-6 text-sm text-sand-500">Loading...</p>

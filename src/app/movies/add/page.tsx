@@ -176,9 +176,9 @@ export default function AddMoviePage() {
     <Shell title="Log a movie or show">
       {keyRow !== undefined && !credential && (
         <p className="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
-          To search for movies and shows, add your free TMDB key in{" "}
-          <Link href="/settings/" className="underline">
-            Settings
+          To search for movies and shows, add your free TMDB key on the{" "}
+          <Link href="/movies/tmdb/" className="underline">
+            movie search setup page
           </Link>
           . Or log one by typing its title below.
         </p>

@@ -1,13 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useSetting } from "@/lib/backup/hooks";
 import { deleteSetting, setSetting } from "@/lib/backup/store";
+import { tmdbSetupPath } from "@/lib/paths";
 import { checkCredential, parseCredential, TmdbError } from "@/lib/tmdb";
 import { TmdbAttribution } from "./TmdbAttribution";
 import { btnPrimary, btnSecondary, cardClass, inputClass } from "../ui";
 
-export function TmdbKeyCard() {
+export function TmdbKeyCard({ showGuideLink = true }: { showGuideLink?: boolean }) {
   const saved = useSetting<string>("tmdbKey");
   const [draft, setDraft] = useState("");
   const [message, setMessage] = useState<{ text: string; good: boolean } | null>(null);
@@ -113,25 +115,14 @@ export function TmdbKeyCard() {
         </p>
       )}
 
-      <details className="mt-4 text-sm">
-        <summary className="cursor-pointer font-medium text-sand-600 dark:text-sand-400">
-          How do I get a key?
-        </summary>
-        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sand-600 dark:text-sand-300">
-          <li>Make a free account at themoviedb.org and confirm your email.</li>
-          <li>
-            Open your account settings and find the API section. Request a key for personal,
-            non-commercial use. The form is short. Menu names may differ a little.
-          </li>
-          <li>
-            Copy the <strong>API Read Access Token</strong> (long, starts with eyJ) or the{" "}
-            <strong>API Key</strong> (32 letters and numbers) and paste it above.
-          </li>
-        </ol>
-        <p className="mt-2 text-sand-500">
-          TMDB&apos;s free API is for personal, non-commercial use only.
-        </p>
-      </details>
+      {showGuideLink && (
+        <Link href={tmdbSetupPath()} className={`${btnSecondary} mt-4`}>
+          How do I get a key? Step by step with pictures
+        </Link>
+      )}
+      <p className="mt-3 text-xs text-sand-500">
+        TMDB&apos;s free API is for personal, non-commercial use only.
+      </p>
 
       <TmdbAttribution className="mt-4 border-t border-sand-200 pt-4 dark:border-sand-800" />
     </section>

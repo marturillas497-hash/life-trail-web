@@ -111,6 +111,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | M8 | Posters are copied into the journal so they show offline | Done |
 | M9 | The TMDB attribution notice and the official logo are shown | Done, logo file is added by the owner |
 | M10 | Season level logging for shows | Planned |
+| M11 | A movie search setup page with a short picture guide to getting a TMDB key, ending in the key field. Reachable from Movies, the add page and Settings. Movies shows a banner while no key is saved | Done |
 
 ### 6.6 Insights
 
@@ -154,14 +155,23 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 |---|---|---|
 | A1 | Installable as an app, with brand icons | Done |
 | A2 | Works offline. A new version waits for the person to press "Reload to update", so a draft is never lost | Done |
-| A3 | Light, dark or match device, chosen in Settings and remembered | Done |
+| A3 | Light, dark, OLED black (true black surfaces) or match device, chosen in Settings and remembered | Done |
 | A4 | A collapsible sidebar on large screens that remembers its state | Done |
 | A5 | A bottom tab bar with six items on phones | Done |
 | A6 | Back and Cancel links look like buttons | Done |
 | A7 | Motion is gentle. Hovering changes colors only and never moves or resizes a control. Respects "reduce motion" | Done |
 | A8 | An in-app guide (How to use) from the sidebar and from Settings | Done |
 
-### 6.10 Android app
+### 6.10 First run
+
+| ID | Requirement | Status |
+|---|---|---|
+| W1 | A fresh journal opens a welcome screen once. A journal that already has entries never sees it | Done |
+| W2 | A backup folder step. Where a folder can be chosen, Next stays disabled until one is. Where it cannot (the Android app, browsers without folder saving), the step explains the share sheet or download and Next is enabled | Done, real folder dialog not tried |
+| W3 | An option to start from a backup file, using the same preview and safety copy as Restore | Done |
+| W4 | Everything on the welcome screen can be skipped | Done |
+
+### 6.11 Android app
 
 | ID | Requirement | Status |
 |---|---|---|

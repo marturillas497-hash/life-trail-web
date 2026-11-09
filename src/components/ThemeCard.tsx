@@ -8,6 +8,7 @@ const OPTIONS: { value: ThemeChoice; label: string }[] = [
   { value: "system", label: "Match device" },
   { value: "light", label: "Light" },
   { value: "dark", label: "Dark" },
+  { value: "oled", label: "OLED black" },
 ];
 
 export function ThemeCard() {
@@ -26,9 +27,10 @@ export function ThemeCard() {
     <section className={cardClass}>
       <h2 className="font-semibold">Appearance</h2>
       <p className="mt-1 text-sm text-sand-500">
-        Saved on this device only, so it is not part of backups.
+        Saved on this device only, so it is not part of backups. OLED black uses true black, which
+        saves battery on OLED phone screens.
       </p>
-      <div className="mt-3 flex gap-2" role="radiogroup" aria-label="Theme">
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4" role="radiogroup" aria-label="Theme">
         {OPTIONS.map((option) => {
           const selected = choice === option.value;
           return (
@@ -41,7 +43,7 @@ export function ThemeCard() {
                 setChoice(option.value);
                 saveTheme(option.value);
               }}
-              className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                 selected
                   ? "border-brand-600 bg-brand-50 text-brand-900 dark:border-brand-400 dark:bg-brand-950 dark:text-brand-200"
                   : "border-sand-300 text-sand-700 hover:bg-sand-50 dark:border-sand-700 dark:text-sand-300 dark:hover:bg-sand-800"

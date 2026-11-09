@@ -114,6 +114,18 @@ html.light {
   color-scheme: light;
 }
 
+/* True black for OLED screens. Cards and borders step up in neutral grays. */
+html.oled {
+  --color-sand-700: #2b2b2b;
+  --color-sand-800: #1b1b1b;
+  --color-sand-900: #0e0e0e;
+  --color-sand-950: #000000;
+}
+
+html.oled body {
+  background-image: none;
+}
+
 body {
   font-family:
     system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;

@@ -13,6 +13,9 @@ import { NativeBridge } from "./native/NativeBridge";
 import { ServiceWorkerRegister } from "./pwa/ServiceWorkerRegister";
 import { LockProvider, useLock } from "@/lib/lock/context";
 import { useQuickBackup } from "./backup/useQuickBackup";
+import { WelcomeFlow } from "./welcome/WelcomeFlow";
+import { useWelcomeNeeded } from "@/lib/welcome";
+import { applyTheme, readTheme } from "@/lib/theme";
 
 /* Add an item here and it shows up in the sidebar and the phone tab bar. */
 const NAV: { href: string; label: string; icon: string; mobile?: boolean }[] = [
@@ -31,6 +34,10 @@ function Shell({ children }: { children: ReactNode }) {
   const collapsed = useSyncExternalStore(subscribeSidebar, isCollapsed, () => false);
   const quickBackup = useQuickBackup();
   const router = useRouter();
+  const welcome = useWelcomeNeeded();
+
+  /* Keeps the phone's status bar color in step with the saved theme after a reload. */
+  useEffect(() => applyTheme(readTheme()), []);
 
   /* Alt+T opens today's note from anywhere. */
   useEffect(() => {
@@ -52,7 +59,7 @@ function Shell({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="flex h-dvh" inert={status === "loading" || status === "locked"}>
+    <div className="flex h-dvh" inert={status === "loading" || status === "locked" || welcome}>
       <aside className="hidden w-60 shrink-0 flex-col overflow-hidden border-r border-sand-200 bg-sand-50 p-3 transition-[width] duration-300 ease-in-out motion-reduce:transition-none lg:flex collapsed:w-[4.5rem] dark:border-sand-800 dark:bg-sand-900">
         <Link
           href="/"
@@ -175,6 +182,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <LockProvider>
       <BackupRunner />
       <Shell>{children}</Shell>
+      <WelcomeFlow />
       <LockOverlay />
     </LockProvider>
   );
