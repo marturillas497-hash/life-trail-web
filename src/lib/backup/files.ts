@@ -2,6 +2,7 @@ import { hasContent, hashData, buildBackupFile, serializeBackup, type BackupData
 import { readCurrentData } from "./snapshots";
 import { deleteSetting, getSetting, setSetting } from "./store";
 import { todayKey } from "../dates";
+import { FolderBackup, isNativeFolder, type NativeFolder } from "../native/folder";
 import { isNative } from "../native/platform";
 import { shareJsonFile } from "../native/share";
 
@@ -88,20 +89,27 @@ export async function shareBackup(): Promise<boolean> {
   return true;
 }
 
-/* ---------- Automatic backups to a folder (Chrome and Edge on a computer) ---------- */
+/* ---------- Automatic backups to a folder (Chrome and Edge on a computer, and the Android app) ---------- */
 
 export function isFolderBackupSupported(): boolean {
-  return typeof window !== "undefined" && !isNative() && "showDirectoryPicker" in window;
+  return typeof window !== "undefined" && (isNative() || "showDirectoryPicker" in window);
 }
 
-async function getHandle(): Promise<FolderHandle | undefined> {
-  return getSetting<FolderHandle>("folderHandle");
+/* A folder handle in a browser, or a folder address from Android's own picker in the app. */
+type FolderRef = FolderHandle | NativeFolder;
+
+async function getHandle(): Promise<FolderRef | undefined> {
+  return getSetting<FolderRef>("folderHandle");
 }
 
 export async function getFolderState(): Promise<FolderState> {
   if (!isFolderBackupSupported()) return "unsupported";
   const handle = await getHandle();
   if (!handle) return "none";
+  if (isNativeFolder(handle)) {
+    /* Android keeps the permission until the person removes it, so a lost one means choosing again. */
+    return (await nativeAccess(handle)) ? "ready" : "none";
+  }
   try {
     const permission = await handle.queryPermission({ mode: "readwrite" });
     return permission === "granted" ? "ready" : "needs-permission";
@@ -112,6 +120,18 @@ export async function getFolderState(): Promise<FolderState> {
 
 /* Opens the folder picker. Returns the folder name, or null if cancelled. */
 export async function chooseBackupFolder(): Promise<string | null> {
+  if (isNative()) {
+    const picked = await FolderBackup.pickFolder();
+    if (picked.cancelled || !picked.uri) return null;
+    const previous = await getHandle();
+    if (isNativeFolder(previous) && previous.uri !== picked.uri) {
+      await FolderBackup.releaseFolder({ uri: previous.uri }).catch(() => {});
+    }
+    const name = picked.name ?? "Backup folder";
+    await setSetting("folderHandle", { native: true, uri: picked.uri, name } satisfies NativeFolder);
+    await deleteSetting("folderError");
+    return name;
+  }
   const picker = (window as PickerWindow).showDirectoryPicker;
   if (!picker) return null;
   try {
@@ -128,13 +148,15 @@ export async function chooseBackupFolder(): Promise<string | null> {
 /* Must be called from a click. Asks the browser to let us write to the saved folder again. */
 export async function grantFolderAccess(): Promise<boolean> {
   const handle = await getHandle();
-  if (!handle) return false;
+  if (!handle || isNativeFolder(handle)) return false;
   const permission = await handle.requestPermission({ mode: "readwrite" });
   if (permission === "granted") await deleteSetting("folderError");
   return permission === "granted";
 }
 
 export async function forgetBackupFolder(): Promise<void> {
+  const handle = await getHandle();
+  if (isNativeFolder(handle)) await FolderBackup.releaseFolder({ uri: handle.uri }).catch(() => {});
   await deleteSetting("folderHandle");
   await deleteSetting("folderError");
 }
@@ -150,8 +172,21 @@ async function pruneFolder(handle: FolderHandle): Promise<void> {
   }
 }
 
-async function writeToFolder(handle: FolderHandle, data: BackupData): Promise<void> {
+async function nativeAccess(folder: NativeFolder): Promise<boolean> {
+  try {
+    return (await FolderBackup.checkFolder({ uri: folder.uri })).granted;
+  } catch {
+    return false;
+  }
+}
+
+async function writeToFolder(handle: FolderRef, data: BackupData): Promise<void> {
   const json = serializeBackup(buildBackupFile(data));
+  if (isNativeFolder(handle)) {
+    await FolderBackup.writeFile({ uri: handle.uri, name: backupFileName(), data: json });
+    await FolderBackup.pruneFiles({ uri: handle.uri, pattern: FILE_PATTERN.source, keep: KEEP_FOLDER_FILES });
+    return;
+  }
   const fileHandle = await handle.getFileHandle(backupFileName(), { create: true });
   const writable = await fileHandle.createWritable();
   await writable.write(json);
@@ -169,7 +204,11 @@ export async function runFolderBackup(force = false): Promise<void> {
   if (!handle) return;
 
   try {
-    if ((await handle.queryPermission({ mode: "readwrite" })) !== "granted") return;
+    if (isNativeFolder(handle)) {
+      if (!(await nativeAccess(handle))) return;
+    } else if ((await handle.queryPermission({ mode: "readwrite" })) !== "granted") {
+      return;
+    }
 
     const data = await readCurrentData({ withImages: true });
     if (!hasContent(data)) return;
@@ -216,6 +255,11 @@ export async function quickBackup(): Promise<QuickBackupResult> {
   }
 
   let handle = await getHandle();
+  /* In the app, a folder Android no longer allows is dropped, so the picker opens again. */
+  if (isNativeFolder(handle) && !(await nativeAccess(handle))) {
+    await forgetBackupFolder();
+    handle = undefined;
+  }
   if (!handle) {
     if (!(await chooseBackupFolder())) return { kind: "cancelled" };
     handle = await getHandle();
@@ -223,7 +267,7 @@ export async function quickBackup(): Promise<QuickBackupResult> {
     window.dispatchEvent(new Event(FOLDER_CHANGE_EVENT));
   }
 
-  if ((await handle.queryPermission({ mode: "readwrite" })) !== "granted") {
+  if (!isNativeFolder(handle) && (await handle.queryPermission({ mode: "readwrite" })) !== "granted") {
     if ((await handle.requestPermission({ mode: "readwrite" })) !== "granted") {
       window.dispatchEvent(new Event(FOLDER_CHANGE_EVENT));
       return { kind: "cancelled" };

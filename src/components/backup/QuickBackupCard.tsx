@@ -14,13 +14,15 @@ export function QuickBackupCard() {
   const hasFolder = state === "ready" || state === "needs-permission";
 
   const native = isNative();
-  const description = native
-    ? "One press opens the share sheet with a fresh backup file. Save it to Google Drive or Files, or send it to yourself, so a copy lives outside this app. Uninstalling the app deletes its journal, so back up first."
-    : state === "unsupported"
+  const base =
+    state === "unsupported"
       ? "This browser cannot save into a folder by itself, so one press downloads the backup file to your Downloads folder. To save straight into a folder, see the folder section below."
       : hasFolder
         ? `One press saves a fresh backup file into "${folderName ?? "your backup folder"}".`
         : "Choose a folder once, for example a new folder called Life Trail Backups. After that, one press saves a fresh backup there.";
+  const description = native
+    ? `${base} Uninstalling the app deletes its journal, but backup files in a folder outside the app stay.`
+    : base;
 
   const label = busy
     ? "Backing up..."

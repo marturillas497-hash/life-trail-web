@@ -58,8 +58,7 @@ export function FolderBackupCard() {
       return `Backups will be saved to "${name}". The first backup file is already there.`;
     });
 
-  /* The Android app has no folder access, the share sheet covers it. */
-  if (isNative()) return null;
+  const native = isNative();
 
   return (
     <section className={cardClass}>
@@ -95,10 +94,9 @@ export function FolderBackupCard() {
       ) : (
         <>
           <p className="mt-1 text-sm text-sand-500">
-            Pick a folder once. Life Trail then saves a dated backup file there every day you use
-            it, and keeps the newest 30. Choosing a folder that syncs to OneDrive or Google Drive
-            gives you a copy off this computer as well. Create a new folder for it, for example
-            &quot;Life Trail Backups&quot;, because browsers refuse folders like Downloads itself.
+            {native
+              ? "Pick a folder on your phone once, for example a new folder called Life Trail Backups inside Documents. Life Trail then saves a dated backup file there every day you use it, and keeps the newest 30. The files stay if the app is uninstalled. Android cannot pick Google Drive folders, so to put a copy in Drive use Save or share backup file on this page."
+              : "Pick a folder once. Life Trail then saves a dated backup file there every day you use it, and keeps the newest 30. Choosing a folder that syncs to OneDrive or Google Drive gives you a copy off this computer as well. Create a new folder for it, for example \"Life Trail Backups\", because browsers refuse folders like Downloads itself."}
           </p>
 
           {state === "checking" && <p className="mt-3 text-sm text-sand-500">Checking...</p>}

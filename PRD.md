@@ -169,7 +169,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | ID | Requirement | Status |
 |---|---|---|
 | W1 | A fresh journal opens a welcome screen once. A journal that already has entries never sees it | Done |
-| W2 | A backup folder step. Where a folder can be chosen, Next stays disabled until one is. Where it cannot (the Android app, browsers without folder saving), the step explains the share sheet or download and Next is enabled | Done, real folder dialog not tried |
+| W2 | A backup folder step. Where a folder can be chosen (computer browsers with folder saving, and the Android app), Next stays disabled until one is. Where it cannot, the step explains the download and Next is enabled | Done, real folder dialogs not tried |
 | W3 | An option to start from a backup file, using the same preview and safety copy as Restore | Done |
 | W4 | Everything on the welcome screen can be skipped | Done |
 
@@ -179,7 +179,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 |---|---|---|
 | N1 | An installable Android app (APK) with the same screens and the same on device data as the website, built in the cloud so the owner's PC needs no Android tools | Built, not run on a phone (the build has never run) |
 | N2 | A daily reminder: one notification at a chosen time, asking for permission when switched on. Tapping it opens today's note. Stored on the phone only | Built, not run on a phone |
-| N3 | Back up now opens the Android share sheet with a backup file, so it can be saved to Google Drive, Files or sent to oneself. The folder backup card is hidden | Built, not run on a phone |
+| N3 | One press backup into a folder on the phone, chosen once with Android's own folder picker, plus the same daily automatic backup as the website, keeping the newest 30 files. Save or share backup file opens the Android share sheet for Google Drive, Files or sending it to oneself. Google Drive folders cannot be chosen, because the Drive app does not support the folder picker | Built, not run on a phone |
 | N4 | Links in entries open in the phone's browser | Built, not run on a phone |
 | N5 | Website only parts are hidden or off in the app: the install card, the update bar and the service worker | Done in a browser simulation |
 | N6 | The app keeps its own journal, separate from the website's. Moving data uses a backup file and Restore. Uninstalling the app deletes its journal, and the Backup page says so | Built, not run on a phone |

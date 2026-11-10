@@ -75,15 +75,15 @@ export function WelcomeFlow() {
             <p className="mt-1 text-sm text-sand-500">Checking...</p>
           ) : unsupported ? (
             <p className="mt-1 text-sm text-sand-600 dark:text-sand-300">
-              {native
-                ? "On Android, Back up now opens the share sheet with a backup file. Save it to Google Drive or Files so a copy lives outside this app. Uninstalling the app deletes its journal."
-                : "This browser cannot save straight into a folder, so Back up now will download a file instead. You can look at the options later in Backup."}
+              This browser cannot save straight into a folder, so Back up now will download a file
+              instead. You can look at the options later in Backup.
             </p>
           ) : (
             <>
               <p className="mt-1 text-sm text-sand-600 dark:text-sand-300">
-                Pick a folder where backup files are saved. A folder that syncs to the cloud, such as
-                Google Drive or OneDrive, is the safest choice.
+                {native
+                  ? "Pick a folder on your phone where backup files are saved, for example a new folder called Life Trail Backups inside Documents. Files in it stay even if the app is uninstalled."
+                  : "Pick a folder where backup files are saved. A folder that syncs to the cloud, such as Google Drive or OneDrive, is the safest choice."}
               </p>
               <button
                 type="button"
