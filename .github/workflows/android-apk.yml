@@ -63,14 +63,17 @@ jobs:
           ./gradlew assembleDebug --stacktrace
 
       - name: Name the file
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk life-trail.apk
+        run: |
+          APK="life-trail-$APP_VERSION-build${{ github.run_number }}.apk"
+          cp android/app/build/outputs/apk/debug/app-debug.apk "$APK"
+          echo "APK_NAME=$APK" >> "$GITHUB_ENV"
 
       - name: Check the signing key and version of the APK
         continue-on-error: true
         run: |
           BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
-          "$BT/apksigner" verify --print-certs life-trail.apk > certs.txt
-          "$BT/aapt" dump badging life-trail.apk | grep -E "^package:" > badging.txt
+          "$BT/apksigner" verify --print-certs "$APK_NAME" > certs.txt
+          "$BT/aapt" dump badging "$APK_NAME" | grep -E "^package:" > badging.txt
           SIGNER="$(grep -m1 "SHA-256 digest" certs.txt | awk '{print $NF}')"
           echo "SIGNER=$SIGNER" >> "$GITHUB_ENV"
           {
@@ -84,15 +87,15 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: life-trail-apk
-          path: life-trail.apk
+          name: ${{ env.APK_NAME }}
+          path: ${{ env.APK_NAME }}
           retention-days: 30
 
       - name: Publish as a release for easy phone download
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v$APP_VERSION-build${{ github.run_number }}" life-trail.apk \
+          gh release create "v$APP_VERSION-build${{ github.run_number }}" "$APK_NAME" \
             --target "${{ github.sha }}" \
             --title "Life Trail $APP_VERSION (build ${{ github.run_number }})" \
             --notes "Debug build for sideloading. Signing key SHA-256: ${SIGNER:-not checked}" \

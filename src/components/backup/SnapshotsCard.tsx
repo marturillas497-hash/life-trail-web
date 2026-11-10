@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSnapshots, type SnapshotSummary } from "@/lib/backup/hooks";
-import { restoreSnapshot } from "@/lib/backup/snapshots";
+import { mergeSnapshot, restoreSnapshot } from "@/lib/backup/snapshots";
 import { formatDateTime } from "@/lib/dates";
 import { ConfirmDialog } from "../ConfirmDialog";
 import { btnSecondary, cardClass } from "../ui";
@@ -16,19 +16,27 @@ const KIND_LABEL = {
 
 export function SnapshotsCard({ onRestored }: { onRestored: (message: string) => void }) {
   const snapshots = useSnapshots();
-  const [target, setTarget] = useState<SnapshotSummary | null>(null);
+  const [target, setTarget] = useState<{ snapshot: SnapshotSummary; mode: "merge" | "replace" } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function confirmRestore() {
     if (!target) return;
-    const chosen = target;
+    const { snapshot: chosen, mode } = target;
     setTarget(null);
     setError(null);
     try {
-      await restoreSnapshot(chosen.id);
-      onRestored(
-        `Restored the snapshot from ${formatDateTime(chosen.createdAt)}. Your journal before the restore was saved as a snapshot, so you can undo this.`,
-      );
+      if (mode === "merge") {
+        const plan = await mergeSnapshot(chosen.id);
+        const added = `${plan.newEntries} ${plan.newEntries === 1 ? "entry" : "entries"}`;
+        onRestored(
+          `Merged the snapshot from ${formatDateTime(chosen.createdAt)}: added ${added}${plan.updatedEntries > 0 ? `, updated ${plan.updatedEntries}` : ""}. Your journal before the merge was saved as a snapshot, so you can undo this.`,
+        );
+      } else {
+        await restoreSnapshot(chosen.id);
+        onRestored(
+          `Restored the snapshot from ${formatDateTime(chosen.createdAt)}. Your journal before the restore was saved as a snapshot, so you can undo this.`,
+        );
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not restore that snapshot.");
     }
@@ -61,7 +69,10 @@ export function SnapshotsCard({ onRestored }: { onRestored: (message: string) =>
                   {snapshot.movieLogCount ? `, ${snapshot.movieLogCount} movie ${snapshot.movieLogCount === 1 ? "log" : "logs"}` : ""}
                 </div>
               </div>
-              <button type="button" className={btnSecondary} onClick={() => setTarget(snapshot)}>
+              <button type="button" className={btnSecondary} onClick={() => setTarget({ snapshot, mode: "merge" })}>
+                Merge
+              </button>
+              <button type="button" className={btnSecondary} onClick={() => setTarget({ snapshot, mode: "replace" })}>
                 Restore
               </button>
             </li>
@@ -70,10 +81,19 @@ export function SnapshotsCard({ onRestored }: { onRestored: (message: string) =>
       )}
 
       <ConfirmDialog
-        open={target !== null}
+        open={target?.mode === "replace"}
         title="Restore this snapshot?"
         message="Your current journal will be replaced by this snapshot. A snapshot of your current journal is saved first, so you can undo this."
         confirmLabel="Restore"
+        onConfirm={() => void confirmRestore()}
+        onCancel={() => setTarget(null)}
+      />
+      <ConfirmDialog
+        open={target?.mode === "merge"}
+        title="Merge this snapshot?"
+        message="Entries, tags and viewings that are in the snapshot but not in your journal are added. Nothing in your journal is removed. A snapshot of your current journal is saved first, so you can undo this."
+        confirmLabel="Merge"
+        tone="default"
         onConfirm={() => void confirmRestore()}
         onCancel={() => setTarget(null)}
       />

@@ -1,5 +1,6 @@
 import { db } from "../db";
 import { todayKey } from "../dates";
+import { mergeData, type MergePlan } from "./merge";
 import { base64ToBytes, bytesToBase64, hasContent, hashData, normalizeData, summarize, type BackupData } from "./format";
 import { selectIdsToKeep, type SnapshotKind } from "./retention";
 import { backupDb, type Snapshot } from "./store";
@@ -145,6 +146,19 @@ export async function restoreSnapshot(id: number): Promise<void> {
   const snapshot = await backupDb.snapshots.get(id);
   if (!snapshot) throw new Error("That snapshot no longer exists.");
   await replaceJournal(snapshot.data);
+}
+
+/*
+Adds what a snapshot has and the journal lacks, without removing anything. Snapshots
+carry no pictures, so picture links in merged entries keep pointing at the pictures
+already in this journal.
+*/
+export async function mergeSnapshot(id: number): Promise<MergePlan> {
+  const snapshot = await backupDb.snapshots.get(id);
+  if (!snapshot) throw new Error("That snapshot no longer exists.");
+  const { merged, plan } = mergeData(await readCurrentData({ withImages: true }), normalizeData(snapshot.data));
+  await replaceJournal(merged);
+  return plan;
 }
 
 /* Older snapshots have no movie lists, so everything is read through normalizeData. */
