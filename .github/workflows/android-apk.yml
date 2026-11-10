@@ -28,6 +28,8 @@ jobs:
         run: npx --yes pnpm@12.15.0 install --frozen-lockfile
 
       - name: Build the web app
+        env:
+          NEXT_PUBLIC_APP_VERSION: ${{ github.run_number }}
         run: npx --yes pnpm@12.15.0 build
 
       - name: Copy the web app into the Android project
@@ -36,7 +38,10 @@ jobs:
       - name: Set the version number
         run: |
           sed -i -E 's/versionCode [0-9]+/versionCode ${{ github.run_number }}/' android/app/build.gradle
-          grep -n "versionCode" android/app/build.gradle
+          sed -i -E 's/versionName "[^"]*"/versionName "${{ github.run_number }}"/' android/app/build.gradle
+          sed -i -E 's#(<string name="app_name">)[^<]*(</string>)#\1Life Trail v${{ github.run_number }}\2#' android/app/src/main/res/values/strings.xml
+          grep -n "version" android/app/build.gradle
+          grep -n "app_name" android/app/src/main/res/values/strings.xml
 
       - name: Build the APK
         working-directory: android

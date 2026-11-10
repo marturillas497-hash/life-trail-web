@@ -135,6 +135,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | B4 | A reminder banner when the journal has not been saved to a file for a while | Done |
 | B5 | Backup files include pictures. Daily and manual snapshots do not, to stay small | Done |
 | B6 | Restore from a snapshot or a file after a preview. A copy of the current journal is saved first, so the restore can be undone | Done |
+| B10 | Restoring a backup file can merge it into the current journal instead of replacing it. The preview says what a merge would add, update and leave alone. Nothing is removed, and a safety copy is saved first | Done |
 | B7 | Older backup files (versions 1 to 3) still load. Damaged files are refused with a clear message | Done |
 | B8 | Export to PDF or CSV | Decided against (November 2026). Backups stay JSON |
 | B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Shelved (the owner said to forget it for now, November 2026). Research is kept in `CLAUDE.md` |
@@ -160,6 +161,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | A5 | A bottom tab bar with six items on phones. It tucks away when scrolling down and returns when scrolling up, near the top of a page, and on a new page | Done |
 | A6 | Back and Cancel links look like buttons | Done |
 | A7 | Motion is gentle. Hovering changes colors only and never moves or resizes a control. Respects "reduce motion" | Done |
+| A9 | The Android app shows its version: in the name under the icon (Life Trail v18), in Android's app info and in Settings, About. The website says it updates by itself | Done in the workflow, not run on a phone |
 | A8 | An in-app guide (How to use) from the sidebar and from Settings | Done |
 
 ### 6.10 First run

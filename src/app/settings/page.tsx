@@ -5,6 +5,7 @@ import { AppLockCard } from "@/components/lock/AppLockCard";
 import { TmdbKeyCard } from "@/components/movies/TmdbKeyCard";
 import { ReminderCard } from "@/components/native/ReminderCard";
 import { InstallCard } from "@/components/pwa/InstallCard";
+import { AboutCard } from "@/components/AboutCard";
 import { DailyNoteCard } from "@/components/DailyNoteCard";
 import { ThemeCard } from "@/components/ThemeCard";
 import { btnSecondary, cardClass } from "@/components/ui";
@@ -50,6 +51,7 @@ export default function SettingsPage() {
             Open Backup and restore
           </Link>
         </section>
+        <AboutCard />
       </div>
     </div>
   );

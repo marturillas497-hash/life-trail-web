@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
-import { btnDanger, btnSecondary } from "./ui";
+import { btnDanger, btnPrimary, btnSecondary } from "./ui";
 
 type Props = {
   open: boolean;
   title: string;
   message: string;
   confirmLabel: string;
+  /* "default" for a safe action such as a merge. Anything that removes data stays "danger". */
+  tone?: "danger" | "default";
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -17,6 +19,7 @@ export function ConfirmDialog({
   title,
   message,
   confirmLabel,
+  tone = "danger",
   onConfirm,
   onCancel,
 }: Props) {
@@ -51,7 +54,7 @@ export function ConfirmDialog({
           <button type="button" className={btnSecondary} onClick={onCancel}>
             Cancel
           </button>
-          <button type="button" className={btnDanger} onClick={onConfirm}>
+          <button type="button" className={tone === "danger" ? btnDanger : btnPrimary} onClick={onConfirm}>
             {confirmLabel}
           </button>
         </div>
