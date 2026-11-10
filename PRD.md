@@ -161,7 +161,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | A5 | A bottom tab bar with six items on phones. It tucks away when scrolling down and returns when scrolling up, near the top of a page, and on a new page | Done |
 | A6 | Back and Cancel links look like buttons | Done |
 | A7 | Motion is gentle. Hovering changes colors only and never moves or resizes a control. Respects "reduce motion" | Done |
-| A9 | The Android app shows its version: in the name under the icon (Life Trail v18), in Android's app info and in Settings, About. The website says it updates by itself | Done in the workflow, not run on a phone |
+| A9 | The Android app shows a three part version such as 1.0.0, set by the owner in a VERSION file, plus a build number: in the name under the icon (Life Trail 1.0.0), in Android's app info and in Settings, About. Every build installs over the previous one and keeps the journal. The website says it updates by itself | Done in the workflow, not run on a phone |
 | A8 | An in-app guide (How to use) from the sidebar and from Settings | Done |
 
 ### 6.10 First run
