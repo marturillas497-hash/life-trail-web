@@ -22,8 +22,12 @@ export function MiniPixels({ year, entries, tagMap }: { year: number; entries: E
           return (
             <div
               key={`${day}-${month}`}
-              className={`aspect-square rounded-[2px] ${pixel ? "" : "bg-current opacity-10"}`}
-              style={pixel ? { backgroundColor: tag?.color ?? "#a1a1aa" } : undefined}
+              className={`animate-pixel-pop aspect-square rounded-[2px] ${pixel ? "" : "bg-current opacity-10"}`}
+              style={{
+                /* The squares pop in as a diagonal wave across the year. */
+                animationDelay: `${520 + (month * 4 + day) * 9}ms`,
+                ...(pixel ? { backgroundColor: tag?.color ?? "#a1a1aa" } : {}),
+              }}
             />
           );
         }),

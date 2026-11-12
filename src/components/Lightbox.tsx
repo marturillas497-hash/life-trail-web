@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   src: string;
@@ -26,7 +27,8 @@ export function Lightbox({ src, alt, caption, onClose }: Props) {
     };
   }, [onClose]);
 
-  return (
+  /* Drawn on the page itself, so a transformed or clipped parent cannot cut it off. */
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -51,6 +53,7 @@ export function Lightbox({ src, alt, caption, onClose }: Props) {
         onClick={(event) => event.stopPropagation()}
       />
       {caption && <p className="mt-3 text-sm text-white/90">{caption}</p>}
-    </div>
+    </div>,
+    document.body,
   );
 }

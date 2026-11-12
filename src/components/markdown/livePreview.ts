@@ -12,6 +12,7 @@ import {
 import { resolveImageSrc } from "@/lib/images";
 import { safeUrl } from "@/lib/markdown";
 import { isNative, openExternal } from "@/lib/native/platform";
+import { openPicture } from "@/lib/pictureViewer";
 
 /* True in the reading view: nothing is editable and every Markdown symbol stays hidden. */
 export const readingMode = Facet.define<boolean, boolean>({
@@ -130,9 +131,8 @@ class ImageWidget extends WidgetType {
     wrap.append(img);
     wrap.addEventListener("click", (event) => {
       if (!this.openOnClick && !(event.ctrlKey || event.metaKey)) return;
-      /* A picture cannot be opened in a separate browser tab inside the Android app. */
-      if (isNative()) return;
-      void resolveImageSrc(this.src).then((url) => url && window.open(url, "_blank", "noopener,noreferrer"));
+      /* Opens in the same enlarged viewer as a movie poster, on the web and in the Android app. */
+      void resolveImageSrc(this.src).then((url) => url && openPicture({ url, alt: this.alt }));
     });
     return wrap;
   }

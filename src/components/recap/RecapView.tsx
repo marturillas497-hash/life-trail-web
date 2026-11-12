@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent, type PointerEvent, type ReactNode } from "react";
 import { formatFullDate, todayKey } from "@/lib/dates";
 import { useEntries, useMovieLogs, useTagMap } from "@/lib/hooks";
 import { previewText } from "@/lib/markdown";
@@ -9,7 +9,7 @@ import { entryPath, newEntryPath } from "@/lib/paths";
 import { buildRecap, recapYears, type Recap, type Watched } from "@/lib/recap";
 import type { Entry, Tag } from "@/lib/types";
 import { BackLink } from "../BackLink";
-import { Poster } from "../movies/Poster";
+import { EnlargeablePoster } from "../movies/EnlargeablePoster";
 import { StarDisplay } from "../movies/StarRating";
 import { btnPrimary, btnSecondary, inputClass } from "../ui";
 import { CountUp } from "./CountUp";
@@ -31,11 +31,11 @@ const dayShort = (key: string) => {
 const plural = (count: number, one: string, many: string) => `${count.toLocaleString()} ${count === 1 ? one : many}`;
 
 function Body({ children }: { children: ReactNode }) {
-  return <div className="flex flex-1 animate-page-in flex-col items-center justify-center gap-3 px-6 py-14 text-center">{children}</div>;
+  return <div className="stagger flex flex-1 flex-col items-center justify-center gap-3 px-6 py-14 text-center">{children}</div>;
 }
 
 function Big({ children }: { children: ReactNode }) {
-  return <p className="font-display text-7xl font-bold leading-none sm:text-8xl">{children}</p>;
+  return <p className="animate-big-pop font-display text-7xl font-bold leading-none sm:text-8xl">{children}</p>;
 }
 
 function buildSlides(
@@ -57,7 +57,7 @@ function buildSlides(
     render: (t) => (
       <Body>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-mark.png" alt="" width={112} height={112} className="size-28" />
+        <img src="/logo-mark.png" alt="" width={112} height={112} className="size-28 animate-logo-in" />
         <p className={`text-sm uppercase tracking-widest ${t.muted}`}>Life Trail</p>
         <h2 className="font-display text-5xl font-bold leading-tight sm:text-6xl">
           Your {year}
@@ -139,13 +139,13 @@ function buildSlides(
       render: (t) => (
         <Body>
           <p className={t.muted}>Your feeling of the year</p>
-          <p className="text-8xl leading-none" aria-hidden="true">
+          <p className="animate-emoji-pop text-8xl leading-none" aria-hidden="true">
             {topTag.emoji}
           </p>
           <h2 className="font-display text-4xl font-bold">{topTag.name}</h2>
           <p className={t.muted}>{Math.round(topFeeling.share * 100)}% of the feelings you wrote down</p>
           <ul className="mt-3 w-full max-w-sm space-y-2 text-left text-sm">
-            {list.map((item) => {
+            {list.map((item, rank) => {
               const tag = tagMap.get(item.tagId)!;
               return (
                 <li key={item.tagId} className="flex items-center gap-3">
@@ -155,7 +155,7 @@ function buildSlides(
                   <span className="h-2.5 flex-1 overflow-hidden rounded-full bg-current/15">
                     <span
                       className="block h-full animate-bar-grow rounded-full"
-                      style={{ width: `${item.share * 100}%`, backgroundColor: tag.color }}
+                      style={{ width: `${item.share * 100}%`, backgroundColor: tag.color, animationDelay: `${700 + rank * 130}ms` }}
                     />
                   </span>
                   <span className="w-9 text-right font-medium">{Math.round(item.share * 100)}%</span>
@@ -177,13 +177,14 @@ function buildSlides(
           <h2 className="font-display text-3xl font-bold">Month by month</h2>
           <p className={t.muted}>The feeling that led each month</p>
           <ul className="mt-2 grid w-full max-w-sm grid-cols-4 gap-2">
-            {recap.months.map((m) => {
+            {recap.months.map((m, i) => {
               const tag = m.topTagId !== null ? tagMap.get(m.topTagId) : undefined;
               return (
                 <li
                   key={m.month}
                   title={tag ? `${monthName(year, m.month)}: ${tag.name}` : monthName(year, m.month)}
-                  className={`flex flex-col items-center rounded-xl py-2 ${t.panel} ${m.entries === 0 ? "opacity-40" : ""}`}
+                  className={`animate-tile-flip flex flex-col items-center rounded-xl py-2 ${t.panel} ${m.entries === 0 ? "opacity-40" : ""}`}
+                  style={{ animationDelay: `${450 + i * 45}ms` }}
                 >
                   <span className={`text-xs ${t.muted}`}>{monthShort(year, m.month)}</span>
                   <span className="my-1 text-2xl leading-none">{tag ? tag.emoji : "·"}</span>
@@ -279,9 +280,13 @@ function buildSlides(
           <h2 className="font-display text-3xl font-bold">Your top picks</h2>
           <ol className="mt-2 flex flex-wrap items-start justify-center gap-4">
             {watched.top.map(({ log, movie }, index) => (
-              <li key={movie.id} className={`flex flex-col items-center text-center ${index === 0 ? "w-32" : "w-24"}`}>
+              <li
+                key={movie.id}
+                className={`animate-poster-in flex flex-col items-center text-center ${index === 0 ? "w-32" : "w-24"}`}
+                style={{ animationDelay: `${500 + index * 150}ms`, ["--tilt" as string]: `${[-4, 5, -5, 4, -3][index % 5]}deg` } as CSSProperties}
+              >
                 <span className={`mb-1 text-xs font-medium ${t.accent}`}>#{index + 1}</span>
-                <Poster
+                <EnlargeablePoster
                   title={movie.title}
                   posterData={movie.posterData}
                   posterPath={movie.posterPath}
@@ -307,7 +312,7 @@ function buildSlides(
   if (writing.entries > 0) {
     tiles.push(["Entries", writing.entries.toLocaleString()]);
     tiles.push(["Words", writing.words.toLocaleString()]);
-    if (writing.longestStreak) tiles.push(["Longest streak", `${writing.longestStreak.length} days`]);
+    if (writing.longestStreak) tiles.push(["Longest streak", plural(writing.longestStreak.length, "day", "days")]);
   }
   if (topTag) tiles.push(["Feeling of the year", `${topTag.emoji} ${topTag.name}`]);
   if (watched.logs > 0) {
@@ -321,8 +326,8 @@ function buildSlides(
       <Body>
         <h2 className="font-display text-3xl font-bold">{year} in numbers</h2>
         <ul className="mt-2 grid w-full max-w-sm grid-cols-2 gap-2.5">
-          {tiles.map(([label, value]) => (
-            <li key={label} className={`rounded-2xl p-3 ${t.panel}`}>
+          {tiles.map(([label, value], i) => (
+            <li key={label} className={`animate-tile-flip rounded-2xl p-3 ${t.panel}`} style={{ animationDelay: `${400 + i * 70}ms` }}>
               <div className={`text-xs ${t.muted}`}>{label}</div>
               <div className="mt-0.5 line-clamp-2 font-display text-lg font-bold leading-tight">{value}</div>
             </li>
@@ -343,6 +348,8 @@ function buildSlides(
   return slides;
 }
 
+type Motion = { leaving: number | null; dir: 1 | -1; x: number; y: number };
+
 export function RecapView({ requestedYear }: { requestedYear: number | null }) {
   const [today] = useState(() => todayKey());
   const entries = useEntries();
@@ -350,6 +357,16 @@ export function RecapView({ requestedYear }: { requestedYear: number | null }) {
   const tagMap = useTagMap();
   const [chosen, setChosen] = useState<number | null>(requestedYear);
   const [index, setIndex] = useState(0);
+  const [motion, setMotion] = useState<Motion>({ leaving: null, dir: 1, x: 50, y: 50 });
+  const [hover, setHover] = useState<"left" | "right" | null>(null);
+  const [restart, setRestart] = useState(0);
+  const onRestart = useCallback(() => setRestart((n) => n + 1), []);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const api = useRef<{ go: (next: number, origin?: { x: number; y: number }) => void; at: number; last: number }>({
+    go: () => {},
+    at: 0,
+    last: 0,
+  });
 
   const watched: Watched[] = useMemo(() => logs ?? [], [logs]);
   const years = useMemo(() => (entries ? recapYears(entries, watched) : []), [entries, watched]);
@@ -359,28 +376,77 @@ export function RecapView({ requestedYear }: { requestedYear: number | null }) {
   const recap = useMemo(() => (entries ? buildRecap(year, entries, watched, today) : null), [entries, watched, year, today]);
   const yearEntries = useMemo(() => (entries ?? []).filter((entry) => entry.date.startsWith(`${year}-`)), [entries, year]);
   const slides = useMemo(
-    () => (recap && tagMap && recap.hasData ? buildSlides(recap, yearEntries, tagMap, today, () => setIndex(0)) : []),
-    [recap, yearEntries, tagMap, today],
+    () =>
+      recap && tagMap && recap.hasData
+        ? buildSlides(recap, yearEntries, tagMap, today, onRestart)
+        : [],
+    [recap, yearEntries, tagMap, today, onRestart],
   );
   const last = slides.length - 1;
+  const safeIndex = Math.min(index, Math.max(last, 0));
+
+  /*
+  Moves to another slide. The slide being left stays on screen for a moment so it
+  can drift away while the new one opens from the tapped spot.
+  */
+  function go(next: number, origin?: { x: number; y: number }) {
+    const target = Math.max(0, Math.min(next, last));
+    if (target === safeIndex) return;
+    const dir = target > safeIndex ? 1 : -1;
+    setMotion({ leaving: safeIndex, dir, x: origin?.x ?? (dir === 1 ? 100 : 0), y: origin?.y ?? 50 });
+    setIndex(target);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setMotion((m) => ({ ...m, leaving: null })), 900);
+  }
+
+  useEffect(() => {
+    api.current = { go, at: safeIndex, last };
+  });
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  /* "Watch again" asks for a restart, which is done here once the latest render is in place. */
+  useEffect(() => {
+    if (restart > 0) api.current.go(0);
+  }, [restart]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target && ["SELECT", "INPUT", "TEXTAREA"].includes(target.tagName)) return;
       if (event.ctrlKey || event.metaKey || event.altKey) return;
-      if (event.key === "ArrowRight") setIndex((i) => Math.min(i + 1, Math.max(slides.length - 1, 0)));
-      if (event.key === "ArrowLeft") setIndex((i) => Math.max(i - 1, 0));
+      if (document.querySelector("[aria-modal='true']")) return;
+      if (event.key === "ArrowRight") api.current.go(api.current.at + 1);
+      if (event.key === "ArrowLeft") api.current.go(api.current.at - 1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [slides.length]);
+  }, []);
 
   if (!entries || !logs || !tagMap || !recap) return <p className="p-6 text-sm text-sand-500">Loading...</p>;
 
-  const safeIndex = Math.min(index, Math.max(last, 0));
   const slide = slides[safeIndex];
-  const theme = THEMES[safeIndex % THEMES.length];
+  const zone = (event: MouseEvent<HTMLElement> | PointerEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    return { side: x < 0.3 ? ("left" as const) : ("right" as const), x: x * 100, y: y * 100 };
+  };
+
+  /* Like Instagram stories: the left third goes back, the rest goes forward. Links and buttons keep working. */
+  function onTap(event: MouseEvent<HTMLElement>) {
+    /* Clicks inside the enlarged poster viewer bubble up through React, but are not taps on the card. */
+    if (!event.currentTarget.contains(event.target as Node)) return;
+    if ((event.target as HTMLElement).closest("a, button, input, select, textarea, label")) return;
+    if (window.getSelection()?.toString()) return;
+    const { side, x, y } = zone(event);
+    go(side === "left" ? safeIndex - 1 : safeIndex + 1, { x, y });
+  }
+
+  const layers =
+    slide && motion.leaving !== null && motion.leaving !== safeIndex && slides[motion.leaving]
+      ? [motion.leaving, safeIndex]
+      : [safeIndex];
 
   return (
     <div className="h-full overflow-y-auto">
@@ -395,6 +461,7 @@ export function RecapView({ requestedYear }: { requestedYear: number | null }) {
                 onChange={(event) => {
                   setChosen(Number(event.target.value));
                   setIndex(0);
+                  setMotion((m) => ({ ...m, leaving: null }));
                 }}
                 className={`${inputClass} !w-auto`}
               >
@@ -424,38 +491,88 @@ export function RecapView({ requestedYear }: { requestedYear: number | null }) {
             <section
               aria-roledescription="carousel"
               aria-label={`Your ${year} recap`}
-              className={`relative flex min-h-[34rem] flex-col overflow-hidden rounded-3xl shadow-xl sm:min-h-[36rem] ${theme.background}`}
+              onClick={onTap}
+              onPointerMove={(event) => {
+                if (event.pointerType === "mouse") setHover(zone(event).side);
+              }}
+              onPointerLeave={() => setHover(null)}
+              className="relative isolate flex min-h-[34rem] cursor-pointer touch-manipulation select-none flex-col overflow-hidden rounded-3xl bg-sand-950 shadow-xl sm:min-h-[36rem]"
             >
-              <ol className="absolute inset-x-4 top-4 z-10 flex gap-1.5">
+              {layers.map((layerIndex) => {
+                const layer = slides[layerIndex];
+                const layerTheme = THEMES[layerIndex % THEMES.length];
+                const leaving = layerIndex !== safeIndex;
+                return (
+                  <div
+                    key={layer.key}
+                    aria-hidden={leaving || undefined}
+                    aria-live={leaving ? undefined : "polite"}
+                    data-slide={layer.key}
+                    data-leaving={leaving || undefined}
+                    className={`flex flex-col ${layerTheme.background} ${
+                      leaving ? "pointer-events-none absolute inset-0 z-[1] animate-story-out" : "relative z-[2] flex-1 animate-story-in"
+                    }`}
+                    style={{ "--ox": `${motion.x}%`, "--oy": `${motion.y}%`, "--dir": motion.dir } as CSSProperties}
+                  >
+                    {layer.render(layerTheme)}
+                  </div>
+                );
+              })}
+
+              <ol className="absolute inset-x-4 top-3 z-10 flex gap-1.5">
                 {slides.map((item, i) => (
                   <li key={item.key} className="flex-1">
                     <button
                       type="button"
                       aria-label={`Go to ${item.label}`}
                       aria-current={i === safeIndex ? "step" : undefined}
-                      onClick={() => setIndex(i)}
-                      className={`block h-1.5 w-full rounded-full bg-current ${i <= safeIndex ? "opacity-90" : "opacity-25"}`}
-                    />
+                      onClick={() => go(i)}
+                      className="flex h-4 w-full items-center"
+                    >
+                      <span className="block h-1.5 w-full overflow-hidden rounded-full bg-current/25">
+                        <span
+                          key={i === safeIndex ? `now-${safeIndex}` : "still"}
+                          className={`block h-full rounded-full bg-current ${i === safeIndex ? "animate-progress-fill" : ""}`}
+                          style={{ width: i <= safeIndex ? "100%" : "0%" }}
+                        />
+                      </span>
+                    </button>
                   </li>
                 ))}
               </ol>
-              <div key={slide.key} className="flex flex-1 flex-col" aria-live="polite" data-slide={slide.key}>
-                {slide.render(theme)}
-              </div>
+
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none absolute left-3 top-1/2 z-[3] flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-2xl text-white transition-opacity ${
+                  hover === "left" && safeIndex > 0 ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                &#8249;
+              </span>
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none absolute right-3 top-1/2 z-[3] flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-2xl text-white transition-opacity ${
+                  hover === "right" && safeIndex < last ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                &#8250;
+              </span>
             </section>
 
             <div className="flex items-center justify-between gap-3">
-              <button type="button" className={btnSecondary} disabled={safeIndex === 0} onClick={() => setIndex(safeIndex - 1)}>
+              <button type="button" className={btnSecondary} disabled={safeIndex === 0} onClick={() => go(safeIndex - 1)}>
                 Back
               </button>
               <span className="text-sm text-sand-500" aria-hidden="true">
                 {safeIndex + 1} / {slides.length}
               </span>
-              <button type="button" className={btnPrimary} disabled={safeIndex === last} onClick={() => setIndex(safeIndex + 1)}>
+              <button type="button" className={btnPrimary} disabled={safeIndex === last} onClick={() => go(safeIndex + 1)}>
                 Next
               </button>
             </div>
-            <p className="text-center text-xs text-sand-500">Use the arrow keys to move between slides.</p>
+            <p className="text-center text-xs text-sand-500">
+              Tap the right side of the card to go forward and the left side to go back. Arrow keys work too.
+            </p>
           </>
         )}
       </div>

@@ -77,7 +77,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | J8 | A toolbar for bold, italic, heading, link, list, checklist, quote and picture, plus Ctrl+B, Ctrl+I, Ctrl+K | Done |
 | J9 | Links: Ctrl+Enter or Ctrl+click opens the link under the cursor in a new tab. In saved entries a normal click opens it. Only web and email links open | Done |
 | J10 | Ctrl+Enter saves entries, edits, viewings and tags when the cursor is not on a link. Ctrl+S also saves entries | Done |
-| J11 | Pictures: add by button, paste or drag and drop. Shrunk to a sensible size, shown inline, and opened larger on click. Pictures no entry uses can be removed from the Backup page | Done |
+| J11 | Pictures: add by button, paste or drag and drop. Shrunk to a sensible size, shown inline, and opened larger on click in the same full screen viewer as movie posters. Pictures no entry uses can be removed from the Backup page | Done |
 | J12 | Daily note: one press (Home button or Alt+T) opens today's note from an editable template, with the cursor ready and a question of the day above it. If today already has an entry, the same press continues it. Nothing is saved until the person writes and saves, so there are no empty entries | Done |
 | J13 | One daily prompt (60 rotating questions) and one editable template in Settings with {{date}}, {{weekday}} and {{prompt}}. More than one template | Done for one template, more templates planned |
 | J14 | Real tables in the editor | Planned (low) |
@@ -123,6 +123,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | I4 | Year in Pixels for a year: one pixel per day colored by the feeling used most that day, ties going to the one chosen first. Tapping a day reads or writes that day | Done |
 | I5 | How you felt: one bar split between feelings so the parts add up to 100%, a sentence naming the top feeling, and the change since the previous month or year | Done |
 | I6 | Days of the week: the main feeling for each weekday, once there are at least 7 entries | Done |
+| I8 | The recap works like Instagram stories: tapping the right side of the card goes forward, the left third goes back, links and buttons still work, and the arrow keys, Back and Next buttons and the progress bar also work. Slides change with an iris that opens from the tapped spot while the old slide drifts away, and the content of each slide rises in line by line. Squares, bars, posters and tiles have their own entrances. All of it is switched off by the reduce motion setting | Done |
 | I7 | Year recap: a story of the year in slides (writing, streak, busiest month and weekday, feeling of the year, month by month feelings, Year in Pixels, a memorable entry, movies and shows watched with top picks, a summary). Opened from a Home card in November, December and January, or from Insights. Years with data can be picked. Slides without data are skipped | Done |
 
 ### 6.7 Backups and restore
