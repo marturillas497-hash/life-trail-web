@@ -65,8 +65,7 @@ const STEPS: Step[] = [
     body: (
       <>
         Open <strong>Audience</strong>. While the app is in Testing, only the email addresses listed under Test users can
-        sign in, and that is fine for a private journal. Press Add users and add your own Google email. If you later want
-        friends to use it, you can press Publish app there. For this one permission Google does not require a review.
+        sign in, and that is fine for a private journal. Press Add users and add your own Google email. To let other people use it, press Publish app there instead. For this one narrow permission Google should not need a full security review, though it may ask for basic app details.
       </>
     ),
   },
@@ -89,12 +88,23 @@ const STEPS: Step[] = [
     ),
   },
   {
-    title: "Paste it into Life Trail",
+    title: "Put the client ID into the app",
     body: (
       <>
-        Go back to Backup and restore, find Back up to Google Drive, paste the client ID and press Save client ID. Then
-        press Back up to Google Drive. Google opens a small window: choose your account and allow the permission. A
-        message may say the app is not verified. That is expected for your own test app. Press Continue.
+        To build it into the app, open <code className={CODE}>src/lib/backup/driveConfig.ts</code>, paste the client ID
+        between the quotes, then commit and push as usual. Everyone who opens the site then gets a Connect Google Drive
+        button on the Backup page. To try it first without changing any code, paste it into the box on the Backup page
+        instead. It then applies on this device only.
+      </>
+    ),
+  },
+  {
+    title: "Connect and back up",
+    body: (
+      <>
+        On the Backup page press Connect Google Drive. Google opens a small window: choose your account and allow the
+        permission. A message may say the app is not verified. That is expected for your own test app. Press Continue.
+        Your first backup is saved right away, and from then on the Back up now button in the sidebar saves to Drive too.
       </>
     ),
   },
@@ -107,9 +117,11 @@ export default function DriveSetupPage() {
         <BackLink href="/backup/">Backup and restore</BackLink>
         <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Set up Google Drive backup</h1>
         <p className="mt-2 text-sm text-sand-600 dark:text-sand-300">
-          Life Trail has no server, so it cannot sign you in to Google for you. You make a small free Google Cloud project
-          of your own once, which takes about ten minutes. The client ID it gives you is not a secret, and it stays on
-          this device only.
+          Life Trail has no server, so it cannot sign you in to Google for you. Instead, whoever hosts the app makes one small
+          free Google Cloud project, once, and puts its client ID into the app. After that, every person only presses
+          Connect Google Drive, signs in with their own Google account, and their backups go straight from their device to
+          their own Drive. If your copy of the app already says Connect Google Drive on the Backup page, you do not need this
+          page. The client ID is not a secret.
         </p>
 
         <ol className="mt-6 space-y-4">

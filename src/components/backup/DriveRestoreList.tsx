@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { downloadDriveBackup, DriveError, getAccessToken, listDriveBackups, type DriveBackup } from "@/lib/backup/drive";
+import { downloadDriveBackup, DriveError, listDriveBackups, signIn, type DriveBackup } from "@/lib/backup/drive";
 import { useDriveSetup } from "@/lib/backup/useDrive";
 import { formatDateTime } from "@/lib/dates";
 import { isNative } from "@/lib/native/platform";
@@ -17,7 +17,7 @@ Shown inside the restore card once Drive backup is set up. Picking a file hands 
 text to the same preview and merge steps as a file chosen from the computer.
 */
 export function DriveRestoreList({ onText }: { onText: (name: string, text: string) => void }) {
-  const { clientId, ready } = useDriveSetup();
+  const { clientId } = useDriveSetup();
   const [native] = useState(() => isNative());
   const [files, setFiles] = useState<DriveBackup[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -29,10 +29,10 @@ export function DriveRestoreList({ onText }: { onText: (name: string, text: stri
   async function show() {
     if (!clientId) return;
     setError(null);
-    const signIn = getAccessToken(clientId);
+    const pending = signIn(clientId);
     setBusy(true);
     try {
-      setFiles(await listDriveBackups(await signIn));
+      setFiles(await listDriveBackups(await pending));
     } catch (err) {
       if (!(err instanceof DriveError && err.cancelled)) setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -43,10 +43,10 @@ export function DriveRestoreList({ onText }: { onText: (name: string, text: stri
   async function use(file: DriveBackup) {
     if (!clientId) return;
     setError(null);
-    const signIn = getAccessToken(clientId);
+    const pending = signIn(clientId);
     setBusy(true);
     try {
-      const { text } = await downloadDriveBackup(await signIn, file.id);
+      const { text } = await downloadDriveBackup(await pending, file.id);
       onText(file.name, text);
       setFiles(null);
     } catch (err) {
@@ -59,7 +59,7 @@ export function DriveRestoreList({ onText }: { onText: (name: string, text: stri
   return (
     <div className="mt-4 border-t border-sand-200 pt-4 dark:border-sand-700">
       <p className="text-sm font-medium">Or choose one from Google Drive</p>
-      <button type="button" className={`${btnSecondary} mt-2`} disabled={busy || !ready} onClick={() => void show()}>
+      <button type="button" className={`${btnSecondary} mt-2`} disabled={busy} onClick={() => void show()}>
         {busy && files === null ? "Looking in Drive..." : "Show my Drive backups"}
       </button>
 

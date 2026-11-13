@@ -139,7 +139,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | B10 | Restoring a backup file, or a snapshot in the list, can merge it into the current journal instead of replacing it. The preview says what a merge would add, update and leave alone. Nothing is removed, and a safety copy is saved first | Done |
 | B7 | Older backup files (versions 1 to 3) still load. Damaged files are refused with a clear message | Done |
 | B8 | Export to PDF or CSV | Decided against (November 2026). Backups stay JSON |
-| B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Done on the website (part 24), not tried with a real Google account. A Back up to Google Drive button saves today's backup file, with pictures, into a Life Trail Backups folder, replacing the same day's file and keeping the newest 30 (older ones go to the Drive trash). The restore card can list the Drive backups and open one in the usual preview with merge or replace. The client ID is pasted in the app and a setup guide page explains the Google Cloud steps. Not in the Android app yet, which shows a note and the share sheet instead |
+| B9 | Optional backup to the person's own Google Drive, using only the non-sensitive `drive.file` scope. The app ships with its own Google client ID (made once by the owner in Google Cloud and put in `driveConfig.ts`), so each person only presses Connect Google Drive and signs in with their own Google account. The backup goes from the device straight to that person's Drive and never through a server of the owner. Free. It needs a press each time, because a site with no server cannot renew Google's one hour sign in. Saves `life-trail-backup-DATE.json` (with pictures) into a Life Trail Backups folder, replaces the same day's file, keeps the newest 30 and trashes older ones. The Back up now button in the sidebar saves to Drive too once it is connected (if a folder window and the sign in window would both be needed in one press, the folder goes first and Drive waits for the next press). The restore card lists the Drive backups and opens one in the usual preview with merge or replace, even on a new device that never connected. A person can paste their own client ID instead of the built in one, and a setup guide page explains the Google Cloud steps. Not in the Android app yet, which shows a note and the share sheet | Done on the website (part 24), not tried with a real Google account |
 
 ### 6.8 Privacy and security
 
@@ -208,7 +208,7 @@ Rules: dates are local days so they never shift with time zones. A tag is archiv
 
 | Area | Requirement |
 |---|---|
-| Privacy | No accounts, no analytics, no third party scripts, except Google's sign-in script, which loads only after a Drive client ID is saved and never in the Android app. The site is marked noindex |
+| Privacy | No accounts, no analytics, no third party scripts, except Google's sign-in script, which loads only after the person has connected Google Drive and never in the Android app. The site is marked noindex |
 | Offline | Everything except TMDB search and the sharper poster works without a connection |
 | Data safety | Daily snapshot, file backups, restore with undo. The app warns that browser data can be erased and nudges toward file backups |
 | Performance | Entries and the journal list stay fast with years of daily entries. Pictures are shrunk before storing. Large lists are not rendered with heavy components |
@@ -272,7 +272,7 @@ This is a personal project, so success is felt rather than measured:
 | Shows from real TMDB behave differently from the test data | Check with a real search before relying on it |
 | The paused Flutter repository | Keep, or archive it |
 | Do shows need seasons? | Decide after using the show log for a while |
-| Google Drive backup | Built for the website, untried against real Google. Android needs separate native work. The owner treats a public release as a hopeful thought only, so a Google Cloud project in Testing mode with the owner as test user is enough |
+| Google Drive backup | Built for the website, untried against real Google. The owner still has to make the Google Cloud project once and put the client ID in `driveConfig.ts`. In Google's Testing mode only listed test users can sign in, so letting friends in means pressing Publish app (for this narrow permission a full review should not be needed, not yet checked). Android needs separate native work. The owner treats a public release as a hopeful thought only |
 | Android app route | Decided: Capacitor with the APK built in the cloud. Open risks: the first Gradle build may need fixes, and a hard load of a page other than Home inside the app would show the wrong page (checked by tapping through the app) |
 | The phone layout has never been tested on a real phone | The first APK is the moment to test it, including the status bar area under Android's edge to edge drawing |
 | A name for the Home greeting | A small Settings field would do |

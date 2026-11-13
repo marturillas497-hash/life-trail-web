@@ -154,6 +154,21 @@ export function getAccessToken(clientId: string): Promise<string> {
   });
 }
 
+/*
+The one entry point for a click that needs Drive. When Google's script is already loaded the
+sign-in window opens straight away, inside the click. Otherwise the script is fetched first,
+which is quick and still inside the browser's short window after a click. A successful
+sign-in switches Drive backup on, which is what makes the script load on later visits.
+*/
+export function signIn(clientId: string): Promise<string> {
+  const loaded = typeof window !== "undefined" && window.google?.accounts?.oauth2 !== undefined;
+  const token = loaded ? getAccessToken(clientId) : loadGoogleScript().then(() => getAccessToken(clientId));
+  return token.then(async (value) => {
+    await setSetting("driveEnabled", true);
+    return value;
+  });
+}
+
 /* ---------- Drive requests ---------- */
 
 async function describeFailure(response: Response): Promise<string> {
@@ -335,8 +350,8 @@ export async function downloadDriveBackup(token: string, id: string): Promise<{ 
 /* ---------- Disconnecting ---------- */
 
 /*
-Takes back the access Google gave this site and forgets the Drive folder. The backups
-already in Drive stay there, and the saved client ID is kept so connecting again is quick.
+Takes back the access Google gave this site, switches Drive backup off and forgets the Drive
+folder. The backups already in Drive stay there, and any client ID the person pasted is kept.
 */
 export async function disconnectDrive(): Promise<void> {
   const token = cached?.token;
@@ -344,6 +359,7 @@ export async function disconnectDrive(): Promise<void> {
   if (token && window.google?.accounts?.oauth2) {
     window.google.accounts.oauth2.revoke(token);
   }
+  await deleteSetting("driveEnabled");
   await deleteSetting("driveFolderId");
   await deleteSetting("lastDriveBackupAt");
   await deleteSetting("driveError");
