@@ -7,6 +7,7 @@ import { isNoOp, mergeData, type MergePlan } from "@/lib/backup/merge";
 import { readCurrentData, replaceJournal } from "@/lib/backup/snapshots";
 import { formatDateTime, formatShortDate } from "@/lib/dates";
 import { ConfirmDialog } from "../ConfirmDialog";
+import { DriveRestoreList } from "./DriveRestoreList";
 import { btnPrimary, btnSecondary, cardClass } from "../ui";
 
 const MAX_FILE_BYTES = 200 * 1024 * 1024;
@@ -20,6 +21,20 @@ export function RestoreFileCard({ onRestored }: { onRestored: (message: string) 
   const [busy, setBusy] = useState(false);
   const [inputKey, setInputKey] = useState(0);
 
+  /* Shared by a file from this computer and a file from Google Drive. */
+  async function loadText(name: string, text: string) {
+    setError(null);
+    setLoaded(null);
+    try {
+      const backup = parseBackup(text);
+      setLoaded({ name, backup });
+      /* The preview of a merge is worked out now, from the journal as it is. */
+      setPlan(mergeData(await readCurrentData({ withImages: true }), backup).plan);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not read that file.");
+    }
+  }
+
   async function onPick(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     setError(null);
@@ -27,10 +42,7 @@ export function RestoreFileCard({ onRestored }: { onRestored: (message: string) 
     if (!file) return;
     try {
       if (file.size > MAX_FILE_BYTES) throw new Error("That file is too large to be a backup.");
-      const backup = parseBackup(await file.text());
-      setLoaded({ name: file.name, backup });
-      /* The preview of a merge is worked out now, from the journal as it is. */
-      setPlan(mergeData(await readCurrentData({ withImages: true }), backup).plan);
+      await loadText(file.name, await file.text());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not read that file.");
     }
@@ -93,6 +105,8 @@ export function RestoreFileCard({ onRestored }: { onRestored: (message: string) 
         onChange={(event) => void onPick(event)}
         className="mt-4 block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-sand-100 file:px-4 file:py-2 file:text-sm file:font-medium hover:file:bg-sand-200 dark:file:bg-sand-800 dark:hover:file:bg-sand-700"
       />
+
+      <DriveRestoreList onText={(name, text) => void loadText(name, text)} />
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 

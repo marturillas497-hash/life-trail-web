@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { DriveBackupCard } from "@/components/backup/DriveBackupCard";
 import { FolderBackupCard } from "@/components/backup/FolderBackupCard";
 import { ImagesCard } from "@/components/backup/ImagesCard";
 import { QuickBackupCard } from "@/components/backup/QuickBackupCard";
@@ -42,6 +43,7 @@ export default function BackupPage() {
         <ManualBackupCard />
         <ImagesCard />
         <FolderBackupCard />
+        <DriveBackupCard />
         <SnapshotsCard onRestored={setNotice} />
         <RestoreFileCard onRestored={setNotice} />
       </div>

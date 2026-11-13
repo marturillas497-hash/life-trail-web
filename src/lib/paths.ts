@@ -29,3 +29,4 @@ export const tmdbSetupPath = () => "/movies/tmdb/";
 export const movieLogPath = (id: number) => `/movies/log/?id=${id}`;
 export const addMoviePath = (movieId?: number) =>
   movieId === undefined ? "/movies/add/" : `/movies/add/?movieId=${movieId}`;
+export const driveSetupPath = () => "/backup/drive/";

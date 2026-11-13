@@ -1,6 +1,6 @@
 # Life Trail: Product Requirements Document
 
-Version 1.1, November 2026. Owner: Arendiem. Companion file: `CLAUDE.md` (technical context and working rules). When the two disagree about what the product should do, this document wins. When they disagree about how it is built, `CLAUDE.md` wins.
+Version 1.3, November 2026. Owner: Arendiem. Companion file: `CLAUDE.md` (technical context and working rules). When the two disagree about what the product should do, this document wins. When they disagree about how it is built, `CLAUDE.md` wins.
 
 ## 1. Summary
 
@@ -28,7 +28,7 @@ Not targeted: teams, public blogging, people who need sync across devices, or an
 
 ## 4. Product principles
 
-1. **Private by construction.** Data never leaves the device unless the person downloads a file. The only outgoing requests are to TMDB, and only when searching or viewing a poster.
+1. **Private by construction.** Data never leaves the device unless the person downloads a file or chooses to back up to their own Google Drive. The outgoing requests are to TMDB (searching, posters) and, only after the person sets up Drive backup, to Google.
 2. **Calm and warm.** The app should feel approachable, never clinical. Soft colors, a rounded sans heading font (Nunito, shipped inside the app), gentle motion.
 3. **Write first.** The shortest path from opening the app to typing a sentence should stay short. Home puts "Write today's entry" at the top.
 4. **Safe by default.** Nothing is lost by a wrong click: deletes ask first, restores save a safety copy, archived tags keep old entries correct.
@@ -139,7 +139,7 @@ Status key: **Done** (built and tested in a real browser by Claude), **Done, par
 | B10 | Restoring a backup file, or a snapshot in the list, can merge it into the current journal instead of replacing it. The preview says what a merge would add, update and leave alone. Nothing is removed, and a safety copy is saved first | Done |
 | B7 | Older backup files (versions 1 to 3) still load. Damaged files are refused with a clear message | Done |
 | B8 | Export to PDF or CSV | Decided against (November 2026). Backups stay JSON |
-| B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Shelved (the owner said to forget it for now, November 2026). Research is kept in `CLAUDE.md` |
+| B9 | Optional backup to the owner's own Google Drive with one press, using only the non-sensitive `drive.file` scope. Free to use. Needs a one time Google Cloud setup by the owner. Cannot run in the background in a site with no server | Done on the website (part 24), not tried with a real Google account. A Back up to Google Drive button saves today's backup file, with pictures, into a Life Trail Backups folder, replacing the same day's file and keeping the newest 30 (older ones go to the Drive trash). The restore card can list the Drive backups and open one in the usual preview with merge or replace. The client ID is pasted in the app and a setup guide page explains the Google Cloud steps. Not in the Android app yet, which shows a note and the share sheet instead |
 
 ### 6.8 Privacy and security
 
@@ -208,7 +208,7 @@ Rules: dates are local days so they never shift with time zones. A tag is archiv
 
 | Area | Requirement |
 |---|---|
-| Privacy | No accounts, no analytics, no third party scripts. The site is marked noindex |
+| Privacy | No accounts, no analytics, no third party scripts, except Google's sign-in script, which loads only after a Drive client ID is saved and never in the Android app. The site is marked noindex |
 | Offline | Everything except TMDB search and the sharper poster works without a connection |
 | Data safety | Daily snapshot, file backups, restore with undo. The app warns that browser data can be erased and nudges toward file backups |
 | Performance | Entries and the journal list stay fast with years of daily entries. Pictures are shrunk before storing. Large lists are not rendered with heavy components |
@@ -229,26 +229,31 @@ Rules: dates are local days so they never shift with time zones. A tag is archiv
 
 ## 10. Current status
 
-Built and tested in a real browser by Claude: everything marked Done above, including the daily note and the year recap.
+Built and tested in a real browser by Claude: everything marked Done above, including the daily note, the year recap, the welcome screen, merge restore, the OLED theme and the picture viewer.
 
-Written but never built or run on a phone: the Android app (6.10). The first things to check by hand:
+The Android app (6.11) builds in GitHub Actions and has been installed on the owner's phone. Its native features were only checked in browser simulations, so the first things to check by hand on the phone are:
 
-1. The GitHub workflow producing an APK, then installing it on the phone.
-2. Every tab, the back button, the status bar area and the editor on the phone.
-3. The daily reminder, the share sheet backup and restoring a file inside the app.
-4. A real TMDB search that returns shows (for example Loki), with the owner's key, on the website and in the app.
-5. The folder picker and the one press backup in Brave after enabling the flag.
-6. The Vercel build and the live site after the latest push.
+1. Installing a new APK over the old one keeps the journal (the update numbering was fixed in part 20).
+2. Every tab, the back button, the status bar area and the editor.
+3. The folder picker with one press backup, the share sheet backup, and merge or restore from a file inside the app.
+4. The daily reminder and its permission prompt, and a tap opening today's note.
+5. Recap taps, the tab bar hiding on scroll, and pressing pictures.
+6. A real TMDB search that returns shows (for example Loki), with the owner's key, on the website and in the app.
+7. The folder picker in Brave after enabling the flag, and the Vercel site after the latest push.
+8. Google Drive backup with a real Google account on the website: the sign-in window in Brave, an upload, a restore from Drive, and whether the site's `Referrer-Policy: same-origin` header gets in the way of Google's window.
 
 ## 11. Roadmap
 
 | Order | Item | Why |
 |---|---|---|
-| 1 | **Get the Android app built and tested on the phone** | The code exists (6.10) but has never been built or run. Expect fixes after the first run |
-| 2 | Season level logging for shows | Lets a show be rated per season |
-| 3 | More templates | Different notes for different days |
-| 4 | Fingerprint unlock | Faster than a PIN on phones |
-| 5 | Backup to Google Drive | Shelved, only if the owner returns to it |
+| 1 | **Fix what the phone shows** | The app was built and installed, but its native features have not been used on a phone yet |
+| 2 | Password encrypted backups | Backups are plain readable text today. Optional encryption was explained to the owner and waits for their yes |
+| 3 | Picture size in notes | Size presets stored in the picture's alt text. Waits for the owner's yes |
+| 4 | Check for updates button | The repo is private, so it would read a version file hosted on the website. Waits for the owner's yes |
+| 5 | Season level logging for shows | Lets a show be rated per season |
+| 6 | More templates | Different notes for different days |
+| 7 | Fingerprint unlock | Faster than a PIN on phones |
+| 8 | Google Drive backup inside the Android app | The website version is built (B9). The app needs a native Google sign in plugin, a second Google client tied to the signing key, and a check that files made by the website are visible to it |
 
 ## 12. Success criteria
 
@@ -267,7 +272,7 @@ This is a personal project, so success is felt rather than measured:
 | Shows from real TMDB behave differently from the test data | Check with a real search before relying on it |
 | The paused Flutter repository | Keep, or archive it |
 | Do shows need seasons? | Decide after using the show log for a while |
-| Google Drive backup | Shelved by the owner. Revisit only if asked |
+| Google Drive backup | Built for the website, untried against real Google. Android needs separate native work. The owner treats a public release as a hopeful thought only, so a Google Cloud project in Testing mode with the owner as test user is enough |
 | Android app route | Decided: Capacitor with the APK built in the cloud. Open risks: the first Gradle build may need fixes, and a hard load of a page other than Home inside the app would show the wrong page (checked by tapping through the app) |
 | The phone layout has never been tested on a real phone | The first APK is the moment to test it, including the status bar area under Android's edge to edge drawing |
 | A name for the Home greeting | A small Settings field would do |

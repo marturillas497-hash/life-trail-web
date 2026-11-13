@@ -256,6 +256,15 @@ export default function GuidePage() {
             folder or a USB stick.
           </p>
           <p>
+            You can also back up to your own Google Drive on the website. It is optional and needs a one time setup of a free
+            Google Cloud project, explained in{" "}
+            <Link href="/backup/drive/" className="font-medium text-brand-600 underline dark:text-brand-300">
+              the Drive setup guide
+            </Link>
+            . After that, one press saves the backup file in a Life Trail Backups folder in your Drive, and the restore
+            card can pull one back.
+          </p>
+          <p>
             The Backup page also restores from a file or a daily snapshot. More details are in{" "}
             <Link href="/help/" className="font-medium text-brand-600 underline dark:text-brand-300">
               how your backups work
