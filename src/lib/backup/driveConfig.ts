@@ -6,4 +6,4 @@ asking, it does not give anyone access to anything. Leave it empty to make every
 paste their own client ID instead.
 */
 /* The cast keeps TypeScript from treating this as the literal empty string, so filling it in never breaks the build. */
-export const BUILT_IN_GOOGLE_CLIENT_ID = "" as string;
+export const BUILT_IN_GOOGLE_CLIENT_ID = "866903091866-3gidstpj9hdsmn9atbtefn4db8iseo7i.apps.googleusercontent.com" as string;
