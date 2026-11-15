@@ -64,8 +64,13 @@ const STEPS: Step[] = [
     title: "Add yourself as a test user",
     body: (
       <>
-        Open <strong>Audience</strong>. While the app is in Testing, only the email addresses listed under Test users can
-        sign in, and that is fine for a private journal. Press Add users and add your own Google email. To let other people use it, press Publish app there instead. For this one narrow permission Google should not need a full security review, though it may ask for basic app details.
+        Open <strong>Audience</strong> and leave the app in <strong>Testing</strong>. Scroll to Test users, press Add users and
+        add your own Google email, and later the email of each friend who should use it (up to 100 people). Only listed
+        people can sign in. Google will show a &quot;has not verified this app&quot; screen the first time. Press Advanced,
+        then Go to Life Trail, then allow. Do not press Publish app, and do not upload an app logo on the Branding page.
+        Publishing needs the Branding page completed, and an app that shows a logo or name to the public must pass
+        Google&apos;s brand verification, which needs a privacy policy and a domain you own. That is only worth doing if
+        Life Trail ever goes public.
       </>
     ),
   },
